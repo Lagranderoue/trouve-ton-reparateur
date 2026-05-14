@@ -1,0 +1,51 @@
+import { supabase } from '../../lib/supabase'
+
+export default async function Resultats() {
+  const { data: reparateurs } = await supabase
+    .from('reparateurs')
+    .select('*')
+
+  return (
+    <main className="min-h-screen bg-gray-50">
+      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between bg-white">
+        <a href="/" className="text-base font-medium">
+          Trouve ton <span className="text-blue-600">réparateur</span>
+        </a>
+        <button className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
+          Inscrire ma boutique
+        </button>
+      </nav>
+
+      <div className="max-w-4xl mx-auto px-6 py-6">
+        <div className="flex items-center gap-3 mb-4">
+          <a href="/" className="text-sm text-gray-400 hover:text-gray-600">← Retour</a>
+          <h1 className="text-base font-medium text-gray-900">
+            {reparateurs?.length} réparateur(s) trouvé(s)
+          </h1>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {reparateurs?.map((r) => (
+            <a href={`/reparateur/${r.id}`} key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-blue-200 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-sm font-medium text-blue-700 flex-shrink-0">
+                {r.nom?.charAt(0)}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium text-sm text-gray-900">{r.nom}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${r.ouvert ? "bg-green-50 text-green-700" : "bg-red-50 text-red-500"}`}>
+                    {r.ouvert ? "Ouvert" : "Fermé"}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-400">{r.adresse}, {r.ville}</div>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <div className="text-xs text-gray-400">📍 {r.ville}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </main>
+  )
+}
