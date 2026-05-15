@@ -1,11 +1,40 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+
 export default function Home() {
+  const [query, setQuery] = useState('')
+  const router = useRouter()
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      router.push(`/resultats?q=${encodeURIComponent(query.trim())}`)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleSearch()
+  }
+
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords
+      router.push(`/resultats?lat=${latitude}&lng=${longitude}`)
+    })
+  }
+
   return (
     <main className="min-h-screen bg-white flex flex-col">
       <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
         <div className="text-base font-medium">
           Trouve ton <span className="text-blue-600">réparateur</span>
         </div>
-        <button className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
+        <button
+          onClick={() => router.push('/inscrire')}
+          className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
           Inscrire ma boutique
         </button>
       </nav>
@@ -24,13 +53,22 @@ export default function Home() {
             type="text"
             placeholder="Ville ou code postal..."
             className="flex-1 px-4 py-3 text-sm outline-none"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
-          <button className="bg-blue-600 text-white px-5 text-sm font-medium">
+          <button
+            onClick={handleSearch}
+            className="bg-blue-600 text-white px-5 text-sm font-medium"
+          >
             Rechercher
           </button>
         </div>
 
-        <button className="text-sm text-gray-400 flex items-center gap-1 mb-12">
+        <button
+          onClick={handleGeolocate}
+          className="text-sm text-gray-400 flex items-center gap-1 mb-12"
+        >
           📍 Utiliser ma position actuelle
         </button>
 
