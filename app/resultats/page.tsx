@@ -1,5 +1,22 @@
-cat > ~/trouve-ton-reparateur/app/resultats/page.tsx << 'EOF'
 import { supabase } from '../../lib/supabase'
+
+async function geocodeVille(query: string) {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=fr&format=json&limit=1`,
+    { headers: { 'User-Agent': 'trouvetonreparateur/1.0' } }
+  )
+  const data = await res.json()
+  if (!data[0]) return null
+  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
+}
+
+function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2)**2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+}
 
 export default async function Resultats({
   searchParams,
@@ -9,6 +26,7 @@ export default async function Resultats({
   const { q } = await searchParams
 
   let reparateurs: any[] = []
+  let fallback = false
 
   if (q) {
     const { data } = await supabase
@@ -16,7 +34,25 @@ export default async function Resultats({
       .select('*')
       .or(`ville.ilike.%${q}%,code_postal.ilike.%${q}%`)
 
-    reparateurs = data ?? []
+    if (data && data.length > 0) {
+      reparateurs = data
+    } else {
+      const coords = await geocodeVille(q)
+      if (coords) {
+        const { data: tous } = await supabase
+          .from('reparateurs')
+          .select('*')
+          .not('latitude', 'is', null)
+
+        if (tous) {
+          reparateurs = tous
+            .map(r => ({ ...r, distance: distance(coords.lat, coords.lng, r.latitude, r.longitude) }))
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 10)
+          fallback = true
+        }
+      }
+    }
   }
 
   return (
@@ -29,24 +65,20 @@ export default async function Resultats({
           Inscrire ma boutique
         </button>
       </nav>
-
       <div className="max-w-4xl mx-auto px-6 py-6">
         <div className="flex items-center gap-3 mb-4">
           <a href="/" className="text-sm text-gray-400 hover:text-gray-600">← Retour</a>
           <h1 className="text-base font-medium text-gray-900">
-            {reparateurs.length} réparateur(s) trouvé(s)
-            {q && <span className="text-gray-400 font-normal"> pour "{q}"</span>}
+            {fallback ? `Aucun réparateur à ${q} — les plus proches :` : `${reparateurs.length} réparateur(s) trouvé(s) pour "${q}"`}
           </h1>
         </div>
-
         {reparateurs.length === 0 && (
           <div className="text-center text-gray-400 py-20">
             <div className="text-4xl mb-3">🔍</div>
-            <p className="text-sm">Aucun réparateur trouvé pour cette recherche.</p>
+            <p className="text-sm">Aucun réparateur trouvé.</p>
             <a href="/" className="text-blue-600 text-sm mt-2 inline-block">Réessayer</a>
           </div>
         )}
-
         <div className="flex flex-col gap-3">
           {reparateurs.map((r) => (
             <a href={`/reparateur/${r.id}`} key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-blue-200 transition-colors">
@@ -63,6 +95,7 @@ export default async function Resultats({
                 <div className="text-xs text-gray-400">{r.adresse}, {r.ville}</div>
               </div>
               <div className="text-right flex-shrink-0">
+                {r.distance && <div className="text-xs text-blue-500 font-medium">{Math.round(r.distance)} km</div>}
                 <div className="text-xs text-gray-400">📍 {r.ville}</div>
               </div>
             </a>
