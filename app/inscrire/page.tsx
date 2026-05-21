@@ -39,6 +39,11 @@ export default function Inscrire() {
         ...form, latitude: lat, longitude: lng, kbis_url: fileName, statut: 'pending', ouvert: false, note: null
       })
       if (insertError) throw insertError
+      await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
       setSuccess(true)
     } catch (e) {
       setError('Une erreur est survenue. Veuillez reessayer.')
