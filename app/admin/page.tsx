@@ -4,7 +4,12 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 
 export default function Admin() {
-  const [password, setPassword] = useState('')
+  const [auth, setAuth] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('admin_auth') === 'true'
+    }
+    return false
+  })
   const [auth, setAuth] = useState(false)
   const [error, setError] = useState('')
   const [reparateurs, setReparateurs] = useState<any[]>([])
@@ -15,6 +20,7 @@ export default function Admin() {
 
   const handleLogin = () => {
     if (password === '1904') {
+      sessionStorage.setItem('admin_auth', 'true')
       setAuth(true)
       loadReparateurs()
     } else {
