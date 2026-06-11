@@ -32,18 +32,19 @@ export default async function Resultats({
     const { data } = await supabase
       .from('reparateurs')
       .select('*')
-      .or(`ville.ilike.%${q}%,code_postal.ilike.%${q}%`)
-
+.or(`ville.ilike.%${q}%,code_postal.ilike.%${q}%`)
+      .eq('statut', 'approved')
     if (data && data.length > 0) {
       reparateurs = data
     } else {
+      // Fallback : géolocalisation par proximité
       const coords = await geocodeVille(q)
       if (coords) {
         const { data: tous } = await supabase
           .from('reparateurs')
           .select('*')
-          .not('latitude', 'is', null)
-
+.not('latitude', 'is', null)
+          .eq('statut', 'approved')
         if (tous) {
           reparateurs = tous
             .map(r => ({ ...r, distance: distance(coords.lat, coords.lng, r.latitude, r.longitude) }))
@@ -65,13 +66,17 @@ export default async function Resultats({
           Inscrire ma boutique
         </button>
       </nav>
+
       <div className="max-w-4xl mx-auto px-6 py-6">
         <div className="flex items-center gap-3 mb-4">
           <a href="/" className="text-sm text-gray-400 hover:text-gray-600">← Retour</a>
           <h1 className="text-base font-medium text-gray-900">
-            {fallback ? `Aucun réparateur à ${q} — les plus proches :` : `${reparateurs.length} réparateur(s) trouvé(s) pour "${q}"`}
+            {fallback
+              ? `Aucun réparateur à ${q} — réparateurs les plus proches :`
+              : `${reparateurs.length} réparateur(s) trouvé(s) pour "${q}"`}
           </h1>
         </div>
+
         {reparateurs.length === 0 && (
           <div className="text-center text-gray-400 py-20">
             <div className="text-4xl mb-3">🔍</div>
@@ -79,6 +84,7 @@ export default async function Resultats({
             <a href="/" className="text-blue-600 text-sm mt-2 inline-block">Réessayer</a>
           </div>
         )}
+
         <div className="flex flex-col gap-3">
           {reparateurs.map((r) => (
             <a href={`/reparateur/${r.id}`} key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-blue-200 transition-colors">
@@ -95,7 +101,9 @@ export default async function Resultats({
                 <div className="text-xs text-gray-400">{r.adresse}, {r.ville}</div>
               </div>
               <div className="text-right flex-shrink-0">
-                {r.distance && <div className="text-xs text-blue-500 font-medium">{Math.round(r.distance)} km</div>}
+                {r.distance && (
+                  <div className="text-xs text-blue-500 font-medium">{Math.round(r.distance)} km</div>
+                )}
                 <div className="text-xs text-gray-400">📍 {r.ville}</div>
               </div>
             </a>
