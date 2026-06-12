@@ -10,6 +10,7 @@ export default function Admin() {
   const [reparateurs, setReparateurs] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState('dashboard')
+  const [kbisUrl, setKbisUrl] = useState<string | null>(null)
   const mapRef = useRef<any>(null)
   const mapInstanceRef = useRef<any>(null)
 
@@ -53,14 +54,9 @@ export default function Admin() {
     setLoading(false)
   }
 
-  const getKbisUrl = async (fileName: string) => {
-    const { data } = await supabase.storage.from('kbis').createSignedUrl(fileName, 60)
-    if (data?.signedUrl) {
-      const a = document.createElement('a')
-      a.href = data.signedUrl
-      a.target = '_blank'
-      a.click()
-    }
+  const voirKbis = async (fileName: string) => {
+    const { data } = await supabase.storage.from('kbis').createSignedUrl(fileName, 300)
+    if (data?.signedUrl) setKbisUrl(data.signedUrl)
   }
 
   useEffect(() => {
@@ -117,6 +113,25 @@ export default function Admin() {
 
   return (
     <main className="min-h-screen bg-gray-50">
+
+      {kbisUrl && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-6" onClick={() => setKbisUrl(null)}>
+          <div className="bg-white rounded-xl overflow-hidden max-w-3xl w-full max-h-screen" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h2 className="text-sm font-medium text-gray-900">Document Kbis</h2>
+              <button onClick={() => setKbisUrl(null)} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+            </div>
+            <div className="p-4">
+              {kbisUrl.match(/\.(jpg|jpeg|png)$/i) ? (
+                <img src={kbisUrl} alt="Kbis" className="w-full rounded-lg" />
+              ) : (
+                <iframe src={kbisUrl} className="w-full rounded-lg" style={{ height: '600px' }} />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <nav className="border-b border-gray-100 px-6 py-4 bg-white flex items-center justify-between">
         <h1 className="text-base font-medium">Admin <span className="text-blue-600">Trouve ton reparateur</span></h1>
         <div className="flex gap-2">
@@ -182,7 +197,7 @@ export default function Admin() {
                   {r.horaires && <p className="text-sm text-gray-600 mb-3"><strong>Horaires:</strong> {r.horaires}</p>}
                   <div className="flex gap-2 flex-wrap">
                     {r.kbis_url && (
-                      <button onClick={() => getKbisUrl(r.kbis_url)} className="text-xs border border-gray-200 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-50">
+                      <button onClick={() => voirKbis(r.kbis_url)} className="text-xs border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50">
                         Voir Kbis
                       </button>
                     )}
