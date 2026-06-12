@@ -227,8 +227,11 @@ export default function Admin() {
                     <p className="text-xs text-gray-400">{r.ville} — {r.email}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => updateStatut(r.id, 'rejected')} disabled={loading} className="text-xs border border-gray-200 px-3 py-1.5 rounded-lg text-gray-500">
-                      Desapprouver
+                    <button onClick={() => updateStatut(r.id, 'pending')} disabled={loading} className="text-xs border border-orange-200 text-orange-500 px-3 py-1.5 rounded-lg">
+                      Mettre en attente
+                    </button>
+                    <button onClick={() => updateStatut(r.id, 'rejected')} disabled={loading} className="text-xs border border-red-200 text-red-400 px-3 py-1.5 rounded-lg">
+                      Rejeter
                     </button>
                     <button onClick={() => deleteReparateur(r.id)} disabled={loading} className="text-xs border border-red-200 text-red-400 px-3 py-1.5 rounded-lg">
                       Supprimer
