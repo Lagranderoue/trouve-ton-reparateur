@@ -21,7 +21,7 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
         const jour = parts[0]?.trim() || ''
         const horaire = parts.slice(1).join(':').trim()
         return { jour, horaire }
-      }).filter(h => h.jour)
+}).filter((h: { jour: string; horaire: string }) => h.jour)
     : []
 
   return (
