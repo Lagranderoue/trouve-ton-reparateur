@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabase'
 
 async function geocodeVille(query: string) {
   const res = await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=fr&format=json&limit=1`,
+    'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=fr&format=json&limit=1',
     { headers: { 'User-Agent': 'trouvetonreparateur/1.0' } }
   )
   const data = await res.json()
@@ -21,12 +21,14 @@ function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
 export default async function Resultats({
   searchParams,
 }: {
-searchParams: Promise<{ q?: string; lat?: string; lng?: string }>}) {
-const { q, lat, lng } = await searchParams
+  searchParams: Promise<{ q?: string; lat?: string; lng?: string }>
+}) {
+  const { q, lat, lng } = await searchParams
+
   let reparateurs: any[] = []
   let fallback = false
 
-if (lat && lng) {
+  if (lat && lng) {
     const userLat = parseFloat(lat)
     const userLng = parseFloat(lng)
     const { data: tous } = await supabase
@@ -38,29 +40,31 @@ if (lat && lng) {
       reparateurs = tous
         .map(r => ({ ...r, distance: distance(userLat, userLng, r.latitude, r.longitude) }))
         .sort((a, b) => a.distance - b.distance)
+        .filter(r => r.distance <= 70)
         .slice(0, 10)
       fallback = true
     }
-  } else if (q) {    const { data } = await supabase
+  } else if (q) {
+    const { data } = await supabase
       .from('reparateurs')
       .select('*')
-.or(`ville.ilike.%${q}%,code_postal.ilike.%${q}%`)
+      .or('ville.ilike.%' + q + '%,code_postal.ilike.%' + q + '%')
       .eq('statut', 'approved')
     if (data && data.length > 0) {
       reparateurs = data
     } else {
-      // Fallback : géolocalisation par proximité
       const coords = await geocodeVille(q)
       if (coords) {
         const { data: tous } = await supabase
           .from('reparateurs')
           .select('*')
-.not('latitude', 'is', null)
+          .not('latitude', 'is', null)
           .eq('statut', 'approved')
         if (tous) {
           reparateurs = tous
             .map(r => ({ ...r, distance: distance(coords.lat, coords.lng, r.latitude, r.longitude) }))
             .sort((a, b) => a.distance - b.distance)
+            .filter(r => r.distance <= 70)
             .slice(0, 10)
           fallback = true
         }
@@ -74,9 +78,9 @@ if (lat && lng) {
         <a href="/" className="text-base font-medium">
           Trouve ton <span className="text-blue-600">réparateur</span>
         </a>
-        <button className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
+        <a href="/inscrire" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
           Inscrire ma boutique
-        </button>
+        </a>
       </nav>
 
       <div className="max-w-4xl mx-auto px-6 py-6">
@@ -84,29 +88,29 @@ if (lat && lng) {
           <a href="/" className="text-sm text-gray-400 hover:text-gray-600">← Retour</a>
           <h1 className="text-base font-medium text-gray-900">
             {fallback
-              ? `Aucun réparateur à ${q} — réparateurs les plus proches :`
-              : `${reparateurs.length} réparateur(s) trouvé(s) pour "${q}"`}
+              ? 'Réparateurs les plus proches de vous :'
+              : reparateurs.length + ' réparateur(s) trouvé(s)' + (q ? ' pour "' + q + '"' : '')}
           </h1>
         </div>
 
         {reparateurs.length === 0 && (
           <div className="text-center text-gray-400 py-20">
             <div className="text-4xl mb-3">🔍</div>
-            <p className="text-sm">Aucun réparateur trouvé.</p>
+            <p className="text-sm">Aucun réparateur trouvé dans un rayon de 70 km.</p>
             <a href="/" className="text-blue-600 text-sm mt-2 inline-block">Réessayer</a>
           </div>
         )}
 
         <div className="flex flex-col gap-3">
           {reparateurs.map((r) => (
-            <a href={`/reparateur/${r.id}`} key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-blue-200 transition-colors">
+            <a href={'/reparateur/' + r.id} key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-blue-200 transition-colors">
               <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-sm font-medium text-blue-700 flex-shrink-0">
                 {r.nom?.charAt(0)}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-medium text-sm text-gray-900">{r.nom}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${r.ouvert ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500'}`}>
+                  <span className={'text-xs px-2 py-0.5 rounded-full ' + (r.ouvert ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500')}>
                     {r.ouvert ? 'Ouvert' : 'Fermé'}
                   </span>
                 </div>
