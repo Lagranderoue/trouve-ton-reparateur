@@ -11,57 +11,81 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
 
   if (!r) return <div className="p-10 text-center text-gray-400">Réparateur introuvable.</div>
 
+  const servicesList = r.services ? r.services.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+
+  const horairesList = r.horaires ? r.horaires.split('|').map((h: string) => {
+    const parts = h.trim().split(':')
+    const jour = parts[0]?.trim()
+    const horaire = parts.slice(1).join(':').trim()
+    return { jour, horaire }
+  }).filter(h => h.jour) : []
+
   return (
     <main className="min-h-screen bg-gray-50">
       <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between bg-white">
         <a href="/" className="text-base font-medium">
           Trouve ton <span className="text-blue-600">réparateur</span>
         </a>
-        <button className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
+        <a href="/inscrire" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
           Inscrire ma boutique
-        </button>
+        </a>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-6 py-6">
-        <a href="/resultats" className="text-sm text-gray-400 hover:text-gray-600 mb-4 block">← Retour aux résultats</a>
+      <div className="max-w-3xl mx-auto px-6 py-8">
+        <a href="javascript:history.back()" className="text-sm text-gray-400 hover:text-gray-600 mb-6 flex items-center gap-1">
+          ← Retour aux résultats
+        </a>
 
         <div className="bg-white border border-gray-100 rounded-xl p-6 mb-4">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-lg font-medium text-blue-700 flex-shrink-0">
-              {r.nom?.charAt(0)}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-xl font-medium text-gray-900">{r.nom}</h1>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${r.ouvert ? "bg-green-50 text-green-700" : "bg-red-50 text-red-500"}`}>
-                  {r.ouvert ? "Ouvert" : "Fermé"}
-                </span>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-xl font-medium text-blue-700 flex-shrink-0">
+                {r.nom?.charAt(0)}
               </div>
-              <div className="text-sm text-gray-400 mb-1">📍 {r.adresse}, {r.ville} {r.code_postal}</div>
-              {r.note && (
-                <div className="text-sm text-yellow-500">
-                  {"★".repeat(Math.floor(r.note))} <span className="text-gray-400">{r.note}/5</span>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <h1 className="text-xl font-medium text-gray-900">{r.nom}</h1>
+                  <span className={`text-xs px-2.5 py-1 rounded-full ${r.ouvert ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500'}`}>
+                    {r.ouvert ? 'Ouvert' : 'Fermé'}
+                  </span>
                 </div>
-              )}
+                <div className="text-sm text-gray-400 flex items-center gap-1 mb-2">
+                  📍 {r.adresse}, {r.ville} {r.code_postal}
+                </div>
+                {r.description && <p className="text-sm text-gray-500">{r.description}</p>}
+              </div>
             </div>
-          </div>
-          {r.description && <p className="text-sm text-gray-500">{r.description}</p>}
-        </div>
-
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="col-span-2 bg-white border border-gray-100 rounded-xl p-5">
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Services</h2>
-            <p className="text-sm text-gray-700">{r.services}</p>
-          </div>
-
-          <div className="bg-white border border-gray-100 rounded-xl p-5">
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Horaires</h2>
-            <p className="text-sm text-gray-700">{r.horaires}</p>
             {r.telephone && (
-              <a href={`tel:${r.telephone}`} className="w-full mt-4 bg-blue-600 text-white text-sm py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 block text-center">
+              <a href={'tel:' + r.telephone}
+                className="flex-shrink-0 flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium">
                 📞 Appeler
               </a>
             )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white border border-gray-100 rounded-xl p-5">
+            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">Services</h2>
+            <div className="flex flex-wrap gap-2">
+              {servicesList.length > 0 ? servicesList.map((s: string) => (
+                <span key={s} className="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
+                  {s}
+                </span>
+              )) : <p className="text-sm text-gray-400">Non renseigné</p>}
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-100 rounded-xl p-5">
+            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">Horaires</h2>
+            <div className="flex flex-col gap-2">
+              {horairesList.length > 0 ? horairesList.map(({ jour, horaire }) => (
+                <div key={jour} className="flex justify-between text-sm">
+                  <span className={horaire === 'Fermé' ? 'text-gray-300' : 'text-gray-700 font-medium'}>{jour}</span>
+                  <span className={horaire === 'Fermé' ? 'text-gray-300' : 'text-gray-500'}>{horaire}</span>
+                </div>
+              )) : <p className="text-sm text-gray-400">Non renseigné</p>}
+            </div>
           </div>
         </div>
       </div>
