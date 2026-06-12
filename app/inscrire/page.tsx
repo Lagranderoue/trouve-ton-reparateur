@@ -89,7 +89,8 @@ export default function Inscrire() {
     } finally {
       setLoading(false)
     }
-  }if (success) return (
+  }
+  if (success) return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="text-center max-w-md">
         <div className="text-5xl mb-4">✅</div>
