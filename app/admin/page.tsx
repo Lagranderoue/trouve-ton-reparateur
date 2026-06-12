@@ -55,7 +55,12 @@ export default function Admin() {
 
   const getKbisUrl = async (fileName: string) => {
     const { data } = await supabase.storage.from('kbis').createSignedUrl(fileName, 60)
-    if (data?.signedUrl) window.open(data.signedUrl, '_blank')
+    if (data?.signedUrl) {
+      const a = document.createElement('a')
+      a.href = data.signedUrl
+      a.target = '_blank'
+      a.click()
+    }
   }
 
   useEffect(() => {
