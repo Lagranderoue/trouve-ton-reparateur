@@ -21,15 +21,27 @@ function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
 export default async function Resultats({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
-}) {
-  const { q } = await searchParams
-
+searchParams: Promise<{ q?: string; lat?: string; lng?: string }>}) {
+const { q, lat, lng } = await searchParams
   let reparateurs: any[] = []
   let fallback = false
 
-  if (q) {
-    const { data } = await supabase
+if (lat && lng) {
+    const userLat = parseFloat(lat)
+    const userLng = parseFloat(lng)
+    const { data: tous } = await supabase
+      .from('reparateurs')
+      .select('*')
+      .not('latitude', 'is', null)
+      .eq('statut', 'approved')
+    if (tous) {
+      reparateurs = tous
+        .map(r => ({ ...r, distance: distance(userLat, userLng, r.latitude, r.longitude) }))
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 10)
+      fallback = true
+    }
+  } else if (q) {    const { data } = await supabase
       .from('reparateurs')
       .select('*')
 .or(`ville.ilike.%${q}%,code_postal.ilike.%${q}%`)
