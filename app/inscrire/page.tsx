@@ -11,11 +11,17 @@ const SERVICES = [
 
 const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
 
+const CRENEAUX = Array.from({ length: 29 }, (_, i) => {
+  const h = Math.floor(i / 2) + 8
+  const m = i % 2 === 0 ? '00' : '30'
+  return `${String(h).padStart(2, '0')}:${m}`
+})
+
 const defaultHoraires = JOURS.map((jour, i) => ({
   jour,
-  ouvert: i < 5,
-  ouverture: 9,
-  fermeture: 19
+  ouvert: i < 6,
+  ouverture: '09:00',
+  fermeture: '19:00'
 }))
 
 export default function Inscrire() {
@@ -41,7 +47,7 @@ export default function Inscrire() {
     setHoraires(prev => prev.map((h, idx) => idx === i ? { ...h, ouvert: !h.ouvert } : h))
   }
 
-  const updateHoraire = (i: number, key: 'ouverture' | 'fermeture', val: number) => {
+  const updateHoraire = (i: number, key: 'ouverture' | 'fermeture', val: string) => {
     setHoraires(prev => prev.map((h, idx) => idx === i ? { ...h, [key]: val } : h))
   }
 
@@ -64,7 +70,7 @@ export default function Inscrire() {
       const { error: uploadError } = await supabase.storage.from('kbis').upload(fileName, kbis)
       if (uploadError) throw uploadError
       const horairesText = horaires
-        .map(h => h.ouvert ? h.jour + ': ' + h.ouverture + 'h - ' + h.fermeture + 'h' : h.jour + ': Fermé')
+        .map(h => h.ouvert ? h.jour + ': ' + h.ouverture + ' - ' + h.fermeture : h.jour + ': Fermé')
         .join(' | ')
       const { error: insertError } = await supabase.from('reparateurs').insert({
         ...form,
@@ -103,84 +109,93 @@ export default function Inscrire() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <nav className="border-b border-gray-100 px-6 py-4 bg-white">
+      <nav className="border-b border-gray-100 px-6 py-5 bg-white">
         <a href="/" className="text-base font-medium">Trouve ton <span className="text-blue-600">réparateur</span></a>
       </nav>
-      <div className="max-w-xl mx-auto px-6 py-8">
-        <h1 className="text-xl font-medium text-gray-900 mb-1">Inscrire ma boutique</h1>
-        <p className="text-sm text-gray-400 mb-6">Votre dossier sera vérifié avant publication. Un Kbis est obligatoire.</p>
-        <div className="flex flex-col gap-5">
 
-          {[
-            { label: 'Nom de la boutique *', name: 'nom', placeholder: 'La Grande Roue' },
-            { label: 'Adresse *', name: 'adresse', placeholder: '24 avenue Mathias Duval' },
-            { label: 'Ville *', name: 'ville', placeholder: 'Grasse' },
-            { label: 'Code postal', name: 'code_postal', placeholder: '06130' },
-            { label: 'Téléphone *', name: 'telephone', placeholder: '09 86 27 89 02' },
-            { label: 'Email *', name: 'email', placeholder: 'contact@boutique.fr' },
-          ].map(({ label, name, placeholder }) => (
-            <div key={name}>
-              <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">{label}</label>
-              <input name={name} placeholder={placeholder} value={(form as any)[name]} onChange={handleChange}
-                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-400" />
+      <div className="max-w-xl mx-auto px-6 py-10">
+        <h1 className="text-2xl font-medium text-gray-900 mb-1">Inscrire ma boutique</h1>
+        <p className="text-sm text-gray-400 mb-8">Votre dossier sera vérifié avant publication. Un Kbis est obligatoire.</p>
+
+        <div className="flex flex-col gap-6">
+
+          <div className="bg-white border border-gray-100 rounded-xl p-6">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Informations générales</h2>
+            <div className="flex flex-col gap-4">
+              {[
+                { label: 'Nom de la boutique *', name: 'nom', placeholder: 'La Grande Roue' },
+                { label: 'Adresse *', name: 'adresse', placeholder: '24 avenue Mathias Duval' },
+                { label: 'Ville *', name: 'ville', placeholder: 'Grasse' },
+                { label: 'Code postal', name: 'code_postal', placeholder: '06130' },
+                { label: 'Téléphone *', name: 'telephone', placeholder: '09 86 27 89 02' },
+                { label: 'Email *', name: 'email', placeholder: 'contact@boutique.fr' },
+              ].map(({ label, name, placeholder }) => (
+                <div key={name}>
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wide block mb-1.5">{label}</label>
+                  <input name={name} placeholder={placeholder} value={(form as any)[name]} onChange={handleChange}
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-400" />
+                </div>
+              ))}
+              <div>
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wide block mb-1.5">Description</label>
+                <textarea name="description" placeholder="Présentez votre boutique en quelques mots..." value={form.description} onChange={handleChange} rows={3}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-400 resize-none" />
+              </div>
             </div>
-          ))}
-
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Description</label>
-            <textarea name="description" placeholder="Présentez votre boutique..." value={form.description} onChange={handleChange} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-400" />
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-3">Services proposés</label>
-            <div className="grid grid-cols-2 gap-2">
+          <div className="bg-white border border-gray-100 rounded-xl p-6">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Services proposés</h2>
+            <div className="grid grid-cols-2 gap-3">
               {SERVICES.map(s => (
-                <label key={s} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <label key={s} className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer py-1">
                   <input type="checkbox" checked={services.includes(s)} onChange={() => toggleService(s)}
-                    className="w-4 h-4 accent-blue-600" />
+                    className="w-4 h-4 accent-blue-600 flex-shrink-0" />
                   {s}
                 </label>
               ))}
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-3">Horaires d'ouverture</label>
+          <div className="bg-white border border-gray-100 rounded-xl p-6">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Horaires d'ouverture</h2>
             <div className="flex flex-col gap-3">
               {horaires.map((h, i) => (
-                <div key={h.jour} className="grid items-center gap-3" style={{ gridTemplateColumns: '80px 1fr' }}>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: h.ouvert ? 'inherit' : '#9ca3af' }}>
+                <div key={h.jour} className="grid items-center gap-3" style={{ gridTemplateColumns: '100px 1fr' }}>
+                  <label className={`flex items-center gap-2 text-sm cursor-pointer ${!h.ouvert ? 'text-gray-300' : 'text-gray-700'}`}>
                     <input type="checkbox" checked={h.ouvert} onChange={() => toggleJour(i)} className="w-4 h-4 accent-blue-600" />
-                    {h.jour.slice(0, 3)}
+                    {h.jour}
                   </label>
                   <div className={`flex items-center gap-2 ${!h.ouvert ? 'opacity-30 pointer-events-none' : ''}`}>
-                    <span className="text-xs text-gray-400 w-6">{h.ouverture}h</span>
-                    <input type="range" min={8} max={22} value={h.ouverture} step={1}
-                      onChange={e => updateHoraire(i, 'ouverture', parseInt(e.target.value))}
-                      className="flex-1" />
-                    <span className="text-xs text-gray-400 w-6">{h.fermeture}h</span>
-                    <input type="range" min={8} max={22} value={h.fermeture} step={1}
-                      onChange={e => updateHoraire(i, 'fermeture', parseInt(e.target.value))}
-                      className="flex-1" />
+                    <select value={h.ouverture} onChange={e => updateHoraire(i, 'ouverture', e.target.value)}
+                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400">
+                      {CRENEAUX.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <span className="text-gray-300 text-sm">→</span>
+                    <select value={h.fermeture} onChange={e => updateHoraire(i, 'fermeture', e.target.value)}
+                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400">
+                      {CRENEAUX.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Kbis (PDF ou image) *</label>
+          <div className="bg-white border border-gray-100 rounded-xl p-6">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Document Kbis</h2>
+            <p className="text-xs text-gray-400 mb-3">Joignez votre extrait Kbis (PDF ou image). Ce document sera vérifié par notre équipe.</p>
             <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setKbis(e.target.files?.[0] || null)}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm" />
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm" />
           </div>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
           <button onClick={handleSubmit} disabled={loading}
-            className="bg-blue-600 text-white py-3 rounded-lg text-sm font-medium disabled:opacity-50">
+            className="bg-blue-600 text-white py-4 rounded-xl text-sm font-medium disabled:opacity-50 w-full">
             {loading ? 'Envoi en cours...' : 'Envoyer ma demande'}
           </button>
+
         </div>
       </div>
     </main>
