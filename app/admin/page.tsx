@@ -85,7 +85,8 @@ export default function Admin() {
         mapInstanceRef.current = map
       }, 300)
     }
-  }, [tab, auth, reparateurs])if (!auth) return (
+  }, [tab, auth, reparateurs])
+  if (!auth) return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-xl p-8 border border-gray-100 w-full max-w-sm">
         <h1 className="text-lg font-medium text-gray-900 mb-6">Admin</h1>
