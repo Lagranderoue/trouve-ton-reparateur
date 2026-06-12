@@ -11,14 +11,18 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
 
   if (!r) return <div className="p-10 text-center text-gray-400">Réparateur introuvable.</div>
 
-  const servicesList = r.services ? r.services.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+  const servicesList: string[] = r.services
+    ? r.services.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : []
 
-  const horairesList = r.horaires ? r.horaires.split('|').map((h: string) => {
-    const parts = h.trim().split(':')
-    const jour = parts[0]?.trim()
-    const horaire = parts.slice(1).join(':').trim()
-    return { jour, horaire }
-  }).filter(h => h.jour) : []
+  const horairesList: { jour: string; horaire: string }[] = r.horaires
+    ? r.horaires.split('|').map((h: string) => {
+        const parts = h.trim().split(':')
+        const jour = parts[0]?.trim() || ''
+        const horaire = parts.slice(1).join(':').trim()
+        return { jour, horaire }
+      }).filter(h => h.jour)
+    : []
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -56,8 +60,7 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
               </div>
             </div>
             {r.telephone && (
-              <a href={'tel:' + r.telephone}
-                className="flex-shrink-0 flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium">
+              <a href={'tel:' + r.telephone} className="flex-shrink-0 flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium">
                 📞 Appeler
               </a>
             )}
@@ -68,7 +71,7 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
           <div className="bg-white border border-gray-100 rounded-xl p-5">
             <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">Services</h2>
             <div className="flex flex-wrap gap-2">
-              {servicesList.length > 0 ? servicesList.map((s: string) => (
+              {servicesList.length > 0 ? servicesList.map((s) => (
                 <span key={s} className="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
                   {s}
                 </span>
