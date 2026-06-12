@@ -4,12 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 
 export default function Admin() {
-  const [auth, setAuth] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('admin_auth') === 'true'
-    }
-    return false
-  })
+  const [password, setPassword] = useState('')
   const [auth, setAuth] = useState(false)
   const [error, setError] = useState('')
   const [reparateurs, setReparateurs] = useState<any[]>([])
@@ -17,6 +12,13 @@ export default function Admin() {
   const [tab, setTab] = useState('dashboard')
   const mapRef = useRef<any>(null)
   const mapInstanceRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (sessionStorage.getItem('admin_auth') === 'true') {
+      setAuth(true)
+      loadReparateurs()
+    }
+  }, [])
 
   const handleLogin = () => {
     if (password === '1904') {
@@ -83,9 +85,7 @@ export default function Admin() {
         mapInstanceRef.current = map
       }, 300)
     }
-  }, [tab, auth, reparateurs])
-
-  if (!auth) return (
+  }, [tab, auth, reparateurs])if (!auth) return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-xl p-8 border border-gray-100 w-full max-w-sm">
         <h1 className="text-lg font-medium text-gray-900 mb-6">Admin</h1>
