@@ -1,15 +1,44 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function Home() {
   const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
   const router = useRouter()
+  const timeoutRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (query.length < 2) {
+      setSuggestions([])
+      return
+    }
+    clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=fr&format=json&limit=5&addressdetails=1',
+          { headers: { 'User-Agent': 'trouvetonreparateur/1.0' } }
+        )
+        const data = await res.json()
+        const villes = data
+          .map((item: any) => item.address?.city || item.address?.town || item.address?.village || item.address?.municipality || '')
+          .filter((v: string) => v.length > 0)
+          .filter((v: string, i: number, arr: string[]) => arr.indexOf(v) === i)
+        setSuggestions(villes)
+        setShowSuggestions(true)
+      } catch {
+        setSuggestions([])
+      }
+    }, 300)
+  }, [query])
 
   const handleSearch = () => {
     if (query.trim()) {
-      router.push(`/resultats?q=${encodeURIComponent(query.trim())}`)
+      setShowSuggestions(false)
+      router.push('/resultats?q=' + encodeURIComponent(query.trim()))
     }
   }
 
@@ -21,8 +50,14 @@ export default function Home() {
     if (!navigator.geolocation) return
     navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude, longitude } = pos.coords
-      router.push(`/resultats?lat=${latitude}&lng=${longitude}`)
+      router.push('/resultats?lat=' + latitude + '&lng=' + longitude)
     })
+  }
+
+  const selectSuggestion = (ville: string) => {
+    setQuery(ville)
+    setShowSuggestions(false)
+    router.push('/resultats?q=' + encodeURIComponent(ville))
   }
 
   return (
@@ -48,21 +83,39 @@ export default function Home() {
           Entrez votre ville ou code postal — on trouve le pro le plus proche.
         </p>
 
-        <div className="flex w-full max-w-md border border-gray-200 rounded-xl overflow-hidden mb-3">
-          <input
-            type="text"
-            placeholder="Ville ou code postal..."
-            className="flex-1 px-4 py-3 text-sm outline-none"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          <button
-            onClick={handleSearch}
-            className="bg-blue-600 text-white px-5 text-sm font-medium"
-          >
-            Rechercher
-          </button>
+        <div className="relative w-full max-w-md mb-3">
+          <div className="flex border border-gray-200 rounded-xl overflow-hidden">
+            <input
+              type="text"
+              placeholder="Ville ou code postal..."
+              className="flex-1 px-4 py-3 text-sm outline-none"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            />
+            <button
+              onClick={handleSearch}
+              className="bg-blue-600 text-white px-5 text-sm font-medium"
+            >
+              Rechercher
+            </button>
+          </div>
+
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-xl mt-1 shadow-lg z-10 overflow-hidden">
+              {suggestions.map((ville, i) => (
+                <button
+                  key={i}
+                  onClick={() => selectSuggestion(ville)}
+                  className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 last:border-0 flex items-center gap-2"
+                >
+                  📍 {ville}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <button
