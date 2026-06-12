@@ -111,7 +111,7 @@ export default function Home() {
                   onClick={() => selectSuggestion(ville)}
                   className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 last:border-0 flex items-center gap-2"
                 >
-                  📍 {ville}
+                  {ville}
                 </button>
               ))}
             </div>
