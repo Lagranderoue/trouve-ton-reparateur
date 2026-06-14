@@ -62,9 +62,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white flex flex-col">
-      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-        <div className="text-base font-medium">
-          Trouve ton <span className="text-blue-600">réparateur</span>
+      <nav className="bg-[#0C447C] px-6 py-4 flex items-center justify-between">
+        <div className="text-base font-medium text-white">
+          Trouve ton <span className="text-[#85B7EB]">réparateur</span>
         </div>
         <button
           onClick={() => router.push('/inscrire')}
@@ -75,11 +75,11 @@ export default function Home() {
       </nav>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-3xl font-medium text-gray-900 mb-3 leading-tight">
+        <h1 className="text-3xl font-medium text-white mb-3 leading-tight">
           Votre téléphone est cassé ?<br />
           Trouvez un réparateur en urgence.
         </h1>
-        <p className="text-gray-500 mb-8 text-sm">
+        <p className="text-[#85B7EB] mb-8 text-sm">
           Entrez votre ville ou code postal — on trouve le pro le plus proche.
         </p>
 
