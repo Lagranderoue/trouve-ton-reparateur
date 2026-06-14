@@ -61,25 +61,25 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col">
-      <nav className="bg-[#0C447C] px-6 py-4 flex items-center justify-between">
-        <div className="text-base font-medium text-white">
-          Trouve ton <span className="text-[#85B7EB]">réparateur</span>
+    <main className="min-h-screen bg-white flex flex-col">
+      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <div className="text-base font-medium">
+          Trouve ton <span className="text-blue-600">réparateur</span>
         </div>
         <button
           onClick={() => router.push('/inscrire')}
-          className="text-sm bg-white text-blue-600 border-2 border-white px-4 py-2 rounded-lg hover:bg-transparent hover:text-white transition-colors duration-200"
+          className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg"
         >
           Inscrire ma boutique
         </button>
       </nav>
 
-      <div className="flex flex-col items-center justify-center px-6 py-20 text-center bg-[#0C447C]">
-        <h1 className="text-3xl font-medium text-white mb-3 leading-tight">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <h1 className="text-3xl font-medium text-gray-900 mb-3 leading-tight">
           Votre téléphone est cassé ?<br />
           Trouvez un réparateur en urgence.
         </h1>
-        <p className="text-[#85B7EB] mb-8 text-sm">
+        <p className="text-gray-500 mb-8 text-sm">
           Entrez votre ville ou code postal — on trouve le pro le plus proche.
         </p>
 
@@ -124,11 +124,10 @@ export default function Home() {
         >
           📍 Utiliser ma position actuelle
         </button>
-    </div>
 
-    <div className="flex gap-10 pt-8 pb-8 border-b border-gray-100 w-full justify-center bg-white">
+        <div className="flex gap-10 border-t border-gray-100 pt-8">
           <div className="text-center">
-            <div className="text-xl font-medium">2 000+</div>
+            <div className="text-xl font-medium">1 200+</div>
             <div className="text-xs text-gray-400">Réparateurs</div>
           </div>
           <div className="text-center">
