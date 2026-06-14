@@ -61,7 +61,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white flex flex-col">
+    <main className="min-h-screen bg-gray-50 flex flex-col">
       <nav className="bg-[#0C447C] px-6 py-4 flex items-center justify-between">
         <div className="text-base font-medium text-white">
           Trouve ton <span className="text-[#85B7EB]">réparateur</span>
@@ -125,9 +125,9 @@ export default function Home() {
           📍 Utiliser ma position actuelle
         </button>
 
-        <div className="flex gap-10 pt-8 pb-8 bg-white border-b border-gray-100 w-full justify-center">
+        <div className="flex gap-10 pt-8 pb-8 border-b border-gray-100 w-full justify-center">
           <div className="text-center">
-            <div className="text-xl font-medium">1 200+</div>
+            <div className="text-xl font-medium">2 000+</div>
             <div className="text-xs text-gray-400">Réparateurs</div>
           </div>
           <div className="text-center">
