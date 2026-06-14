@@ -74,7 +74,7 @@ export default function Home() {
         </button>
       </nav>
 
-      <div className="flex flex-col items-center justify-center px-6 py-16 text-center bg-[#0C447C]">
+      <div className="flex flex-col items-center justify-center px-6 py-20 text-center bg-[#0C447C]">
         <h1 className="text-3xl font-medium text-white mb-3 leading-tight">
           Votre téléphone est cassé ?<br />
           Trouvez un réparateur en urgence.
@@ -125,7 +125,7 @@ export default function Home() {
           📍 Utiliser ma position actuelle
         </button>
 
-        <div className="flex gap-10 border-t border-gray-200 pt-8 pb-8 bg-white rounded-b-none w-full justify-center">
+        <div className="flex gap-10 pt-8 pb-8 bg-white border-b border-gray-100 w-full justify-center">
           <div className="text-center">
             <div className="text-xl font-medium">1 200+</div>
             <div className="text-xs text-gray-400">Réparateurs</div>
