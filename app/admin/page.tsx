@@ -39,9 +39,16 @@ export default function Admin() {
     setReparateurs(data || [])
   }
 
-  const updateStatut = async (id: string, statut: string) => {
+  const updateStatut = async (id: string, statut: string, email?: string, nom?: string) => {
     setLoading(true)
     await supabase.from('reparateurs').update({ statut }).eq('id', id)
+    if (statut === 'approved' && email) {
+      await fetch('/api/notify-approval', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, nom })
+      })
+    }
     await loadReparateurs()
     setLoading(false)
   }
@@ -201,7 +208,7 @@ export default function Admin() {
                         Voir Kbis
                       </button>
                     )}
-                    <button onClick={() => updateStatut(r.id, 'approved')} disabled={loading} className="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg">
+                    <button onClick={() => updateStatut(r.id, 'approved', r.email, r.nom)} disabled={loading} className="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg">
                       Approuver
                     </button>
                     <button onClick={() => updateStatut(r.id, 'rejected')} disabled={loading} className="text-xs bg-red-500 text-white px-3 py-1.5 rounded-lg">

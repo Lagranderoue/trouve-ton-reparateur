@@ -54,7 +54,7 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
                   </span>
                 </div>
                 <div className="text-sm text-gray-400 flex items-center gap-1 mb-2">
-                  📍 {r.adresse}, {r.ville} {r.code_postal}
+                  {r.adresse}, {r.ville} {r.code_postal}
                 </div>
                 {r.description && <p className="text-sm text-gray-500">{r.description}</p>}
               </div>
