@@ -75,7 +75,8 @@ export default function Home() {
       </nav>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-3xl font-medium text-gray-900 mb-3 leading-tight">
+        <div className="inline-block bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full mb-4">✓ Réparateurs vérifiés et certifiés</div>
+          <h1 className="text-3xl font-medium text-gray-900 mb-3 leading-tight">
           Votre téléphone est cassé ?<br />
           Trouvez un réparateur en urgence.
         </h1>
@@ -127,7 +128,7 @@ export default function Home() {
 
         <div className="flex gap-10 border-t border-gray-100 pt-8">
           <div className="text-center">
-            <div className="text-xl font-medium">1 200+</div>
+            <div className="text-xl font-medium">2 000+</div>
             <div className="text-xs text-gray-400">Réparateurs</div>
           </div>
           <div className="text-center">
