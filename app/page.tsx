@@ -124,8 +124,9 @@ export default function Home() {
         >
           📍 Utiliser ma position actuelle
         </button>
+    </div>
 
-        <div className="flex gap-10 pt-8 pb-8 border-b border-gray-100 w-full justify-center">
+    <div className="flex gap-10 pt-8 pb-8 border-b border-gray-100 w-full justify-center bg-white">
           <div className="text-center">
             <div className="text-xl font-medium">2 000+</div>
             <div className="text-xs text-gray-400">Réparateurs</div>
