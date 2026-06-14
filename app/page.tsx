@@ -61,7 +61,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white flex flex-col">
+    <main className="min-h-screen bg-[#0C447C] flex flex-col">
       <nav className="bg-[#0C447C] px-6 py-4 flex items-center justify-between">
         <div className="text-base font-medium text-white">
           Trouve ton <span className="text-[#85B7EB]">réparateur</span>
@@ -74,7 +74,7 @@ export default function Home() {
         </button>
       </nav>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+      <div className="flex flex-col items-center justify-center px-6 py-16 text-center bg-[#0C447C]">
         <h1 className="text-3xl font-medium text-white mb-3 leading-tight">
           Votre téléphone est cassé ?<br />
           Trouvez un réparateur en urgence.
