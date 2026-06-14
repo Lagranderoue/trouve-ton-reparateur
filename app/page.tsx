@@ -75,7 +75,7 @@ export default function Home() {
       </nav>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-        <div className="inline-block bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full mb-4">✓ Réparateurs vérifiés et certifiés</div>
+        <div className="inline-block bg-blue-100 text-blue-700 text-sm px-4 py-1.5 rounded-full mb-4 font-medium">✓ Réparateurs vérifiés et certifiés</div>
           <h1 className="text-3xl font-medium text-gray-900 mb-3 leading-tight">
           Votre téléphone est cassé ?<br />
           Trouvez un réparateur en urgence.
