@@ -113,6 +113,11 @@ export default async function Resultats({
                   <span className={'text-xs px-2 py-0.5 rounded-full ' + (r.ouvert ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500')}>
                     {r.ouvert ? 'Ouvert' : 'Fermé'}
                   </span>
+                  {r.deplacement && (
+  <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">
+    🏠 Déplacement à domicile
+  </span>
+)}
                 </div>
                 <div className="text-xs text-gray-400">{r.adresse}, {r.ville}</div>
               </div>
