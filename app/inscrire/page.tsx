@@ -33,6 +33,7 @@ export default function Inscrire() {
   const [kbis, setKbis] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [deplacement, setDeplacement] = useState(false)
   const [error, setError] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -76,6 +77,7 @@ export default function Inscrire() {
         ...form,
         services: services.join(', '),
         horaires: horairesText,
+          deplacement: deplacement,
         latitude: lat,
         longitude: lng,
         kbis_url: fileName,

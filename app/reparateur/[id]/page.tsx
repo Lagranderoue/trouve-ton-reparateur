@@ -71,7 +71,13 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
           <div className="bg-white border border-gray-100 rounded-xl p-5">
             <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">Services</h2>
             <div className="flex flex-wrap gap-2">
-              {servicesList.length > 0 ? servicesList.map((s) => (
+              {r.deplacement && (
+              <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-sm px-3 py-1.5 rounded-full font-medium mb-4">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Déplacement à domicile disponible
+              </div>
+            )}
+            {servicesList.length > 0 ? servicesList.map((s) => (
                 <span key={s} className="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
                   {s}
                 </span>
