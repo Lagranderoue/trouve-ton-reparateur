@@ -128,16 +128,16 @@ export default function Home() {
 
         <div className="flex gap-10 border-t border-gray-100 pt-8">
           <div className="text-center">
-            <div className="text-xl font-medium">2 000+</div>
-            <div className="text-xs text-gray-400">Réparateurs</div>
+            <div className="text-xl font-medium text-gray-900">2 000+</div>
+            <div className="text-xs text-gray-600">Réparateurs</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-medium">4.8 / 5</div>
-            <div className="text-xs text-gray-400">Note moyenne</div>
+            <div className="text-xl font-medium text-gray-900">4.8 / 5</div>
+            <div className="text-xs text-gray-600">Note moyenne</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-medium">Gratuit</div>
-            <div className="text-xs text-gray-400">Pour le client</div>
+            <div className="text-xl font-medium text-gray-900">Gratuit</div>
+            <div className="text-xs text-gray-600">Pour le client</div>
           </div>
         </div>
       </div>
