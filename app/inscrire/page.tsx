@@ -160,7 +160,21 @@ export default function Inscrire() {
           </div>
 
           <div className="bg-white border border-gray-100 rounded-xl p-6">
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Horaires d'ouverture</h2>
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Options de service</h2>
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg mb-6">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Deplacement a domicile</p>
+                  <p className="text-xs text-gray-400 mt-1">Je me deplace chez le client pour reparer</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDeplacement(prev => !prev)}
+                  className={"relative inline-flex h-6 w-11 items-center rounded-full transition-colors " + (deplacement ? "bg-green-600" : "bg-gray-200")}
+                >
+                  <span className={"inline-block h-4 w-4 transform rounded-full bg-white transition-transform " + (deplacement ? "translate-x-6" : "translate-x-1")} />
+                </button>
+              </div>
+              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Horaires d'ouverture</h2>
             <div className="flex flex-col gap-3">
               {horaires.map((h, i) => (
                 <div key={h.jour} className="grid items-center gap-3" style={{ gridTemplateColumns: '100px 1fr' }}>
@@ -185,21 +199,7 @@ export default function Inscrire() {
           </div>
 
           <div className="bg-white border border-gray-100 rounded-xl p-6">
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Options de service</h2>
-              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg mb-6">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Deplacement a domicile</p>
-                  <p className="text-xs text-gray-400 mt-1">Je me deplace chez le client pour reparer</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setDeplacement(prev => !prev)}
-                  className={"relative inline-flex h-6 w-11 items-center rounded-full transition-colors " + (deplacement ? "bg-green-600" : "bg-gray-200")}
-                >
-                  <span className={"inline-block h-4 w-4 transform rounded-full bg-white transition-transform " + (deplacement ? "translate-x-6" : "translate-x-1")} />
-                </button>
-              </div>
-              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Document Kbis</h2>
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-5">Document Kbis</h2>
             <p className="text-xs text-gray-400 mb-3">Joignez votre extrait Kbis (PDF ou image). Ce document sera vérifié par notre équipe.</p>
             <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setKbis(e.target.files?.[0] || null)}
               className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm" />
