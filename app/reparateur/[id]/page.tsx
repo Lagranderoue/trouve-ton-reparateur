@@ -100,6 +100,11 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
           </div>
         </div>
       </div>
+    <section className="max-w-2xl mx-auto px-4 py-8">
+        <h2 className="text-lg font-medium text-gray-900 mb-6">Laisser un avis</h2>
+        <AvisForm reparateurId={r.id} />
+        <AvisList reparateurId={r.id} />
+      </section>
     </main>
   )
 }
