@@ -174,7 +174,6 @@ export default function Admin() {
           </button>
           <button onClick={() => setTab('avis')} className={'text-sm px-4 py-2 rounded-lg ' + (tab === 'avis' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-100')}>
             Avis {avis.filter(a => a.statut === 'pending').length > 0 && <span className="ml-1 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">{avis.filter(a => a.statut === 'pending').length}</span>}
-            Reparateurs
           </button>
         </div>
       </nav>
