@@ -1,4 +1,6 @@
 import { supabase } from '../../../lib/supabase'
+import AvisForm from './AvisForm'
+import AvisList from './AvisList'
 
 export default async function FicheReparateur({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
