@@ -113,8 +113,8 @@ export default function Admin() {
   }, [tab, auth, reparateurs])
 
   useEffect(() => {
-    if (tab === 'avis' && auth) loadAvis()
-  }, [tab, auth])
+    if (auth) loadAvis()
+  }, [auth])
   if (!auth) return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-xl p-8 border border-gray-100 w-full max-w-sm">
@@ -173,7 +173,7 @@ export default function Admin() {
             Réparateurs
           </button>
           <button onClick={() => setTab('avis')} className={'text-sm px-4 py-2 rounded-lg ' + (tab === 'avis' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-100')}>
-            Avis
+            Avis {avis.filter(a => a.statut === 'pending').length > 0 && <span className="ml-1 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">{avis.filter(a => a.statut === 'pending').length}</span>}
             Reparateurs
           </button>
         </div>
