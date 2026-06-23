@@ -13,7 +13,7 @@ export default function Admin() {
   const [avis, setAvis] = useState<any[]>([])
 
   const loadAvis = async () => {
-    const { data } = await supabase.from('avis').select('*, reparateurs(nom)').order('created_at', { ascending: false })
+    const { data } = await supabase.from('avis').select('*').order('created_at', { ascending: false })
     setAvis(data || [])
   }
 
