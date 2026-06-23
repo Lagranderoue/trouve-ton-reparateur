@@ -1,7 +1,28 @@
 'use client'
+import React from 'react'
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
+      >
+        <span>{question}</span>
+        <span className="text-gray-400 ml-4">{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <div className="px-5 pb-4 text-sm text-gray-600 leading-relaxed">
+          {answer}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function Home() {
   const [query, setQuery] = useState('')
@@ -141,6 +162,39 @@ export default function Home() {
           </div>
         </div>
       </div>
+    <section className="w-full max-w-2xl mx-auto px-6 py-12">
+        <h2 className="text-xl font-medium text-gray-900 mb-8 text-center">Questions fréquentes</h2>
+        <div className="space-y-4">
+          {[
+            {
+              q: "Comment fonctionne Trouve ton réparateur ?",
+              a: "Entrez votre ville ou code postal, on vous affiche les réparateurs les plus proches. Cliquez sur une fiche pour voir les services, horaires et contacter le professionnel directement."
+            },
+            {
+              q: "Est-ce gratuit pour les clients ?",
+              a: "Oui, totalement gratuit. Vous trouvez un réparateur, vous l'appelez directement. Aucune commission, aucun intermédiaire."
+            },
+            {
+              q: "Les réparateurs sont-ils vérifiés ?",
+              a: "Oui. Chaque réparateur inscrit fournit un document Kbis pour prouver l'existence légale de son entreprise. De plus, la majorité de nos réparateurs ont été formés via Repair School Académie, un programme de formation professionnelle spécialisé dans la réparation de téléphones. Seules les boutiques validées apparaissent dans les résultats."
+            },
+            {
+              q: "Comment inscrire ma boutique ?",
+              a: "Cliquez sur \"Inscrire ma boutique\" en haut de la page, remplissez le formulaire et déposez votre Kbis. Votre fiche sera examinée et publiée sous 24h."
+            },
+            {
+              q: "Comment contacter un réparateur ?",
+              a: "Cliquez sur la fiche du réparateur puis appuyez sur le bouton \"Appeler\" pour le contacter directement par téléphone."
+            },
+            {
+              q: "Qu'est-ce que le déplacement à domicile ?",
+              a: "Certains réparateurs se déplacent directement chez vous pour réparer votre téléphone. Repérez le badge vert \"Déplacement à domicile\" sur les fiches pour identifier ces professionnels."
+            }
+          ].map((item, i) => (
+            <FaqItem key={i} question={item.q} answer={item.a} />
+          ))}
+        </div>
+      </section>
     </main>
   )
 }
