@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { supabase } from '../../../lib/supabase'
+import { supabase } from '../../../lib/supabase.js'
 
 export default function AvisList({ reparateurId }: { reparateurId: string }) {
   const [avis, setAvis] = useState<any[]>([])

@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { supabase } from '../../../lib/supabase'
+import { supabase } from '../../../lib/supabase.js'
 
 export default function AvisForm({ reparateurId }: { reparateurId: string }) {
   const [prenom, setPrenom] = useState('')
