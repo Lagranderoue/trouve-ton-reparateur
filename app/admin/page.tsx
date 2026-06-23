@@ -10,6 +10,23 @@ export default function Admin() {
   const [reparateurs, setReparateurs] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState('dashboard')
+  const [avis, setAvis] = useState<any[]>([])
+
+  const loadAvis = async () => {
+    const { data } = await supabase.from('avis').select('*, reparateurs(nom)').order('created_at', { ascending: false })
+    setAvis(data || [])
+  }
+
+  const updateAvisStatut = async (id: string, statut: string) => {
+    await supabase.from('avis').update({ statut }).eq('id', id)
+    await loadAvis()
+  }
+
+  const deleteAvis = async (id: string) => {
+    if (!confirm('Supprimer cet avis ?')) return
+    await supabase.from('avis').delete().eq('id', id)
+    await loadAvis()
+  }
   const [kbisUrl, setKbisUrl] = useState<string | null>(null)
   const mapRef = useRef<any>(null)
   const mapInstanceRef = useRef<any>(null)
@@ -94,6 +111,10 @@ export default function Admin() {
       }, 300)
     }
   }, [tab, auth, reparateurs])
+
+  useEffect(() => {
+    if (tab === 'avis' && auth) loadAvis()
+  }, [tab, auth])
   if (!auth) return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-xl p-8 border border-gray-100 w-full max-w-sm">
@@ -149,6 +170,10 @@ export default function Admin() {
             Inscriptions {pending.length > 0 && <span className="ml-1 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">{pending.length}</span>}
           </button>
           <button onClick={() => setTab('reparateurs')} className={'text-sm px-4 py-2 rounded-lg ' + (tab === 'reparateurs' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-100')}>
+            Réparateurs
+          </button>
+          <button onClick={() => setTab('avis')} className={'text-sm px-4 py-2 rounded-lg ' + (tab === 'avis' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-100')}>
+            Avis
             Reparateurs
           </button>
         </div>
@@ -224,6 +249,41 @@ export default function Admin() {
           </div>
         )}
 
+        {tab === 'avis' && (
+          <div className="space-y-3">
+            {avis.length === 0 && <p className="text-gray-400 text-sm">Aucun avis pour le moment.</p>}
+            {avis.map(a => (
+              <div key={a.id} className="bg-white border border-gray-200 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <span className="font-medium text-sm text-gray-800">{a.prenom}</span>
+                    <span className="text-xs text-gray-400 ml-2">pour {a.reparateurs?.nom}</span>
+                    <span className="ml-2 text-sm">{'⭐'.repeat(a.note)}</span>
+                  </div>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.statut === 'approved' ? 'bg-green-100 text-green-700' : a.statut === 'rejected' ? 'bg-red-100 text-red-500' : 'bg-orange-100 text-orange-600'}`}>
+                    {a.statut === 'approved' ? 'Approuvé' : a.statut === 'rejected' ? 'Rejeté' : 'En attente'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">{a.commentaire}</p>
+                <div className="flex gap-2">
+                  {a.statut !== 'approved' && (
+                    <button onClick={() => updateAvisStatut(a.id, 'approved')} className="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg">
+                      Approuver
+                    </button>
+                  )}
+                  {a.statut !== 'rejected' && (
+                    <button onClick={() => updateAvisStatut(a.id, 'rejected')} className="text-xs bg-orange-500 text-white px-3 py-1.5 rounded-lg">
+                      Rejeter
+                    </button>
+                  )}
+                  <button onClick={() => deleteAvis(a.id)} className="text-xs border border-red-200 text-red-400 px-3 py-1.5 rounded-lg">
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         {tab === 'reparateurs' && (
           <div>
             <div className="flex flex-col gap-3">
