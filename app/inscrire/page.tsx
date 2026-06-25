@@ -93,7 +93,7 @@ export default function Inscrire() {
       })
       setSuccess(true)
     } catch (e) {
-      setError('Une erreur est survenue. Veuillez reessayer.')
+      setError('Une erreur est survenue : ' + (e instanceof Error ? e.message : String(e)))
     } finally {
       setLoading(false)
     }
