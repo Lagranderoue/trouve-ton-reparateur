@@ -11,7 +11,6 @@ export default function AvisList({ reparateurId }: { reparateurId: string }) {
       .select('*')
       .eq('reparateur_id', reparateurId)
       .eq('statut', 'approved')
-      .order('created_at', { ascending: false })
       .then(({ data }) => setAvis(data || []))
   }, [reparateurId])
 
