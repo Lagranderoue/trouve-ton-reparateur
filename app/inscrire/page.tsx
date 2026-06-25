@@ -67,7 +67,8 @@ export default function Inscrire() {
       const geoData = await geoRes.json()
       const lat = geoData[0] ? parseFloat(geoData[0].lat) : null
       const lng = geoData[0] ? parseFloat(geoData[0].lon) : null
-      const fileName = Date.now() + '-' + kbis.name
+      const cleanName = kbis.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_')
+      const fileName = Date.now() + '-' + cleanName
       const { error: uploadError } = await supabase.storage.from('kbis').upload(fileName, kbis)
       if (uploadError) throw uploadError
       const horairesText = horaires
