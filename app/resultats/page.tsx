@@ -72,6 +72,26 @@ export default async function Resultats({
     }
   }
 
+  // Récupérer les avis pour chaque réparateur
+  const ids = reparateurs.map(r => r.id)
+  let avisMap: Record<string, { moyenne: number, count: number }> = {}
+  if (ids.length > 0) {
+    const { data: avis } = await supabase
+      .from('avis')
+      .select('reparateur_id, note')
+      .in('reparateur_id', ids)
+      .eq('statut', 'approved')
+    if (avis) {
+      ids.forEach(id => {
+        const avisDuRep = avis.filter(a => a.reparateur_id === id)
+        if (avisDuRep.length > 0) {
+          const moyenne = avisDuRep.reduce((acc, a) => acc + a.note, 0) / avisDuRep.length
+          avisMap[id] = { moyenne: Math.round(moyenne * 10) / 10, count: avisDuRep.length }
+        }
+      })
+    }
+  }
+
   return (
     <main className="min-h-screen bg-gray-50">
       <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between bg-white">
@@ -120,6 +140,17 @@ export default async function Resultats({
 )}
                 </div>
                 <div className="text-xs text-gray-400">{r.adresse}, {r.ville}</div>
+                <div className="flex items-center gap-1 mt-1">
+                  {avisMap[r.id] ? (
+                    <>
+                      <span className="text-amber-400 text-xs">★</span>
+                      <span className="text-xs font-medium text-gray-800">{avisMap[r.id].moyenne}</span>
+                      <span className="text-xs text-gray-400">({avisMap[r.id].count} avis)</span>
+                    </>
+                  ) : (
+                    <span className="text-xs text-gray-300">Aucun avis</span>
+                  )}
+                </div>
               </div>
               <div className="text-right flex-shrink-0">
                 {r.distance && (
