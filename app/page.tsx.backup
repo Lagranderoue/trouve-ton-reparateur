@@ -1,0 +1,200 @@
+'use client'
+import React from 'react'
+
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
+      >
+        <span>{question}</span>
+        <span className="text-gray-400 ml-4">{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <div className="px-5 pb-4 text-sm text-gray-600 leading-relaxed">
+          {answer}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function Home() {
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const router = useRouter()
+  const timeoutRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (query.length < 2) {
+      setSuggestions([])
+      return
+    }
+    clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=fr&format=json&limit=5&addressdetails=1',
+          { headers: { 'User-Agent': 'trouvetonreparateur/1.0' } }
+        )
+        const data = await res.json()
+        const villes = data
+          .map((item: any) => item.address?.city || item.address?.town || item.address?.village || item.address?.municipality || '')
+          .filter((v: string) => v.length > 0)
+          .filter((v: string, i: number, arr: string[]) => arr.indexOf(v) === i)
+        setSuggestions(villes)
+        setShowSuggestions(true)
+      } catch {
+        setSuggestions([])
+      }
+    }, 300)
+  }, [query])
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      setShowSuggestions(false)
+      router.push('/resultats?q=' + encodeURIComponent(query.trim()))
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleSearch()
+  }
+
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords
+      router.push('/resultats?lat=' + latitude + '&lng=' + longitude)
+    })
+  }
+
+  const selectSuggestion = (ville: string) => {
+    setQuery(ville)
+    setShowSuggestions(false)
+    router.push('/resultats?q=' + encodeURIComponent(ville))
+  }
+
+  return (
+    <main className="min-h-screen bg-white flex flex-col">
+      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <div className="text-base font-medium">
+          Trouve ton <span className="text-blue-600">réparateur</span>
+        </div>
+        <button
+          onClick={() => router.push('/inscrire')}
+          className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
+          Inscrire ma boutique
+        </button>
+      </nav>
+
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <div className="inline-block bg-blue-100 text-blue-700 text-sm px-4 py-1.5 rounded-full mb-4 font-medium">✓ Réparateurs vérifiés et certifiés</div>
+          <h1 className="text-3xl font-medium text-gray-900 mb-3 leading-tight">
+          Votre téléphone est cassé ?<br />
+          Trouvez un réparateur en urgence.
+        </h1>
+        <p className="text-gray-500 mb-8 text-sm">
+          Entrez votre ville ou code postal — on trouve le pro le plus proche.
+        </p>
+
+        <div className="relative w-full max-w-md mb-3">
+          <div className="flex border border-gray-200 rounded-xl overflow-hidden">
+            <input
+              type="text"
+              placeholder="Ville ou code postal..."
+              className="flex-1 px-4 py-3 text-sm outline-none"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            />
+            <button
+              onClick={handleSearch}
+              className="bg-blue-600 text-white px-5 text-sm font-medium"
+            >
+              Rechercher
+            </button>
+          </div>
+
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-xl mt-1 shadow-lg z-10 overflow-hidden">
+              {suggestions.map((ville, i) => (
+                <button
+                  key={i}
+                  onClick={() => selectSuggestion(ville)}
+                  className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 last:border-0 flex items-center gap-2"
+                >
+                  {ville}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={handleGeolocate}
+          className="text-sm text-gray-400 flex items-center gap-1 mb-12"
+        >
+          📍 Utiliser ma position actuelle
+        </button>
+
+        <div className="flex gap-10 border-t border-gray-100 pt-8">
+          <div className="text-center">
+            <div className="text-xl font-medium text-gray-900">2 000+</div>
+            <div className="text-xs text-gray-600">Réparateurs</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-medium text-gray-900">4.8 / 5</div>
+            <div className="text-xs text-gray-600">Note moyenne</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-medium text-gray-900">Gratuit</div>
+            <div className="text-xs text-gray-600">Pour le client</div>
+          </div>
+        </div>
+      </div>
+    <section className="w-full max-w-2xl mx-auto px-6 py-12">
+        <h2 className="text-xl font-medium text-gray-900 mb-8 text-center">Questions fréquentes</h2>
+        <div className="space-y-4">
+          {[
+            {
+              q: "Comment fonctionne Trouve ton réparateur ?",
+              a: "Entrez votre ville ou code postal, on vous affiche les réparateurs les plus proches. Cliquez sur une fiche pour voir les services, horaires et contacter le professionnel directement."
+            },
+            {
+              q: "Est-ce gratuit pour les clients ?",
+              a: "Oui, totalement gratuit. Vous trouvez un réparateur, vous l'appelez directement. Aucune commission, aucun intermédiaire."
+            },
+            {
+              q: "Les réparateurs sont-ils vérifiés ?",
+              a: "Oui. Chaque réparateur inscrit fournit un document Kbis pour prouver l'existence légale de son entreprise. De plus, la majorité de nos réparateurs ont été formés via Repair School Académie, un programme de formation professionnelle spécialisé dans la réparation de téléphones. Seules les boutiques validées apparaissent dans les résultats."
+            },
+            {
+              q: "Comment inscrire ma boutique ?",
+              a: "Cliquez sur \"Inscrire ma boutique\" en haut de la page, remplissez le formulaire et déposez votre Kbis. Votre fiche sera examinée et publiée sous 24h."
+            },
+            {
+              q: "Comment contacter un réparateur ?",
+              a: "Cliquez sur la fiche du réparateur puis appuyez sur le bouton \"Appeler\" pour le contacter directement par téléphone."
+            },
+            {
+              q: "Qu'est-ce que le déplacement à domicile ?",
+              a: "Certains réparateurs se déplacent directement chez vous pour réparer votre téléphone. Repérez le badge vert \"Déplacement à domicile\" sur les fiches pour identifier ces professionnels."
+            }
+          ].map((item, i) => (
+            <FaqItem key={i} question={item.q} answer={item.a} />
+          ))}
+        </div>
+      </section>
+    </main>
+  )
+}

@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -32,10 +31,7 @@ export default function Home() {
   const timeoutRef = useRef<any>(null)
 
   useEffect(() => {
-    if (query.length < 2) {
-      setSuggestions([])
-      return
-    }
+    if (query.length < 2) { setSuggestions([]); return }
     clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(async () => {
       try {
@@ -50,9 +46,7 @@ export default function Home() {
           .filter((v: string, i: number, arr: string[]) => arr.indexOf(v) === i)
         setSuggestions(villes)
         setShowSuggestions(true)
-      } catch {
-        setSuggestions([])
-      }
+      } catch { setSuggestions([]) }
     }, 300)
   }, [query])
 
@@ -83,118 +77,343 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white flex flex-col">
-      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-        <div className="text-base font-medium">
-          Trouve ton <span className="text-blue-600">réparateur</span>
-        </div>
-        <button
-          onClick={() => router.push('/inscrire')}
-          className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg"
+
+      {/* NAVBAR */}
+      <nav style={{
+        background: '#ffffff',
+        boxShadow: '0 1px 0 #e8e8e8, 0 4px 20px rgba(0,0,0,0.07)',
+        padding: '0 2rem',
+        height: '60px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'relative',
+        zIndex: 10,
+      }}>
+        <div
+          onClick={() => router.push('/')}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
         >
-          Inscrire ma boutique
-        </button>
+          <div style={{
+            width: '32px', height: '32px', borderRadius: '8px',
+            background: 'linear-gradient(135deg, #2563eb, #1e40af)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ color: 'white', fontSize: '16px' }}>🔧</span>
+          </div>
+          <span style={{ fontSize: '15px', fontWeight: 500, color: '#111', letterSpacing: '-0.02em' }}>
+            Trouve ton réparateur
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{
+              fontSize: '13px', color: '#444', background: 'none', border: 'none',
+              padding: '7px 14px', borderRadius: '6px', cursor: 'pointer',
+            }}
+          >
+            Comment ça marche ?
+          </button>
+          <button
+            onClick={() => router.push('/inscrire')}
+            style={{
+              fontSize: '13px', fontWeight: 500, color: '#fff',
+              background: 'linear-gradient(135deg, #38a8f5, #2563eb, #1e40af)',
+              border: '1px solid rgba(56,168,245,0.4)',
+              padding: '8px 18px', borderRadius: '7px', cursor: 'pointer',
+              boxShadow: '0 2px 10px rgba(37,99,235,0.3)',
+            }}
+          >
+            Je suis réparateur
+          </button>
+        </div>
       </nav>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-        <div className="inline-block bg-blue-100 text-blue-700 text-sm px-4 py-1.5 rounded-full mb-4 font-medium">✓ Réparateurs vérifiés et certifiés</div>
-          <h1 className="text-3xl font-medium text-gray-900 mb-3 leading-tight">
-          Votre téléphone est cassé ?<br />
-          Trouvez un réparateur en urgence.
-        </h1>
-        <p className="text-gray-500 mb-8 text-sm">
-          Entrez votre ville ou code postal — on trouve le pro le plus proche.
-        </p>
+      {/* HERO */}
+      <div style={{
+        background: 'linear-gradient(135deg, #0f2d6b 0%, #1a4db8 35%, #2563eb 60%, #38a8f5 100%)',
+        padding: '2.5rem 2rem 0',
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: '380px',
+        overflow: 'hidden',
+        position: 'relative',
+        gap: '1rem',
+      }}>
+        {/* Blobs décoratifs */}
+        <div style={{
+          position: 'absolute', width: '340px', height: '340px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99,179,255,0.18) 0%, transparent 70%)',
+          top: '-80px', right: '60px', pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', width: '240px', height: '240px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%)',
+          bottom: '20px', left: '10px', pointerEvents: 'none',
+        }} />
 
-        <div className="relative w-full max-w-md mb-3">
-          <div className="flex border border-gray-200 rounded-xl overflow-hidden">
-            <input
-              type="text"
-              placeholder="Ville ou code postal..."
-              className="flex-1 px-4 py-3 text-sm outline-none"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-            />
-            <button
-              onClick={handleSearch}
-              className="bg-blue-600 text-white px-5 text-sm font-medium"
-            >
-              Rechercher
-            </button>
+        {/* GAUCHE — texte + recherche */}
+        <div style={{
+          flex: '0 0 52%', maxWidth: '52%',
+          position: 'relative', zIndex: 2,
+          paddingBottom: '2.5rem',
+          display: 'flex', flexDirection: 'column', gap: '1rem',
+        }}>
+          {/* Cadran glassmorphism */}
+          <div style={{
+            width: '100%',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            borderRadius: '16px',
+            padding: '1.25rem 1.5rem 1.1rem',
+            backdropFilter: 'blur(20px) saturate(1.4)',
+            WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(0,0,0,0.15)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            {/* Badge */}
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'rgba(255,255,255,0.10)',
+              border: '1px solid rgba(255,255,255,0.20)',
+              borderRadius: '100px',
+              padding: '3px 10px',
+              fontSize: '10px', fontWeight: 500, color: 'rgba(255,255,255,0.75)',
+              letterSpacing: '0.04em', marginBottom: '0.75rem',
+            }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#86efac', display: 'inline-block' }} />
+              Réparateurs vérifiés en France
+            </div>
+            {/* Titre */}
+            <h1 style={{
+              fontSize: '24px', fontWeight: 500, color: '#fff',
+              lineHeight: 1.25, letterSpacing: '-0.02em', margin: 0,
+            }}>
+              Ton téléphone est cassé ?<br />
+              Trouve le bon réparateur<br />
+              <span style={{
+                background: 'linear-gradient(90deg, #93c5fd, #bfdbfe, #e0f2fe)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>
+                près de chez vous.
+              </span>
+            </h1>
+            <p style={{
+              fontSize: '12.5px', color: 'rgba(255,255,255,0.5)',
+              lineHeight: 1.6, marginTop: '0.6rem',
+            }}>
+              Comparez les avis, les services et les horaires.<br />Gratuit. Sans inscription.
+            </p>
           </div>
 
-          {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-xl mt-1 shadow-lg z-10 overflow-hidden">
-              {suggestions.map((ville, i) => (
-                <button
-                  key={i}
-                  onClick={() => selectSuggestion(ville)}
-                  className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 last:border-0 flex items-center gap-2"
-                >
-                  {ville}
-                </button>
+          {/* Cadran recherche */}
+          <div style={{
+            width: '100%',
+            background: 'rgba(255,255,255,0.96)',
+            borderRadius: '12px',
+            padding: '1rem 1.25rem',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+            position: 'relative', zIndex: 2,
+          }}>
+            <div style={{
+              fontSize: '10px', fontWeight: 500, color: '#888',
+              textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '7px',
+            }}>
+              Où êtes-vous ?
+            </div>
+            <div style={{ display: 'flex', gap: '7px', position: 'relative' }}>
+              <input
+                type="text"
+                placeholder="Ville ou code postal..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                style={{
+                  flex: 1, border: '1px solid #e0e0e0', borderRadius: '6px',
+                  padding: '9px 12px', fontSize: '13px', color: '#111',
+                  background: '#f8f9fc', outline: 'none',
+                }}
+              />
+              <button
+                onClick={handleSearch}
+                style={{
+                  background: 'linear-gradient(135deg, #2563eb, #1e40af)',
+                  color: '#fff', border: 'none', borderRadius: '6px',
+                  padding: '9px 16px', fontSize: '12px', fontWeight: 500,
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                }}
+              >
+                Chercher →
+              </button>
+            </div>
+
+            {showSuggestions && suggestions.length > 0 && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, right: 0,
+                background: '#fff', border: '1px solid #e0e0e0',
+                borderRadius: '8px', marginTop: '4px',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.1)', zIndex: 20, overflow: 'hidden',
+              }}>
+                {suggestions.map((ville, i) => (
+                  <button
+                    key={i}
+                    onClick={() => selectSuggestion(ville)}
+                    style={{
+                      width: '100%', textAlign: 'left', padding: '10px 14px',
+                      fontSize: '13px', color: '#333', background: 'none',
+                      border: 'none', borderBottom: '1px solid #f0f0f0', cursor: 'pointer',
+                    }}
+                  >
+                    📍 {ville}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap' }}>
+              {[
+                { icon: '✓', label: 'Kbis vérifié' },
+                { icon: '★', label: 'Avis certifiés' },
+                { icon: '📍', label: 'Rayon 70 km' },
+              ].map((item, i) => (
+                <span key={i} style={{ fontSize: '10px', color: '#999', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <span style={{ color: '#bbb' }}>{item.icon}</span> {item.label}
+                </span>
               ))}
             </div>
-          )}
+
+            <button
+              onClick={handleGeolocate}
+              style={{
+                marginTop: '8px', fontSize: '11px', color: '#888',
+                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+              }}
+            >
+              📍 Utiliser ma position actuelle
+            </button>
+          </div>
         </div>
 
-        <button
-          onClick={handleGeolocate}
-          className="text-sm text-gray-400 flex items-center gap-1 mb-12"
-        >
-          📍 Utiliser ma position actuelle
-        </button>
-
-        <div className="flex gap-10 border-t border-gray-100 pt-8">
-          <div className="text-center">
-            <div className="text-xl font-medium text-gray-900">2 000+</div>
-            <div className="text-xs text-gray-600">Réparateurs</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xl font-medium text-gray-900">4.8 / 5</div>
-            <div className="text-xs text-gray-600">Note moyenne</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xl font-medium text-gray-900">Gratuit</div>
-            <div className="text-xs text-gray-600">Pour le client</div>
+        {/* DROITE — espace photo */}
+        <div style={{
+          flex: 1,
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+          alignSelf: 'flex-end',
+          position: 'relative', zIndex: 2,
+          minHeight: '300px',
+        }}>
+          <div style={{
+            width: '190px', height: '280px',
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.14)',
+            borderBottom: 'none',
+            borderRadius: '10px 10px 0 0',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: '8px',
+          }}>
+            <span style={{ fontSize: '30px', opacity: 0.2 }}>📷</span>
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)' }}>Photo à venir</span>
           </div>
         </div>
       </div>
-    <section className="w-full max-w-2xl mx-auto px-6 py-12">
-        <h2 className="text-xl font-medium text-gray-900 mb-8 text-center">Questions fréquentes</h2>
-        <div className="space-y-4">
+
+      {/* STATS */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+        borderBottom: '1px solid #ebebeb',
+      }}>
+        {[
+          { n: '+500', l: 'Réparateurs' },
+          { n: '4.8★', l: 'Note moyenne' },
+          { n: '100%', l: 'Gratuit' },
+          { n: '<2min', l: 'Pour trouver' },
+        ].map((s, i) => (
+          <div key={i} style={{
+            padding: '1.25rem', textAlign: 'center',
+            borderRight: i < 3 ? '1px solid #ebebeb' : 'none',
+          }}>
+            <div style={{ fontSize: '22px', fontWeight: 500, color: '#111', letterSpacing: '-0.03em' }}>{s.n}</div>
+            <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* COMMENT ÇA MARCHE */}
+      <section id="comment-ca-marche" style={{ padding: '2.5rem 2rem', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+        <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#999', marginBottom: '0.5rem' }}>
+          Comment ça marche
+        </div>
+        <div style={{ fontSize: '22px', fontWeight: 500, color: '#111', marginBottom: '1.5rem' }}>Simple et rapide.</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {[
-            {
-              q: "Comment fonctionne Trouve ton réparateur ?",
-              a: "Entrez votre ville ou code postal, on vous affiche les réparateurs les plus proches. Cliquez sur une fiche pour voir les services, horaires et contacter le professionnel directement."
-            },
-            {
-              q: "Est-ce gratuit pour les clients ?",
-              a: "Oui, totalement gratuit. Vous trouvez un réparateur, vous l'appelez directement. Aucune commission, aucun intermédiaire."
-            },
-            {
-              q: "Les réparateurs sont-ils vérifiés ?",
-              a: "Oui. Chaque réparateur inscrit fournit un document Kbis pour prouver l'existence légale de son entreprise. De plus, la majorité de nos réparateurs ont été formés via Repair School Académie, un programme de formation professionnelle spécialisé dans la réparation de téléphones. Seules les boutiques validées apparaissent dans les résultats."
-            },
-            {
-              q: "Comment inscrire ma boutique ?",
-              a: "Cliquez sur \"Inscrire ma boutique\" en haut de la page, remplissez le formulaire et déposez votre Kbis. Votre fiche sera examinée et publiée sous 24h."
-            },
-            {
-              q: "Comment contacter un réparateur ?",
-              a: "Cliquez sur la fiche du réparateur puis appuyez sur le bouton \"Appeler\" pour le contacter directement par téléphone."
-            },
-            {
-              q: "Qu'est-ce que le déplacement à domicile ?",
-              a: "Certains réparateurs se déplacent directement chez vous pour réparer votre téléphone. Repérez le badge vert \"Déplacement à domicile\" sur les fiches pour identifier ces professionnels."
-            }
+            { n: '01', t: 'Tu cherches', d: 'Tape ta ville ou ton code postal. On géolocalise les pros autour de toi.' },
+            { n: '02', t: 'Tu compares', d: 'Avis, services, horaires — tout est visible avant d\'appeler.' },
+            { n: '03', t: 'Tu appelles', d: 'Un clic pour contacter directement le réparateur de ton choix.' },
+            { n: '04', t: 'Tu notes', d: 'Laisse un avis pour aider toute la communauté.' },
+          ].map((step, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'flex-start', gap: '16px',
+              padding: '1rem 0',
+              borderBottom: i < 3 ? '1px solid #f0f0f0' : 'none',
+            }}>
+              <div style={{ fontSize: '12px', fontWeight: 500, color: '#bbb', minWidth: '24px', paddingTop: '2px' }}>{step.n}</div>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 500, color: '#111', marginBottom: '2px' }}>{step.t}</div>
+                <div style={{ fontSize: '13px', color: '#888', lineHeight: 1.55 }}>{step.d}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA RÉPARATEURS */}
+      <div style={{
+        background: '#0a0a0a', margin: '0 1.5rem 2rem',
+        borderRadius: '16px', padding: '2.5rem 1.5rem', textAlign: 'center',
+      }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#fff', marginBottom: '0.5rem' }}>
+          Tu répares des téléphones ?
+        </h2>
+        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+          Rejoins la plateforme gratuitement.<br />Sois visible, crédible, trouvé.
+        </p>
+        <button
+          onClick={() => router.push('/inscrire')}
+          style={{
+            background: '#fff', color: '#111', border: 'none',
+            borderRadius: '100px', padding: '11px 28px',
+            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+          }}
+        >
+          Inscrire ma boutique — c'est gratuit →
+        </button>
+      </div>
+
+      {/* FAQ */}
+      <section style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1.5rem 3rem', width: '100%' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 500, color: '#111', marginBottom: '1.25rem', textAlign: 'center' }}>
+          Questions fréquentes
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[
+            { q: "Comment fonctionne Trouve ton réparateur ?", a: "Entrez votre ville ou code postal, on vous affiche les réparateurs les plus proches. Cliquez sur une fiche pour voir les services, horaires et contacter le professionnel directement." },
+            { q: "Est-ce gratuit pour les clients ?", a: "Oui, totalement gratuit. Vous trouvez un réparateur, vous l'appelez directement. Aucune commission, aucun intermédiaire." },
+            { q: "Les réparateurs sont-ils vérifiés ?", a: "Oui. Chaque réparateur inscrit fournit un document Kbis. Seules les boutiques validées apparaissent dans les résultats." },
+            { q: "Comment inscrire ma boutique ?", a: "Cliquez sur \"Je suis réparateur\" en haut de la page, remplissez le formulaire et déposez votre Kbis. Votre fiche sera publiée sous 24h." },
+            { q: "Comment contacter un réparateur ?", a: "Cliquez sur la fiche du réparateur puis appuyez sur le bouton \"Appeler\" pour le contacter directement." },
+            { q: "Qu'est-ce que le déplacement à domicile ?", a: "Certains réparateurs se déplacent directement chez vous. Repérez le badge vert \"Déplacement à domicile\" sur les fiches." },
           ].map((item, i) => (
             <FaqItem key={i} question={item.q} answer={item.a} />
           ))}
         </div>
       </section>
+
     </main>
   )
 }
