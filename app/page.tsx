@@ -78,57 +78,102 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white flex flex-col">
 
-      {/* NAVBAR */}
-      <nav style={{
-        background: '#ffffff',
-        boxShadow: '0 1px 0 #e8e8e8, 0 4px 20px rgba(0,0,0,0.07)',
-        padding: '0 2rem',
-        height: '60px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+      {/* HERO WRAPPER */}
+      <div style={{
+        background: 'linear-gradient(135deg, #0f2d6b 0%, #1a4db8 35%, #2563eb 60%, #38a8f5 100%)',
         position: 'relative',
-        zIndex: 10,
+        overflow: 'hidden',
       }}>
-        <div
-          onClick={() => router.push('/')}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-        >
-          <div style={{
-            width: '32px', height: '32px', borderRadius: '8px',
-            background: 'linear-gradient(135deg, #2563eb, #1e40af)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <span style={{ color: 'white', fontSize: '16px' }}>🔧</span>
-          </div>
-          <span style={{ fontSize: '15px', fontWeight: 500, color: '#111', letterSpacing: '-0.02em' }}>
+        {/* Blob décoratif */}
+        <div style={{
+          position: 'absolute', width: '520px', height: '520px', borderRadius: '50%',
+          background: 'rgba(255,255,255,0.06)',
+          top: '-160px', right: '-40px', pointerEvents: 'none',
+        }} />
+
+        {/* NAVBAR fondue dans le bleu */}
+        <nav style={{
+          padding: '0 1.5rem',
+          height: '68px',
+          display: 'flex',
+          alignItems: 'center',
+          position: 'relative',
+          zIndex: 10,
+          fontFamily: '"DM Sans", sans-serif',
+        }}>
+          <span style={{
+            fontSize: '15px',
+            fontWeight: 600,
+            color: '#ffffff',
+            letterSpacing: '-0.01em',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            fontFamily: '"DM Sans", sans-serif',
+          }}
+            onClick={() => router.push('/')}
+          >
             Trouve ton réparateur
           </span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button
-            onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{
-              fontSize: '13px', color: '#444', background: 'none', border: 'none',
-              padding: '7px 14px', borderRadius: '6px', cursor: 'pointer',
-            }}
-          >
-            Comment ça marche ?
-          </button>
-          <button
-            onClick={() => router.push('/inscrire')}
-            style={{
-              fontSize: '13px', fontWeight: 500, color: '#fff',
-              background: 'linear-gradient(135deg, #38a8f5, #2563eb, #1e40af)',
-              border: '1px solid rgba(56,168,245,0.4)',
-              padding: '8px 18px', borderRadius: '7px', cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(37,99,235,0.3)',
-            }}
-          >
-            Je suis réparateur
-          </button>
-        </div>
-      </nav>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+            <button
+              onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
+              style={{
+                fontFamily: '"DM Sans", sans-serif',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: '#ffffff',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                WebkitAppearance: 'none',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              Comment ça marche ?
+            </button>
+            <button
+              onClick={() => router.push('/inscrire')}
+              style={{
+                fontFamily: '"DM Sans", sans-serif',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: '#ffffff',
+                background: 'rgba(255,255,255,0.12)',
+                border: '1.5px solid rgba(255,255,255,0.65)',
+                padding: '8px 18px',
+                borderRadius: '100px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                WebkitAppearance: 'none',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.9)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.65)'
+              }}
+              onMouseDown={e => {
+                e.currentTarget.style.transform = 'scale(0.96)'
+                e.currentTarget.style.boxShadow = '0 0 0 4px rgba(255,255,255,0.15)'
+              }}
+              onMouseUp={e => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              Vous êtes réparateur ?
+            </button>
+          </div>
+        </nav>
 
       {/* HERO */}
       <div style={{
