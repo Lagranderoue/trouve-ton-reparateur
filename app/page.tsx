@@ -76,9 +76,9 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white flex flex-col">
+    <main style={{ minHeight: '100vh', background: '#fff', display: 'flex', flexDirection: 'column', fontFamily: '"DM Sans", sans-serif' }}>
 
-      {/* HERO WRAPPER */}
+      {/* HERO WRAPPER - navbar + hero fondus ensemble */}
       <div style={{
         background: 'linear-gradient(135deg, #0f2d6b 0%, #1a4db8 35%, #2563eb 60%, #38a8f5 100%)',
         position: 'relative',
@@ -91,7 +91,7 @@ export default function Home() {
           top: '-160px', right: '-40px', pointerEvents: 'none',
         }} />
 
-        {/* NAVBAR fondue dans le bleu */}
+        {/* NAVBAR */}
         <nav style={{
           padding: '0 1.5rem',
           height: '68px',
@@ -99,19 +99,15 @@ export default function Home() {
           alignItems: 'center',
           position: 'relative',
           zIndex: 10,
-          fontFamily: '"DM Sans", sans-serif',
         }}>
-          <span style={{
-            fontSize: '15px',
-            fontWeight: 600,
-            color: '#ffffff',
-            letterSpacing: '-0.01em',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-            fontFamily: '"DM Sans", sans-serif',
-          }}
+          <span
             onClick={() => router.push('/')}
+            style={{
+              fontSize: '15px', fontWeight: 600, color: '#ffffff',
+              letterSpacing: '-0.01em', cursor: 'pointer',
+              whiteSpace: 'nowrap', flexShrink: 0,
+              fontFamily: '"DM Sans", sans-serif',
+            }}
           >
             Trouve ton réparateur
           </span>
@@ -121,37 +117,27 @@ export default function Home() {
               onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: '13px',
-                fontWeight: 500,
+                fontSize: '13px', fontWeight: 500,
                 color: '#ffffff',
                 background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                padding: '8px 12px',
-                borderRadius: '8px',
-                WebkitAppearance: 'none',
+                border: 'none', cursor: 'pointer',
+                whiteSpace: 'nowrap', padding: '8px 12px', borderRadius: '8px',
               }}
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
-              Comment ça marche ?
+              Comment ca marche ?
             </button>
             <button
               onClick={() => router.push('/inscrire')}
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: '13px',
-                fontWeight: 600,
+                fontSize: '13px', fontWeight: 600,
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
-                padding: '8px 18px',
-                borderRadius: '100px',
-                cursor: 'pointer',
+                padding: '8px 18px', borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                WebkitAppearance: 'none',
-                transition: 'all 0.15s ease',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
@@ -170,200 +156,117 @@ export default function Home() {
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
-              Vous êtes réparateur ?
+              Vous etes reparateur ?
             </button>
           </div>
         </nav>
 
-      {/* HERO */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0f2d6b 0%, #1a4db8 35%, #2563eb 60%, #38a8f5 100%)',
-        padding: '2.5rem 2rem 0',
-        display: 'flex',
-        alignItems: 'center',
-        minHeight: '380px',
-        overflow: 'hidden',
-        position: 'relative',
-        gap: '1rem',
-      }}>
-        {/* Blobs décoratifs */}
+        {/* HERO */}
         <div style={{
-          position: 'absolute', width: '340px', height: '340px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,179,255,0.18) 0%, transparent 70%)',
-          top: '-80px', right: '60px', pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', width: '240px', height: '240px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%)',
-          bottom: '20px', left: '10px', pointerEvents: 'none',
-        }} />
-
-        {/* GAUCHE — texte + recherche */}
-        <div style={{
-          flex: '0 0 52%', maxWidth: '52%',
-          position: 'relative', zIndex: 2,
-          paddingBottom: '2.5rem',
-          display: 'flex', flexDirection: 'column', gap: '1rem',
+          padding: '2.5rem 1.5rem 0',
+          display: 'flex', alignItems: 'flex-end',
+          minHeight: '380px', position: 'relative', zIndex: 2,
         }}>
-          {/* Cadran glassmorphism */}
-          <div style={{
-            width: '100%',
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.25)',
-            borderRadius: '16px',
-            padding: '1.25rem 1.5rem 1.1rem',
-            backdropFilter: 'blur(20px) saturate(1.4)',
-            WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(0,0,0,0.15)',
-            position: 'relative',
-            overflow: 'hidden',
-          }}>
-            {/* Badge */}
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              background: 'rgba(255,255,255,0.10)',
-              border: '1px solid rgba(255,255,255,0.20)',
-              borderRadius: '100px',
-              padding: '3px 10px',
-              fontSize: '10px', fontWeight: 500, color: 'rgba(255,255,255,0.75)',
-              letterSpacing: '0.04em', marginBottom: '0.75rem',
-            }}>
-              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#86efac', display: 'inline-block' }} />
-              Réparateurs vérifiés en France
-            </div>
-            {/* Titre */}
+          {/* GAUCHE */}
+          <div style={{ flex: 1, paddingBottom: '3.5rem', maxWidth: '55%' }}>
             <h1 style={{
-              fontSize: '24px', fontWeight: 500, color: '#fff',
-              lineHeight: 1.25, letterSpacing: '-0.02em', margin: 0,
+              fontFamily: '"DM Sans", sans-serif',
+              fontSize: '44px', fontWeight: 700, color: '#fff',
+              lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2rem',
             }}>
-              Ton téléphone est cassé ?<br />
-              Trouve le bon réparateur<br />
-              <span style={{
-                background: 'linear-gradient(90deg, #93c5fd, #bfdbfe, #e0f2fe)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}>
-                près de chez vous.
-              </span>
+              Trouvez le bon<br />réparateur<br />près de chez vous.
             </h1>
-            <p style={{
-              fontSize: '12.5px', color: 'rgba(255,255,255,0.5)',
-              lineHeight: 1.6, marginTop: '0.6rem',
-            }}>
-              Comparez les avis, les services et les horaires.<br />Gratuit. Sans inscription.
-            </p>
-          </div>
 
-          {/* Cadran recherche */}
-          <div style={{
-            width: '100%',
-            background: 'rgba(255,255,255,0.96)',
-            borderRadius: '12px',
-            padding: '1rem 1.25rem',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-            position: 'relative', zIndex: 2,
-          }}>
+            {/* BARRE DE RECHERCHE */}
             <div style={{
-              fontSize: '10px', fontWeight: 500, color: '#888',
-              textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '7px',
+              background: '#fff', borderRadius: '100px',
+              display: 'flex', alignItems: 'center',
+              padding: '6px 6px 6px 20px',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
+              maxWidth: '560px', position: 'relative',
             }}>
-              Où êtes-vous ?
-            </div>
-            <div style={{ display: 'flex', gap: '7px', position: 'relative' }}>
+              <span style={{ fontSize: '18px', color: '#9ca3af', marginRight: '10px', flexShrink: 0 }}>🔍</span>
               <input
                 type="text"
                 placeholder="Ville ou code postal..."
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={e => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                 onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                 style={{
-                  flex: 1, border: '1px solid #e0e0e0', borderRadius: '6px',
-                  padding: '9px 12px', fontSize: '13px', color: '#111',
-                  background: '#f8f9fc', outline: 'none',
+                  flex: 1, border: 'none', background: 'transparent',
+                  fontSize: '15px', color: '#111', outline: 'none',
+                  fontFamily: '"DM Sans", sans-serif',
                 }}
               />
+              <div style={{ width: '1px', height: '28px', background: '#e5e7eb', margin: '0 12px', flexShrink: 0 }} />
+              <span style={{ fontSize: '16px', color: '#9ca3af', flexShrink: 0 }}>📍</span>
+              <button
+                onClick={handleGeolocate}
+                style={{
+                  fontSize: '15px', color: '#9ca3af', background: 'none', border: 'none',
+                  fontFamily: '"DM Sans", sans-serif', margin: '0 12px 0 6px',
+                  whiteSpace: 'nowrap', cursor: 'pointer', padding: 0,
+                }}
+              >
+                Ou ?
+              </button>
               <button
                 onClick={handleSearch}
                 style={{
-                  background: 'linear-gradient(135deg, #2563eb, #1e40af)',
-                  color: '#fff', border: 'none', borderRadius: '6px',
-                  padding: '9px 16px', fontSize: '12px', fontWeight: 500,
-                  cursor: 'pointer', whiteSpace: 'nowrap',
+                  background: '#0f2d6b', color: '#fff', border: 'none',
+                  borderRadius: '100px', padding: '12px 24px',
+                  fontSize: '15px', fontWeight: 600, cursor: 'pointer',
+                  whiteSpace: 'nowrap', fontFamily: '"DM Sans", sans-serif',
+                  display: 'flex', alignItems: 'center', gap: '6px',
                 }}
               >
-                Chercher →
+                Rechercher ›
               </button>
+
+              {showSuggestions && suggestions.length > 0 && (
+                <div style={{
+                  position: 'absolute', top: '110%', left: 0, right: 0,
+                  background: '#fff', border: '1px solid #e0e0e0',
+                  borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                  zIndex: 20, overflow: 'hidden',
+                }}>
+                  {suggestions.map((ville, i) => (
+                    <button
+                      key={i}
+                      onClick={() => selectSuggestion(ville)}
+                      style={{
+                        width: '100%', textAlign: 'left', padding: '10px 16px',
+                        fontSize: '14px', color: '#333', background: 'none',
+                        border: 'none', borderBottom: '1px solid #f0f0f0', cursor: 'pointer',
+                        fontFamily: '"DM Sans", sans-serif',
+                      }}
+                    >
+                      📍 {ville}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-
-            {showSuggestions && suggestions.length > 0 && (
-              <div style={{
-                position: 'absolute', top: '100%', left: 0, right: 0,
-                background: '#fff', border: '1px solid #e0e0e0',
-                borderRadius: '8px', marginTop: '4px',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.1)', zIndex: 20, overflow: 'hidden',
-              }}>
-                {suggestions.map((ville, i) => (
-                  <button
-                    key={i}
-                    onClick={() => selectSuggestion(ville)}
-                    style={{
-                      width: '100%', textAlign: 'left', padding: '10px 14px',
-                      fontSize: '13px', color: '#333', background: 'none',
-                      border: 'none', borderBottom: '1px solid #f0f0f0', cursor: 'pointer',
-                    }}
-                  >
-                    📍 {ville}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap' }}>
-              {[
-                { icon: '✓', label: 'Kbis vérifié' },
-                { icon: '★', label: 'Avis certifiés' },
-                { icon: '📍', label: 'Rayon 70 km' },
-              ].map((item, i) => (
-                <span key={i} style={{ fontSize: '10px', color: '#999', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                  <span style={{ color: '#bbb' }}>{item.icon}</span> {item.label}
-                </span>
-              ))}
-            </div>
-
-            <button
-              onClick={handleGeolocate}
-              style={{
-                marginTop: '8px', fontSize: '11px', color: '#888',
-                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              }}
-            >
-              📍 Utiliser ma position actuelle
-            </button>
           </div>
-        </div>
 
-        {/* DROITE — espace photo */}
-        <div style={{
-          flex: 1,
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-          alignSelf: 'flex-end',
-          position: 'relative', zIndex: 2,
-          minHeight: '300px',
-        }}>
+          {/* DROITE - espace photo */}
           <div style={{
-            width: '190px', height: '280px',
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.14)',
-            borderBottom: 'none',
-            borderRadius: '10px 10px 0 0',
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', gap: '8px',
+            flex: '0 0 42%', display: 'flex', alignItems: 'flex-end',
+            justifyContent: 'center', minHeight: '380px', position: 'relative', zIndex: 2,
           }}>
-            <span style={{ fontSize: '30px', opacity: 0.2 }}>📷</span>
-            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)' }}>Photo à venir</span>
+            <div style={{
+              width: '100%', maxWidth: '360px', height: '380px',
+              background: 'rgba(255,255,255,0.07)',
+              borderRadius: '50% 50% 0 0 / 55% 55% 0 0',
+              border: '1px solid rgba(255,255,255,0.12)', borderBottom: 'none',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: '10px',
+            }}>
+              <span style={{ fontSize: '36px', opacity: 0.2 }}>📷</span>
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.22)' }}>Photo à venir</span>
+            </div>
           </div>
         </div>
       </div>
@@ -380,22 +283,22 @@ export default function Home() {
           { n: '<2min', l: 'Pour trouver' },
         ].map((s, i) => (
           <div key={i} style={{
-            padding: '1.25rem', textAlign: 'center',
+            padding: '1.5rem', textAlign: 'center',
             borderRight: i < 3 ? '1px solid #ebebeb' : 'none',
           }}>
-            <div style={{ fontSize: '22px', fontWeight: 500, color: '#111', letterSpacing: '-0.03em' }}>{s.n}</div>
-            <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>{s.l}</div>
+            <div style={{ fontSize: '24px', fontWeight: 600, color: '#111', letterSpacing: '-0.03em', fontFamily: '"DM Sans", sans-serif' }}>{s.n}</div>
+            <div style={{ fontSize: '12px', color: '#999', marginTop: '2px', fontFamily: '"DM Sans", sans-serif' }}>{s.l}</div>
           </div>
         ))}
       </div>
 
-      {/* COMMENT ÇA MARCHE */}
+      {/* COMMENT CA MARCHE */}
       <section id="comment-ca-marche" style={{ padding: '2.5rem 2rem', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
-        <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#999', marginBottom: '0.5rem' }}>
-          Comment ça marche
+        <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#999', marginBottom: '0.5rem', fontFamily: '"DM Sans", sans-serif' }}>
+          Comment ca marche
         </div>
-        <div style={{ fontSize: '22px', fontWeight: 500, color: '#111', marginBottom: '1.5rem' }}>Simple et rapide.</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <div style={{ fontSize: '22px', fontWeight: 600, color: '#111', marginBottom: '1.5rem', fontFamily: '"DM Sans", sans-serif' }}>Simple et rapide.</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           {[
             { n: '01', t: 'Tu cherches', d: 'Tape ta ville ou ton code postal. On géolocalise les pros autour de toi.' },
             { n: '02', t: 'Tu compares', d: 'Avis, services, horaires — tout est visible avant d\'appeler.' },
@@ -407,10 +310,10 @@ export default function Home() {
               padding: '1rem 0',
               borderBottom: i < 3 ? '1px solid #f0f0f0' : 'none',
             }}>
-              <div style={{ fontSize: '12px', fontWeight: 500, color: '#bbb', minWidth: '24px', paddingTop: '2px' }}>{step.n}</div>
+              <div style={{ fontSize: '12px', fontWeight: 500, color: '#bbb', minWidth: '24px', paddingTop: '2px', fontFamily: '"DM Sans", sans-serif' }}>{step.n}</div>
               <div>
-                <div style={{ fontSize: '15px', fontWeight: 500, color: '#111', marginBottom: '2px' }}>{step.t}</div>
-                <div style={{ fontSize: '13px', color: '#888', lineHeight: 1.55 }}>{step.d}</div>
+                <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '2px', fontFamily: '"DM Sans", sans-serif' }}>{step.t}</div>
+                <div style={{ fontSize: '13px', color: '#888', lineHeight: 1.55, fontFamily: '"DM Sans", sans-serif' }}>{step.d}</div>
               </div>
             </div>
           ))}
@@ -422,37 +325,38 @@ export default function Home() {
         background: '#0a0a0a', margin: '0 1.5rem 2rem',
         borderRadius: '16px', padding: '2.5rem 1.5rem', textAlign: 'center',
       }}>
-        <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#fff', marginBottom: '0.5rem' }}>
-          Tu répares des téléphones ?
+        <h2 style={{ fontSize: '22px', fontWeight: 600, color: '#fff', marginBottom: '0.5rem', fontFamily: '"DM Sans", sans-serif' }}>
+          Tu repares des telephones ?
         </h2>
-        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
-          Rejoins la plateforme gratuitement.<br />Sois visible, crédible, trouvé.
+        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: '"DM Sans", sans-serif' }}>
+          Rejoins la plateforme gratuitement.<br />Sois visible, credible, trouve.
         </p>
         <button
           onClick={() => router.push('/inscrire')}
           style={{
             background: '#fff', color: '#111', border: 'none',
             borderRadius: '100px', padding: '11px 28px',
-            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+            fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+            fontFamily: '"DM Sans", sans-serif',
           }}
         >
-          Inscrire ma boutique — c'est gratuit →
+          Inscrire ma boutique — c'est gratuit
         </button>
       </div>
 
       {/* FAQ */}
       <section style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1.5rem 3rem', width: '100%' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 500, color: '#111', marginBottom: '1.25rem', textAlign: 'center' }}>
-          Questions fréquentes
+        <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#111', marginBottom: '1.25rem', textAlign: 'center', fontFamily: '"DM Sans", sans-serif' }}>
+          Questions frequentes
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
             { q: "Comment fonctionne Trouve ton réparateur ?", a: "Entrez votre ville ou code postal, on vous affiche les réparateurs les plus proches. Cliquez sur une fiche pour voir les services, horaires et contacter le professionnel directement." },
             { q: "Est-ce gratuit pour les clients ?", a: "Oui, totalement gratuit. Vous trouvez un réparateur, vous l'appelez directement. Aucune commission, aucun intermédiaire." },
             { q: "Les réparateurs sont-ils vérifiés ?", a: "Oui. Chaque réparateur inscrit fournit un document Kbis. Seules les boutiques validées apparaissent dans les résultats." },
-            { q: "Comment inscrire ma boutique ?", a: "Cliquez sur \"Je suis réparateur\" en haut de la page, remplissez le formulaire et déposez votre Kbis. Votre fiche sera publiée sous 24h." },
-            { q: "Comment contacter un réparateur ?", a: "Cliquez sur la fiche du réparateur puis appuyez sur le bouton \"Appeler\" pour le contacter directement." },
-            { q: "Qu'est-ce que le déplacement à domicile ?", a: "Certains réparateurs se déplacent directement chez vous. Repérez le badge vert \"Déplacement à domicile\" sur les fiches." },
+            { q: "Comment inscrire ma boutique ?", a: "Cliquez sur Vous etes reparateur en haut de la page, remplissez le formulaire et deposez votre Kbis. Votre fiche sera publiee sous 24h." },
+            { q: "Comment contacter un réparateur ?", a: "Cliquez sur la fiche du réparateur puis appuyez sur le bouton Appeler pour le contacter directement." },
+            { q: "Qu'est-ce que le déplacement à domicile ?", a: "Certains réparateurs se déplacent directement chez vous. Repérez le badge vert Déplacement à domicile sur les fiches." },
           ].map((item, i) => (
             <FaqItem key={i} question={item.q} answer={item.a} />
           ))}
