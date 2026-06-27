@@ -2,8 +2,20 @@ import { supabase } from '../../../lib/supabase'
 import AvisForm from './AvisForm'
 import AvisList from './AvisList'
 
+export const dynamic = 'force-dynamic'
+
+async function enregistrerVue(id: string) {
+  const { createClient } = await import('@supabase/supabase-js')
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+  await supabase.from('vues').insert({ reparateur_id: id })
+}
+
 export default async function FicheReparateur({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  await enregistrerVue(id)
 
   const { data: r } = await supabase
     .from('reparateurs')

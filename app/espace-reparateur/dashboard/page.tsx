@@ -277,6 +277,8 @@ export default function Dashboard() {
   }
   const [deplacement, setDeplacement] = useState(false)
   const [visible, setVisible] = useState(true)
+  const [vuesMois, setVuesMois] = useState(0)
+  const [nbAvis, setNbAvis] = useState(0)
   const router = useRouter()
 
   useEffect(() => {
@@ -289,6 +291,25 @@ export default function Dashboard() {
         setDeplacement(data.deplacement || false)
         setVisible(data.statut === 'approved')
       }
+      // Vues ce mois
+      const debutMois = new Date()
+      debutMois.setDate(1)
+      debutMois.setHours(0,0,0,0)
+      const { count: countVues } = await supabase
+        .from('vues')
+        .select('*', { count: 'exact', head: true })
+        .eq('reparateur_id', data.id)
+        .gte('created_at', debutMois.toISOString())
+      setVuesMois(countVues || 0)
+
+      // Nombre d'avis
+      const { count: countAvis } = await supabase
+        .from('avis')
+        .select('*', { count: 'exact', head: true })
+        .eq('reparateur_id', data.id)
+        .eq('statut', 'approved')
+      setNbAvis(countAvis || 0)
+
       setLoading(false)
     }
     init()
@@ -370,14 +391,15 @@ export default function Dashboard() {
               {/* STATS */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                 {[
-                  { icon: <IconEye size={20} color="#2563eb" />, n: '142', l: 'Vues ce mois', bg: '#eff6ff' },
-                  { icon: <IconStar size={20} color="#16a34a" />, n: reparateur?.note ? reparateur.note.toFixed(1) : 'N/A', l: 'Note moyenne', bg: '#f0fdf4' },
-                  { icon: <IconMessage size={20} color="#ca8a04" />, n: '0', l: 'Avis reçus', bg: '#fefce8' },
+                  { icon: <IconEye size={20} color="#2563eb" />, n: vuesMois.toString(), l: 'Vues ce mois', bg: '#eff6ff', link: '/espace-reparateur/stats' },
+                  { icon: <IconStar size={20} color="#16a34a" />, n: reparateur?.note ? reparateur.note.toFixed(1) : 'N/A', l: 'Note moyenne', bg: '#f0fdf4', link: null },
+                  { icon: <IconMessage size={20} color="#ca8a04" />, n: nbAvis.toString(), l: 'Avis reçus', bg: '#fefce8', link: null },
                 ].map((s, i) => (
-                  <div key={i} style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                  <div key={i} onClick={() => s.link && router.push(s.link)} style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', cursor: s.link ? 'pointer' : 'default' }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>{s.icon}</div>
                     <div style={{ fontSize: '26px', fontWeight: 700, color: '#111', letterSpacing: '-0.03em' }}>{s.n}</div>
                     <div style={{ fontSize: '12px', color: '#999', marginTop: '2px' }}>{s.l}</div>
+                    {s.link && <div style={{ fontSize: '11px', color: '#2563eb', marginTop: '4px', fontWeight: 500 }}>Voir les stats →</div>}
                   </div>
                 ))}
               </div>
