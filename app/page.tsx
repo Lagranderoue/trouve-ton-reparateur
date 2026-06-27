@@ -114,6 +114,7 @@ export default function Home() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
             <button
               onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
+              className="nav-comment-btn"
               style={{
                 fontFamily: '"DM Sans", sans-serif',
                 fontSize: '15px', fontWeight: 500,
@@ -129,6 +130,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => router.push('/inscrire')}
+              className="nav-reparateur-btn"
               style={{
                 fontFamily: '"DM Sans", sans-serif',
                 fontSize: '15px', fontWeight: 600,
@@ -167,8 +169,8 @@ export default function Home() {
           minHeight: '380px', position: 'relative', zIndex: 2,
         }}>
           {/* GAUCHE */}
-          <div style={{ flex: 1, paddingBottom: '3.5rem', maxWidth: '55%' }}>
-            <h1 style={{
+          <div className="hero-left-col" style={{ flex: 1, paddingBottom: '3.5rem', maxWidth: '55%' }}>
+            <h1 className="hero-title" style={{
               fontFamily: '"DM Sans", sans-serif',
               fontSize: '48px', fontWeight: 700, color: '#fff',
               lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2rem',
@@ -202,7 +204,7 @@ export default function Home() {
 
               <button
                 onClick={handleSearch}
-                className="btn-shine"
+                className="btn-shine search-bar-btn"
                 style={{
                   background: '#0f2d6b', color: '#fff', border: 'none',
                   borderRadius: '100px', padding: '12px 24px',
@@ -265,7 +267,7 @@ export default function Home() {
       </div>
 
       {/* STATS */}
-      <div style={{
+      <div className="stats-grid" style={{
         display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
         borderBottom: '1px solid #ebebeb',
       }}>
@@ -314,7 +316,7 @@ export default function Home() {
       </section>
 
       {/* CTA RÉPARATEURS */}
-      <div style={{
+      <div className="cta-block" style={{
         background: '#0a0a0a', margin: '0 1.5rem 2rem',
         borderRadius: '16px', padding: '2.5rem 1.5rem', textAlign: 'center',
       }}>
