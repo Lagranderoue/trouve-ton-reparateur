@@ -43,6 +43,7 @@ export default function Home() {
         const villes = data
           .map((item: any) => item.address?.city || item.address?.town || item.address?.village || item.address?.municipality || '')
           .filter((v: string) => v.length > 0)
+          .filter((v: string) => v.toLowerCase().startsWith(query.toLowerCase()))
           .filter((v: string, i: number, arr: string[]) => arr.indexOf(v) === i)
         setSuggestions(villes)
         setShowSuggestions(true)
@@ -228,13 +229,16 @@ export default function Home() {
                       key={i}
                       onClick={() => selectSuggestion(ville)}
                       style={{
-                        width: '100%', textAlign: 'left', padding: '10px 16px',
-                        fontSize: '14px', color: '#333', background: 'none',
-                        border: 'none', borderBottom: '1px solid #f0f0f0', cursor: 'pointer',
-                        fontFamily: '"DM Sans", sans-serif',
+                        width: '100%', textAlign: 'left', padding: '11px 16px',
+                        fontSize: '14px', color: '#111', background: 'none',
+                        border: 'none', borderBottom: '1px solid #f5f5f5', cursor: 'pointer',
+                        fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', gap: '8px',
                       }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#f8f9fc')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                     >
-                      📍 {ville}
+                      <span style={{ fontWeight: 700, color: '#111' }}>{ville.slice(0, query.length)}</span><span style={{ color: '#111' }}>{ville.slice(query.length)}</span>
+                      <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#999' }}>France</span>
                     </button>
                   ))}
                 </div>
