@@ -203,12 +203,14 @@ export default function Home() {
 
               <button
                 onClick={handleSearch}
+                className="btn-shine"
                 style={{
                   background: '#0f2d6b', color: '#fff', border: 'none',
                   borderRadius: '100px', padding: '12px 24px',
                   fontSize: '15px', fontWeight: 600, cursor: 'pointer',
                   whiteSpace: 'nowrap', fontFamily: '"DM Sans", sans-serif',
                   display: 'flex', alignItems: 'center', gap: '6px',
+                  position: 'relative', overflow: 'hidden', transition: 'background 0.2s ease',
                 }}
               >
                 Rechercher ›

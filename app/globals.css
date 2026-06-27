@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s ease;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: left 0.4s ease;
+}
+.btn-shine:hover::after { left: 150%; }
+.btn-shine:hover { background: #1a3a7a !important; }
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
