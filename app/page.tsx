@@ -3,6 +3,75 @@ import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
+function MobileCards() {
+  const [active, setActive] = React.useState(0)
+  const scrollRef = React.useRef<HTMLDivElement>(null)
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return
+    const cardWidth = scrollRef.current.scrollWidth / 3
+    const index = Math.round(scrollRef.current.scrollLeft / cardWidth)
+    setActive(index)
+  }
+
+  const cards = [
+    { icon: 'ti ti-search', n: '1', t: 'Trouvez', d: 'Un réparateur certifié proche de chez vous' },
+    { icon: 'ti ti-phone-call', n: '2', t: 'Contactez', d: 'Direct et 100% gratuit' },
+    { icon: 'ti ti-tool', n: '3', t: 'Réparez', d: 'Votre téléphone comme neuf' },
+  ]
+
+  return (
+    <div>
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        style={{
+          display: 'flex', gap: '12px',
+          overflowX: 'auto', scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          paddingBottom: '4px', scrollbarWidth: 'none',
+        }}
+      >
+        {cards.map((c, i) => (
+          <div key={i} style={{
+            flex: '0 0 calc(100% - 2rem)',
+            background: '#fff', borderRadius: '14px',
+            padding: '1.25rem',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
+            scrollSnapAlign: 'center',
+            fontFamily: '"DM Sans", sans-serif',
+          }}>
+            <div style={{
+              width: '40px', height: '40px', background: '#eff6ff',
+              borderRadius: '10px', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', marginBottom: '10px',
+            }}>
+              <i className={c.icon} style={{ fontSize: '20px', color: '#2563eb' }} />
+            </div>
+            <div style={{ fontSize: '32px', fontWeight: 700, color: '#f0f0f0', lineHeight: 1, marginBottom: '6px', letterSpacing: '-0.05em' }}>{c.n}</div>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#111', marginBottom: '4px' }}>{c.t}</div>
+            <div style={{ fontSize: '13px', color: '#666', lineHeight: 1.5 }}>{c.d}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', padding: '12px 0 6px' }}>
+        {[0,1,2].map(i => (
+          <div key={i} style={{
+            height: '6px',
+            width: i === active ? '22px' : '6px',
+            borderRadius: '3px',
+            background: i === active ? '#2563eb' : '#e0e0e0',
+            transition: 'all 0.3s ease',
+          }} />
+        ))}
+      </div>
+      <div style={{ textAlign: 'center', fontSize: '11px', color: '#bbb', paddingBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontFamily: '"DM Sans", sans-serif' }}>
+        Glissez pour voir la suite →
+      </div>
+    </div>
+  )
+}
+
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = React.useState(false)
   return (
@@ -303,28 +372,7 @@ export default function Home() {
           <div style={{ fontSize: '12px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, marginBottom: '0.75rem', fontFamily: '"DM Sans", sans-serif' }}>
             Comment ça marche
           </div>
-          <div id="cards-scroll" style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollSnapType: 'x mandatory', paddingBottom: '6px' }}>
-            {[
-              { icon: '🔍', n: '1', t: 'Trouvez', d: 'Un réparateur certifié proche de chez vous' },
-              { icon: '📞', n: '2', t: 'Contactez', d: 'Direct et 100% gratuit' },
-              { icon: '🔧', n: '3', t: 'Réparez', d: 'Votre téléphone comme neuf' },
-            ].map((s, i) => (
-              <div key={i} style={{ flex: '0 0 200px', background: '#fff', borderRadius: '12px', padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', scrollSnapAlign: 'start' }}>
-                <div style={{ fontSize: '20px', color: '#2563eb', marginBottom: '6px', fontFamily: '"DM Sans", sans-serif' }}>{s.icon}</div>
-                <div style={{ fontSize: '28px', fontWeight: 700, color: '#f0f0f0', lineHeight: 1, marginBottom: '6px', fontFamily: '"DM Sans", sans-serif' }}>{s.n}</div>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: '#111', marginBottom: '4px', fontFamily: '"DM Sans", sans-serif' }}>{s.t}</div>
-                <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.5, fontFamily: '"DM Sans", sans-serif' }}>{s.d}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '5px', padding: '10px 0 4px' }} id="mobile-dots">
-            {[0,1,2].map(i => (
-              <div key={i} style={{ width: i === 0 ? '18px' : '6px', height: '6px', borderRadius: i === 0 ? '3px' : '50%', background: i === 0 ? '#2563eb' : '#e0e0e0', transition: 'all 0.25s' }} />
-            ))}
-          </div>
-          <div style={{ textAlign: 'center', fontSize: '11px', color: '#bbb', paddingBottom: '4px', fontFamily: '"DM Sans", sans-serif' }}>
-            Glissez pour voir la suite →
-          </div>
+          <MobileCards />
         </div>
       )}
 
