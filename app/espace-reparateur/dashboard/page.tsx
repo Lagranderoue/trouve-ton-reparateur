@@ -2,6 +2,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
+import {
+  IconHome, IconUser, IconPhoto, IconStar, IconClock, IconSettings,
+  IconLogout, IconPencil, IconPlus, IconMapPin, IconPhone, IconMail,
+  IconBuildingStore, IconCamera, IconEye, IconMessage, IconCheck
+} from '@tabler/icons-react'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,6 +17,8 @@ export default function Dashboard() {
   const [reparateur, setReparateur] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('accueil')
+  const [deplacement, setDeplacement] = useState(false)
+  const [visible, setVisible] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -19,7 +26,11 @@ export default function Dashboard() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/espace-reparateur'); return }
       const { data } = await supabase.from('reparateurs').select('*').eq('email', user.email).single()
-      setReparateur(data)
+      if (data) {
+        setReparateur(data)
+        setDeplacement(data.deplacement || false)
+        setVisible(data.statut === 'approved')
+      }
       setLoading(false)
     }
     init()
@@ -33,60 +44,39 @@ export default function Dashboard() {
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"DM Sans", sans-serif' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ width: '40px', height: '40px', border: '3px solid #e0e0e0', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
+        <div style={{ width: '36px', height: '36px', border: '3px solid #e0e0e0', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
         <div style={{ fontSize: '14px', color: '#888' }}>Chargement...</div>
       </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+      <style>{"@keyframes spin { to { transform: rotate(360deg) } }"}</style>
     </div>
   )
 
   const sidebarItems = [
-    { id: 'accueil', icon: '▪', label: 'Tableau de bord' },
-    { id: 'profil', icon: '▪', label: 'Mon profil' },
-    { id: 'photos', icon: '▪', label: 'Mes photos' },
-    { id: 'avis', icon: '▪', label: 'Mes avis' },
-    { id: 'horaires', icon: '▪', label: 'Mes horaires' },
-    { id: 'parametres', icon: '▪', label: 'Paramètres' },
+    { id: 'accueil', icon: <IconHome size={18} />, label: 'Mon tableau de bord' },
+    { id: 'profil', icon: <IconUser size={18} />, label: 'Mon profil' },
+    { id: 'photos', icon: <IconPhoto size={18} />, label: 'Mes photos' },
+    { id: 'avis', icon: <IconStar size={18} />, label: 'Mes avis' },
+    { id: 'horaires', icon: <IconClock size={18} />, label: 'Mes horaires' },
+    { id: 'parametres', icon: <IconSettings size={18} />, label: 'Paramètres' },
   ]
+
+  const services = reparateur?.services ? reparateur.services.split(',').map((s: string) => s.trim()).filter(Boolean) : []
 
   return (
     <main style={{ minHeight: '100vh', background: '#f4f6fb', fontFamily: '"DM Sans", sans-serif' }}>
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+      <style>{"@keyframes spin { to { transform: rotate(360deg) } }"}</style>
 
       {/* NAVBAR */}
-      <nav style={{
-        background: '#ffffff',
-        boxShadow: '0 1px 0 #e8eaf0, 0 2px 12px rgba(0,0,0,0.04)',
-        padding: '0 2rem', height: '60px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        position: 'sticky', top: 0, zIndex: 100,
-      }}>
-        <div
-          onClick={() => router.push('/')}
-          style={{ fontSize: '15px', fontWeight: 700, color: '#0f2d6b', cursor: 'pointer', letterSpacing: '-0.01em' }}
-        >
+      <nav style={{ background: '#ffffff', boxShadow: '0 1px 0 #e8eaf0, 0 2px 8px rgba(0,0,0,0.04)', padding: '0 2rem', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
+        <div onClick={() => router.push('/')} style={{ fontSize: '15px', fontWeight: 700, color: '#0f2d6b', cursor: 'pointer' }}>
           Trouve ton réparateur
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '34px', height: '34px', borderRadius: '50%',
-              background: 'linear-gradient(135deg, #2563eb, #0f2d6b)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '13px', fontWeight: 700, color: '#fff',
-            }}>
-              {reparateur?.nom?.[0] || 'R'}
-            </div>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#111' }}>{reparateur?.nom}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #0f2d6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff' }}>
+            {reparateur?.nom?.[0] || 'R'}
           </div>
-          <button
-            onClick={handleLogout}
-            style={{
-              fontSize: '13px', color: '#888', background: '#f5f5f5',
-              border: '1px solid #e8e8e8', borderRadius: '6px',
-              padding: '6px 14px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif',
-            }}
-          >
+          <span style={{ fontSize: '14px', fontWeight: 600, color: '#111' }}>{reparateur?.nom}</span>
+          <button onClick={handleLogout} style={{ fontSize: '12px', color: '#888', background: '#f5f5f5', border: '1px solid #e8e8e8', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
             Déconnexion
           </button>
         </div>
@@ -95,174 +85,147 @@ export default function Dashboard() {
       <div style={{ display: 'flex' }}>
 
         {/* SIDEBAR */}
-        <div style={{
-          width: '220px', background: '#ffffff',
-          borderRight: '1px solid #e8eaf0',
-          minHeight: 'calc(100vh - 60px)',
-          padding: '1.25rem 0',
-          flexShrink: 0,
-          position: 'sticky', top: '60px', height: 'calc(100vh - 60px)',
-        }}>
-          <div style={{ padding: '0 1rem 0.75rem', fontSize: '10px', fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Menu
-          </div>
+        <div style={{ width: '220px', background: '#ffffff', borderRight: '1px solid #e8eaf0', minHeight: 'calc(100vh - 60px)', padding: '1.25rem 0', flexShrink: 0, position: 'sticky', top: '60px', height: 'calc(100vh - 60px)', overflowY: 'auto' }}>
+          <div style={{ padding: '0 1rem 0.75rem', fontSize: '10px', fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Menu</div>
           {sidebarItems.map(item => (
-            <div
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '10px 1rem', margin: '1px 8px',
-                fontSize: '13px', fontWeight: activeTab === item.id ? 600 : 500,
-                color: activeTab === item.id ? '#2563eb' : '#555',
-                background: activeTab === item.id ? '#eff6ff' : 'transparent',
-                borderRadius: '8px',
-                borderLeft: activeTab === item.id ? '3px solid #2563eb' : '3px solid transparent',
-                cursor: 'pointer', transition: 'all 0.15s',
-              }}
-              onMouseEnter={e => { if (activeTab !== item.id) e.currentTarget.style.background = '#f8f9fc' }}
-              onMouseLeave={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'transparent' }}
-            >
-              <div style={{
-                width: '28px', height: '28px', borderRadius: '7px',
-                background: activeTab === item.id ? '#dbeafe' : '#f4f4f4',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '14px',
-              }}>
-                {item.id === 'accueil' && '🏠'}
-                {item.id === 'profil' && '👤'}
-                {item.id === 'photos' && '📷'}
-                {item.id === 'avis' && '⭐'}
-                {item.id === 'horaires' && '🕐'}
-                {item.id === 'parametres' && '⚙️'}
-              </div>
-              {item.label}
+            <div key={item.id} onClick={() => setActiveTab(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 1rem', margin: '1px 8px', fontSize: '13px', fontWeight: activeTab === item.id ? 600 : 500, color: activeTab === item.id ? '#2563eb' : '#555', background: activeTab === item.id ? '#eff6ff' : 'transparent', borderRadius: '8px', borderLeft: activeTab === item.id ? '3px solid #2563eb' : '3px solid transparent', cursor: 'pointer' }}>
+              {item.icon} {item.label}
             </div>
           ))}
-
           <div style={{ margin: '1rem 8px 0', borderTop: '1px solid #f0f0f0', paddingTop: '1rem' }}>
-            <div
-              onClick={handleLogout}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '10px 1rem', fontSize: '13px', fontWeight: 500,
-                color: '#dc2626', cursor: 'pointer', borderRadius: '8px',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = '#fef2f2'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              <div style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>🚪</div>
-              Déconnexion
+            <div onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 1rem', fontSize: '13px', fontWeight: 500, color: '#dc2626', cursor: 'pointer', borderRadius: '8px' }}>
+              <IconLogout size={18} /> Déconnexion
             </div>
           </div>
         </div>
 
         {/* MAIN */}
-        <div style={{ flex: 1, padding: '2rem', minWidth: 0 }}>
-
+        <div style={{ flex: 1, padding: '2rem', minWidth: 0, maxWidth: '800px' }}>
           {activeTab === 'accueil' && (
-            <div>
-              {/* Header */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>
-                  Bonjour, {reparateur?.nom} 👋
-                </div>
-                <div style={{ fontSize: '14px', color: '#888', marginTop: '3px' }}>
-                  Voici un aperçu de votre activité sur la plateforme
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+              <div>
+                <div style={{ fontSize: '24px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Bonjour, {reparateur?.nom} 👋</div>
+                <div style={{ fontSize: '14px', color: '#888', marginTop: '3px' }}>Voici un aperçu de votre activité sur la plateforme</div>
               </div>
 
               {/* STATS */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                 {[
-                  { icon: '⭐', n: reparateur?.note ? reparateur.note.toFixed(1) : 'N/A', l: 'Note moyenne', bg: '#f0fdf4', iconBg: '#dcfce7', color: '#16a34a' },
-                  { icon: '💬', n: '0', l: 'Avis reçus', bg: '#fefce8', iconBg: '#fef08a', color: '#ca8a04' },
-                  { icon: '✅', n: reparateur?.statut === 'approved' ? 'Approuvé' : 'En attente', l: 'Statut', bg: '#eff6ff', iconBg: '#bfdbfe', color: '#2563eb' },
+                  { icon: <IconEye size={20} color="#2563eb" />, n: '142', l: 'Vues ce mois', bg: '#eff6ff' },
+                  { icon: <IconStar size={20} color="#16a34a" />, n: reparateur?.note ? reparateur.note.toFixed(1) : 'N/A', l: 'Note moyenne', bg: '#f0fdf4' },
+                  { icon: <IconMessage size={20} color="#ca8a04" />, n: '0', l: 'Avis reçus', bg: '#fefce8' },
                 ].map((s, i) => (
-                  <div key={i} style={{
-                    background: '#ffffff', border: '1px solid #e8eaf0',
-                    borderRadius: '12px', padding: '1.25rem',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-                  }}>
-                    <div style={{
-                      width: '36px', height: '36px', borderRadius: '10px',
-                      background: s.iconBg, display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', fontSize: '18px', marginBottom: '10px',
-                    }}>{s.icon}</div>
-                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#111', letterSpacing: '-0.03em' }}>{s.n}</div>
+                  <div key={i} style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>{s.icon}</div>
+                    <div style={{ fontSize: '26px', fontWeight: 700, color: '#111', letterSpacing: '-0.03em' }}>{s.n}</div>
                     <div style={{ fontSize: '12px', color: '#999', marginTop: '2px' }}>{s.l}</div>
                   </div>
                 ))}
               </div>
 
-              {/* FICHE */}
-              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', marginBottom: '1.25rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Ma fiche</div>
-                  <button
-                    onClick={() => setActiveTab('profil')}
-                    style={{
-                      fontSize: '12px', fontWeight: 600, color: '#2563eb',
-                      background: '#eff6ff', border: '1px solid #bfdbfe',
-                      borderRadius: '6px', padding: '5px 12px', cursor: 'pointer',
-                      fontFamily: '"DM Sans", sans-serif',
-                    }}
-                  >
-                    ✏️ Modifier
+              {/* MON PROFIL */}
+              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Mon profil</div>
+                  <button onClick={() => setActiveTab('profil')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+                    <IconPencil size={13} /> Modifier
                   </button>
                 </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '1.25rem' }}>
+                  <div style={{ width: '56px', height: '56px', borderRadius: '12px', background: '#f0f4ff', border: '2px dashed #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                    <IconCamera size={24} color="#93c5fd" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '16px', fontWeight: 700, color: '#111' }}>{reparateur?.nom}</div>
+                    <div style={{ fontSize: '13px', color: '#888', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <IconMapPin size={13} /> {reparateur?.ville}, {reparateur?.code_postal}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                  <div>
+                    <div style={{ fontSize: '10px', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>Téléphone</div>
+                    <div style={{ fontSize: '13px', color: '#111', background: '#f8f9fc', border: '1px solid #e8eaf0', borderRadius: '7px', padding: '8px 12px' }}>{reparateur?.telephone || '—'}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>Email</div>
+                    <div style={{ fontSize: '13px', color: '#111', background: '#f8f9fc', border: '1px solid #e8eaf0', borderRadius: '7px', padding: '8px 12px' }}>{reparateur?.email || '—'}</div>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>Description</div>
+                  <div style={{ fontSize: '13px', color: '#666', background: '#f8f9fc', border: '1px solid #e8eaf0', borderRadius: '7px', padding: '8px 12px', lineHeight: 1.5 }}>{reparateur?.description || 'Aucune description'}</div>
+                </div>
+              </div>
+
+              {/* STATUT */}
+              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#111', marginBottom: '1rem' }}>Statut de la boutique</div>
                 {[
-                  { l: 'Nom de la boutique', v: reparateur?.nom },
-                  { l: 'Ville', v: reparateur?.ville },
-                  { l: 'Code postal', v: reparateur?.code_postal },
-                  { l: 'Téléphone', v: reparateur?.telephone },
-                  { l: 'Adresse', v: reparateur?.adresse },
-                ].map((row, i, arr) => (
-                  <div key={i} style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '10px 0',
-                    borderBottom: i < arr.length - 1 ? '1px solid #f5f5f5' : 'none',
-                  }}>
-                    <span style={{ fontSize: '13px', color: '#888' }}>{row.l}</span>
-                    <span style={{ fontSize: '13px', color: '#111', fontWeight: 500 }}>{row.v || '—'}</span>
+                  { label: 'Profil visible', desc: 'Votre fiche est visible dans les recherches', val: visible, set: setVisible },
+                  { label: 'Déplacement à domicile', desc: 'Vous déplacez-vous chez vos clients ?', val: deplacement, set: setDeplacement },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: i === 0 ? '1px solid #f5f5f5' : 'none' }}>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: 500, color: '#111' }}>{item.label}</div>
+                      <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{item.desc}</div>
+                    </div>
+                    <div onClick={() => item.set(!item.val)} style={{ width: '44px', height: '24px', background: item.val ? '#22c55e' : '#e0e0e0', borderRadius: '100px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0 }}>
+                      <div style={{ width: '20px', height: '20px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '2px', left: item.val ? '22px' : '2px', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                    </div>
                   </div>
                 ))}
               </div>
 
-              {/* BADGE STATUT */}
-              <div style={{
-                background: reparateur?.statut === 'approved' ? '#f0fdf4' : '#fefce8',
-                border: `1px solid ${reparateur?.statut === 'approved' ? '#bbf7d0' : '#fde68a'}`,
-                borderRadius: '12px', padding: '1rem 1.25rem',
-                display: 'flex', alignItems: 'center', gap: '12px',
-              }}>
-                <div style={{ fontSize: '24px' }}>{reparateur?.statut === 'approved' ? '✅' : '⏳'}</div>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#111' }}>
-                    {reparateur?.statut === 'approved' ? 'Votre fiche est visible' : 'Votre fiche est en attente'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
-                    {reparateur?.statut === 'approved'
-                      ? 'Les clients peuvent vous trouver dans les résultats de recherche.'
-                      : 'Votre fiche sera examinée et publiée sous 24h.'}
-                  </div>
+              {/* SERVICES */}
+              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Mes services</div>
+                  <button onClick={() => setActiveTab('profil')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+                    <IconPencil size={13} /> Modifier
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {services.length > 0 ? services.map((s: string, i: number) => (
+                    <span key={i} style={{ fontSize: '12px', fontWeight: 500, padding: '5px 12px', borderRadius: '100px', background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}>{s}</span>
+                  )) : <span style={{ fontSize: '13px', color: '#888' }}>Aucun service renseigné</span>}
                 </div>
               </div>
+
+              {/* PHOTOS */}
+              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Mes photos</div>
+                  <button onClick={() => setActiveTab('photos')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+                    <IconPlus size={13} /> Ajouter
+                  </button>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                  {[0, 1, 2].map(i => (
+                    <div key={i} style={{ aspectRatio: '1', borderRadius: '10px', background: '#f8f9fc', border: '2px dashed #e0e0e0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                      <IconPlus size={24} color="#ccc" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AVIS */}
+              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#111', marginBottom: '1rem' }}>Derniers avis reçus</div>
+                <div style={{ fontSize: '13px', color: '#888', textAlign: 'center', padding: '1.5rem 0' }}>Aucun avis pour le moment</div>
+              </div>
+
             </div>
           )}
 
           {activeTab !== 'accueil' && (
             <div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '1.5rem' }}>
                 {sidebarItems.find(i => i.id === activeTab)?.label}
               </div>
-              <div style={{
-                background: '#fff', border: '1px solid #e8eaf0',
-                borderRadius: '12px', padding: '3rem',
-                textAlign: 'center', color: '#888',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-              }}>
-                <div style={{ fontSize: '32px', marginBottom: '12px' }}>🚧</div>
+              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                <IconSettings size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
                 <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Section en cours de développement</div>
                 <div style={{ fontSize: '13px', color: '#888' }}>Cette section sera disponible très prochainement.</div>
               </div>
