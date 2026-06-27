@@ -36,14 +36,12 @@ export default function Home() {
     timeoutRef.current = setTimeout(async () => {
       try {
         const res = await fetch(
-          'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=fr&format=json&limit=10&addressdetails=1&featuretype=city',
-          { headers: { 'User-Agent': 'trouvetonreparateur/1.0' } }
+          'https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(query) + '&fields=nom&boost=population&limit=6'
         )
         const data = await res.json()
         const villes = data
-          .map((item: any) => item.address?.city || item.address?.town || item.address?.village || item.address?.municipality || '')
+          .map((item: any) => item.nom)
           .filter((v: string) => v.length > 0)
-          .filter((v: string) => v.toLowerCase().startsWith(query.toLowerCase()))
           .filter((v: string, i: number, arr: string[]) => arr.indexOf(v) === i)
         setSuggestions(villes)
         setShowSuggestions(true)
