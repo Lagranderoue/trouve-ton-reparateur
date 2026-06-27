@@ -296,11 +296,12 @@ export default function Dashboard() {
       const debutMois = new Date()
       debutMois.setDate(1)
       debutMois.setHours(0,0,0,0)
-      const { count: countVues } = await supabase
+      const { count: countVues, error: errVues } = await supabase
         .from('vues')
         .select('*', { count: 'exact', head: true })
         .eq('reparateur_id', data.id)
         .gte('created_at', debutMois.toISOString())
+      console.log('vues count:', countVues, 'error:', errVues, 'debut mois:', debutMois.toISOString())
       setVuesMois(countVues || 0)
 
       // Nombre d'avis
