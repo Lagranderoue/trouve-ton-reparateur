@@ -57,8 +57,12 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
         <div className="bg-white border border-gray-100 rounded-xl p-6 mb-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-xl font-medium text-blue-700 flex-shrink-0">
-                {r.nom?.charAt(0)}
+              <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-xl font-medium text-blue-700 flex-shrink-0 overflow-hidden">
+                {r.logo_url ? (
+                  <img src={r.logo_url} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  r.nom?.charAt(0)
+                )}
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-2">
