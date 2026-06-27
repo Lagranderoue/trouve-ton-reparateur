@@ -43,10 +43,12 @@ function PhotosTab({ reparateur }: { reparateur: any }) {
     if (!e.target.files || e.target.files.length === 0) return
     setUploading(true)
     const file = e.target.files[0]
-    const cleanName = file.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_')
-    const fileName = reparateur.id + '/' + Date.now() + '-' + cleanName
-    const { error } = await supabase.storage.from('photos').upload(fileName, file)
+    const cleanName = file.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_')
+    const fileName = String(reparateur.id) + '/' + Date.now() + '-' + cleanName
+    const { error, data } = await supabase.storage.from('photos').upload(fileName, file, { upsert: true })
+    console.log('upload result:', { error, data })
     if (!error) await loadPhotos()
+    else console.error('upload error:', error)
     setUploading(false)
   }
 
