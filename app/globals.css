@@ -8,7 +8,11 @@
   .nav-comment-btn { display: none !important; }
 
   /* Hero titre */
-  .hero-title { font-size: 28px !important; margin-bottom: 1rem !important; }
+  .hero-title { font-size: 28px !important; margin-bottom: 1rem !important; text-align: center !important; }
+
+  /* Réduire espace navbar-texte */
+  .hero-section { padding-top: 0.25rem !important; }
+  .hero-left-col { padding-bottom: 1.5rem !important; }
 
   /* Cache la photo sur mobile */
   .hero-photo { display: none !important; }
