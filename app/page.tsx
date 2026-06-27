@@ -27,6 +27,14 @@ export default function Home() {
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
   const router = useRouter()
   const timeoutRef = useRef<any>(null)
 
@@ -164,12 +172,13 @@ export default function Home() {
 
         {/* HERO */}
         <div style={{
-          padding: '1rem 1.5rem 0',
-          display: 'flex', alignItems: 'flex-end',
-          minHeight: '380px', position: 'relative', zIndex: 2,
+          padding: isMobile ? '0.25rem 1.25rem 0' : '1rem 1.5rem 0',
+          display: 'flex', alignItems: isMobile ? 'flex-start' : 'flex-end',
+          minHeight: isMobile ? 'unset' : '380px', position: 'relative', zIndex: 2,
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
         }}>
           {/* GAUCHE */}
-          <div className="hero-left-col" style={{ flex: 1, paddingBottom: '3.5rem', maxWidth: '55%' }}>
+          <div className="hero-left-col" style={{ flex: 1, paddingBottom: isMobile ? '1.5rem' : '3.5rem', maxWidth: isMobile ? '100%' : '55%' }}>
             <h1 className="hero-title" style={{
               fontFamily: '"DM Sans", sans-serif',
               fontSize: '48px', fontWeight: 700, color: '#fff',
