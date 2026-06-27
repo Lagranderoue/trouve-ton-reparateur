@@ -81,7 +81,7 @@ export default function Home() {
       <div style={{
         background: 'linear-gradient(135deg, #0f2d6b 0%, #1a4db8 35%, #2563eb 60%, #38a8f5 100%)',
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}>
         {/* Blob décoratif */}
         <div style={{
