@@ -110,7 +110,7 @@ export default function Home() {
           <span
             onClick={() => router.push('/')}
             style={{
-              fontSize: '20px', fontWeight: 700, color: '#ffffff',
+              fontSize: isMobile ? '14px' : '20px', fontWeight: 700, color: '#ffffff',
               letterSpacing: '-0.01em', cursor: 'pointer',
               whiteSpace: 'nowrap', flexShrink: 0,
               fontFamily: '"DM Sans", sans-serif',
@@ -119,7 +119,7 @@ export default function Home() {
             Trouve ton réparateur
           </span>
           <div style={{ flex: 1 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px', flexShrink: 0 }}>
             <button
               onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
               className="nav-comment-btn"
@@ -130,6 +130,7 @@ export default function Home() {
                 background: 'transparent',
                 border: 'none', cursor: 'pointer',
                 whiteSpace: 'nowrap', padding: '8px 12px', borderRadius: '8px',
+                display: isMobile ? 'none' : 'block',
               }}
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
@@ -141,12 +142,13 @@ export default function Home() {
               className="nav-reparateur-btn"
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: '15px', fontWeight: 600,
+                fontSize: isMobile ? '12px' : '15px', fontWeight: 600,
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
-                padding: '8px 18px', borderRadius: '100px', cursor: 'pointer',
+                padding: isMobile ? '6px 12px' : '8px 18px', borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
+                display: 'block',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
