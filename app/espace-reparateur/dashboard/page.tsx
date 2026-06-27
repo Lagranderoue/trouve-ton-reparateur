@@ -405,9 +405,25 @@ export default function Dashboard() {
                   </button>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '1.25rem' }}>
-                  <div style={{ width: '56px', height: '56px', borderRadius: '12px', background: '#f0f4ff', border: '2px dashed #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                    <IconCamera size={24} color="#93c5fd" />
-                  </div>
+                  <label style={{ width: '56px', height: '56px', borderRadius: '12px', background: '#f0f4ff', border: '2px dashed #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                    {reparateur?.logo_url ? (
+                      <img src={reparateur.logo_url} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }} />
+                    ) : (
+                      <IconCamera size={24} color="#93c5fd" />
+                    )}
+                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={async (e) => {
+                      if (!e.target.files?.[0]) return
+                      const file = e.target.files[0]
+                      const cleanName = file.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_')
+                      const fileName = 'logos/' + reparateur.id + '-' + cleanName
+                      const { error } = await supabase.storage.from('photos').upload(fileName, file, { upsert: true })
+                      if (!error) {
+                        const { data: urlData } = supabase.storage.from('photos').getPublicUrl(fileName)
+                        await supabase.from('reparateurs').update({ logo_url: urlData.publicUrl }).eq('id', reparateur.id)
+                        setReparateur({ ...reparateur, logo_url: urlData.publicUrl })
+                      }
+                    }} />
+                  </label>
                   <div>
                     <div style={{ fontSize: '16px', fontWeight: 700, color: '#111' }}>{reparateur?.nom}</div>
                     <div style={{ fontSize: '13px', color: '#888', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
