@@ -162,6 +162,17 @@ export default function Dashboard() {
   const [reparateur, setReparateur] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('accueil')
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const tab = params.get('tab')
+    if (tab) setActiveTab(tab)
+  }, [])
+
+  const changeTab = (tab: string) => {
+    setActiveTab(tab)
+    window.history.pushState({}, '', '/espace-reparateur/dashboard?tab=' + tab)
+  }
   const [deplacement, setDeplacement] = useState(false)
   const [visible, setVisible] = useState(true)
   const router = useRouter()
@@ -233,7 +244,7 @@ export default function Dashboard() {
         <div style={{ width: '220px', background: '#ffffff', borderRight: '1px solid #e8eaf0', minHeight: 'calc(100vh - 60px)', padding: '1.25rem 0', flexShrink: 0, position: 'sticky', top: '60px', height: 'calc(100vh - 60px)', overflowY: 'auto' }}>
           <div style={{ padding: '0 1rem 0.75rem', fontSize: '10px', fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Menu</div>
           {sidebarItems.map(item => (
-            <div key={item.id} onClick={() => setActiveTab(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 1rem', margin: '1px 8px', fontSize: '13px', fontWeight: activeTab === item.id ? 600 : 500, color: activeTab === item.id ? '#2563eb' : '#555', background: activeTab === item.id ? '#eff6ff' : 'transparent', borderRadius: '8px', borderLeft: activeTab === item.id ? '3px solid #2563eb' : '3px solid transparent', cursor: 'pointer' }}>
+            <div key={item.id} onClick={() => changeTab(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 1rem', margin: '1px 8px', fontSize: '13px', fontWeight: activeTab === item.id ? 600 : 500, color: activeTab === item.id ? '#2563eb' : '#555', background: activeTab === item.id ? '#eff6ff' : 'transparent', borderRadius: '8px', borderLeft: activeTab === item.id ? '3px solid #2563eb' : '3px solid transparent', cursor: 'pointer' }}>
               {item.icon} {item.label}
             </div>
           ))}
@@ -273,7 +284,7 @@ export default function Dashboard() {
               <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                   <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Mon profil</div>
-                  <button onClick={() => setActiveTab('profil')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+                  <button onClick={() => changeTab('profil')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
                     <IconPencil size={13} /> Modifier
                   </button>
                 </div>
@@ -327,7 +338,7 @@ export default function Dashboard() {
               <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Mes services</div>
-                  <button onClick={() => setActiveTab('profil')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+                  <button onClick={() => changeTab('profil')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
                     <IconPencil size={13} /> Modifier
                   </button>
                 </div>
@@ -342,7 +353,7 @@ export default function Dashboard() {
               <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Mes photos</div>
-                  <button onClick={() => setActiveTab('photos')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+                  <button onClick={() => changeTab('photos')} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
                     <IconPlus size={13} /> Ajouter
                   </button>
                 </div>
