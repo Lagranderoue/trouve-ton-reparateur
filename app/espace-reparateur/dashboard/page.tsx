@@ -473,6 +473,10 @@ export default function Dashboard() {
             </div>
           )}
 
+          {activeTab === 'photos' && (
+            <PhotosTab reparateur={reparateur} />
+          )}
+
           {activeTab === 'profil' && (
             <ProfilTab reparateur={reparateur} setReparateur={setReparateur} />
           )}
