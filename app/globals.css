@@ -11,7 +11,7 @@
   .hero-title { font-size: 28px !important; margin-bottom: 1rem !important; text-align: center !important; }
 
   /* Réduire espace navbar-texte */
-  .hero-section { padding-top: 0.25rem !important; }
+  .hero-section { padding-top: 0 !important; margin-top: -1.5rem !important; }
   .hero-left-col { padding-bottom: 1.5rem !important; }
 
   /* Cache la photo sur mobile */
