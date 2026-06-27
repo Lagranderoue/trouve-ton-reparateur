@@ -35,7 +35,7 @@ export default function Stats() {
 
       if (vues) {
         const parJour: Record<string, number> = {}
-        vues.forEach(v => {
+        vues.forEach((v: { created_at: string }) => {
           const jour = new Date(v.created_at).getDate().toString()
           parJour[jour] = (parJour[jour] || 0) + 1
         })
