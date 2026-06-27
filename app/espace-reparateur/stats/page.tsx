@@ -26,42 +26,12 @@ export default function Stats() {
       if (!rep) return
       setReparateur(rep)
 
-      // Vues ce mois
-      const debutMois = new Date()
-      debutMois.setDate(1)
-      debutMois.setHours(0,0,0,0)
-
-      const { count: countMois } = await supabase
-        .from('vues')
-        .select('*', { count: 'exact', head: true })
-        .eq('reparateur_id', rep.id)
-        .gte('created_at', debutMois.toISOString())
-      setVuesMois(countMois || 0)
-
-      // Vues mois précédent
-      const debutMoisPrec = new Date()
-      debutMoisPrec.setMonth(debutMoisPrec.getMonth() - 1)
-      debutMoisPrec.setDate(1)
-      debutMoisPrec.setHours(0,0,0,0)
-      const finMoisPrec = new Date()
-      finMoisPrec.setDate(0)
-      finMoisPrec.setHours(23,59,59,999)
-
-      const { count: countPrec } = await supabase
-        .from('vues')
-        .select('*', { count: 'exact', head: true })
-        .eq('reparateur_id', rep.id)
-        .gte('created_at', debutMoisPrec.toISOString())
-        .lte('created_at', finMoisPrec.toISOString())
-      setVuesMoisPrecedent(countPrec || 0)
-
-      // Vues par jour ce mois
-      const { data: vues } = await supabase
-        .from('vues')
-        .select('created_at')
-        .eq('reparateur_id', rep.id)
-        .gte('created_at', debutMois.toISOString())
-        .order('created_at', { ascending: true })
+      // Stats via API route
+      const statsRes = await fetch('/api/stats-detail?id=' + rep.id)
+      const statsData = await statsRes.json()
+      setVuesMois(statsData.vuesMois || 0)
+      setVuesMoisPrecedent(statsData.vuesMoisPrecedent || 0)
+      const vues = statsData.vuesParJour || []
 
       if (vues) {
         const parJour: Record<string, number> = {}
