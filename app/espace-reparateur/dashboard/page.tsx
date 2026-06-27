@@ -291,6 +291,7 @@ export default function Dashboard() {
         setDeplacement(data.deplacement || false)
         setVisible(data.statut === 'approved')
       }
+      console.log('rep id:', data.id)
       // Vues ce mois
       const debutMois = new Date()
       debutMois.setDate(1)
