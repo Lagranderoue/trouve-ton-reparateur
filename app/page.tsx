@@ -379,7 +379,7 @@ export default function Home() {
 
       {/* CHIFFRES MOBILE */}
       {isMobile && (
-        <div style={{ padding: '2rem 1.5rem', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
+        <div style={{ padding: '2rem 1.5rem', textAlign: 'center', borderBottom: '1px solid #f0f0f0', maxWidth: '100%', overflow: 'hidden' }}>
           <div style={{ fontSize: '18px', fontWeight: 700, color: '#0f2d6b', marginBottom: '2rem', fontFamily: '"DM Sans", sans-serif' }}>
             Trouve ton réparateur en chiffres
           </div>
