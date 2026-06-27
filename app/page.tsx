@@ -259,7 +259,7 @@ export default function Home() {
 
           {/* DROITE - espace photo */}
           <div style={{
-            flex: '0 0 42%', display: 'flex', alignItems: 'flex-end',
+            flex: '0 0 42%', display: isMobile ? 'none' : 'flex', alignItems: 'flex-end',
             justifyContent: 'center', minHeight: '380px', position: 'relative', zIndex: 2,
           }}>
             <div style={{

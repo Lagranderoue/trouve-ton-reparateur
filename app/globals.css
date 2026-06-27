@@ -4,7 +4,6 @@
 @media (max-width: 768px) {
 
   /* Navbar */
-  .nav-reparateur-btn { display: none !important; }
   .nav-comment-btn { display: none !important; }
 
   /* Hero section */
