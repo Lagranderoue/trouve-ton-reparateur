@@ -401,32 +401,6 @@ export default function Home() {
       )}
 
       {/* COMMENT CA MARCHE */}
-      <section id="comment-ca-marche" style={{ padding: '2.5rem 2rem', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
-        <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#999', marginBottom: '0.5rem', fontFamily: '"DM Sans", sans-serif' }}>
-          Comment ca marche
-        </div>
-        <div style={{ fontSize: '22px', fontWeight: 600, color: '#111', marginBottom: '1.5rem', fontFamily: '"DM Sans", sans-serif' }}>Simple et rapide.</div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {[
-            { n: '01', t: 'Tu cherches', d: 'Tape ta ville ou ton code postal. On géolocalise les pros autour de toi.' },
-            { n: '02', t: 'Tu compares', d: 'Avis, services, horaires — tout est visible avant d\'appeler.' },
-            { n: '03', t: 'Tu appelles', d: 'Un clic pour contacter directement le réparateur de ton choix.' },
-            { n: '04', t: 'Tu notes', d: 'Laisse un avis pour aider toute la communauté.' },
-          ].map((step, i) => (
-            <div key={i} style={{
-              display: 'flex', alignItems: 'flex-start', gap: '16px',
-              padding: '1rem 0',
-              borderBottom: i < 3 ? '1px solid #f0f0f0' : 'none',
-            }}>
-              <div style={{ fontSize: '12px', fontWeight: 500, color: '#bbb', minWidth: '24px', paddingTop: '2px', fontFamily: '"DM Sans", sans-serif' }}>{step.n}</div>
-              <div>
-                <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '2px', fontFamily: '"DM Sans", sans-serif' }}>{step.t}</div>
-                <div style={{ fontSize: '13px', color: '#888', lineHeight: 1.55, fontFamily: '"DM Sans", sans-serif' }}>{step.d}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* CTA RÉPARATEURS */}
       <div className="cta-block" style={{
