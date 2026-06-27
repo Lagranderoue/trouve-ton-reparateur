@@ -103,7 +103,7 @@ export default function Home() {
           <span
             onClick={() => router.push('/')}
             style={{
-              fontSize: '15px', fontWeight: 600, color: '#ffffff',
+              fontSize: '17px', fontWeight: 600, color: '#ffffff',
               letterSpacing: '-0.01em', cursor: 'pointer',
               whiteSpace: 'nowrap', flexShrink: 0,
               fontFamily: '"DM Sans", sans-serif',
@@ -117,7 +117,7 @@ export default function Home() {
               onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: '13px', fontWeight: 500,
+                fontSize: '15px', fontWeight: 500,
                 color: '#ffffff',
                 background: 'transparent',
                 border: 'none', cursor: 'pointer',
@@ -126,13 +126,13 @@ export default function Home() {
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
-              Comment ca marche ?
+              Comment ça marche ?
             </button>
             <button
               onClick={() => router.push('/inscrire')}
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: '13px', fontWeight: 600,
+                fontSize: '15px', fontWeight: 600,
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
@@ -156,7 +156,7 @@ export default function Home() {
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
-              Vous etes reparateur ?
+              Vous êtes réparateur ?
             </button>
           </div>
         </nav>
@@ -171,7 +171,7 @@ export default function Home() {
           <div style={{ flex: 1, paddingBottom: '3.5rem', maxWidth: '55%' }}>
             <h1 style={{
               fontFamily: '"DM Sans", sans-serif',
-              fontSize: '44px', fontWeight: 700, color: '#fff',
+              fontSize: '48px', fontWeight: 700, color: '#fff',
               lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2rem',
             }}>
               Trouvez le bon<br />réparateur<br />près de chez vous.
