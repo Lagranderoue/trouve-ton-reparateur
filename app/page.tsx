@@ -163,7 +163,7 @@ export default function Home() {
 
         {/* HERO */}
         <div style={{
-          padding: '2.5rem 1.5rem 0',
+          padding: '1rem 1.5rem 0',
           display: 'flex', alignItems: 'flex-end',
           minHeight: '380px', position: 'relative', zIndex: 2,
         }}>
@@ -174,7 +174,7 @@ export default function Home() {
               fontSize: '48px', fontWeight: 700, color: '#fff',
               lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2rem',
             }}>
-              Trouvez le bon<br />réparateur<br />près de chez vous.
+              Trouvez le bon<br />réparateur<br /><span style={{background: 'linear-gradient(90deg, #93c5fd, #bfdbfe)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>près de chez vous.</span>
             </h1>
 
             {/* BARRE DE RECHERCHE */}
@@ -200,18 +200,7 @@ export default function Home() {
                   fontFamily: '"DM Sans", sans-serif',
                 }}
               />
-              <div style={{ width: '1px', height: '28px', background: '#e5e7eb', margin: '0 12px', flexShrink: 0 }} />
-              <span style={{ fontSize: '16px', color: '#9ca3af', flexShrink: 0 }}>📍</span>
-              <button
-                onClick={handleGeolocate}
-                style={{
-                  fontSize: '15px', color: '#9ca3af', background: 'none', border: 'none',
-                  fontFamily: '"DM Sans", sans-serif', margin: '0 12px 0 6px',
-                  whiteSpace: 'nowrap', cursor: 'pointer', padding: 0,
-                }}
-              >
-                Ou ?
-              </button>
+
               <button
                 onClick={handleSearch}
                 style={{
