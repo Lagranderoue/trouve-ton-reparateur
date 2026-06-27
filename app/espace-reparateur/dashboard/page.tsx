@@ -28,11 +28,13 @@ function PhotosTab({ reparateur }: { reparateur: any }) {
   }, [])
 
   const loadPhotos = async () => {
-    const { data } = await supabase.storage.from('photos').list(reparateur.id + '/')
-    if (data) {
-      const urls = data.map(f =>
-        supabase.storage.from('photos').getPublicUrl(reparateur.id + '/' + f.name).data.publicUrl
-      )
+    const { data, error } = await supabase.storage.from('photos').list(String(reparateur.id))
+    if (data && !error) {
+      const urls = data
+        .filter(f => f.name !== '.emptyFolderPlaceholder')
+        .map(f =>
+          supabase.storage.from('photos').getPublicUrl(String(reparateur.id) + '/' + f.name).data.publicUrl
+        )
       setPhotos(urls)
     }
   }
