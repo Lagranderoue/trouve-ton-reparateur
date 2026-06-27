@@ -15,9 +15,9 @@ function MobileCards() {
   }
 
   const cards = [
-    { icon: 'ti ti-search', n: '1', t: 'Trouvez', d: 'Un réparateur certifié proche de chez vous' },
-    { icon: 'ti ti-phone-call', n: '2', t: 'Contactez', d: 'Direct et 100% gratuit' },
-    { icon: 'ti ti-tool', n: '3', t: 'Réparez', d: 'Votre téléphone comme neuf' },
+    { icon: '🔍', n: '1', t: 'Trouvez', d: 'Un réparateur certifié proche de chez vous' },
+    { icon: '📲', n: '2', t: 'Contactez', d: 'Direct et 100% gratuit' },
+    { icon: '🛠️', n: '3', t: 'Réparez', d: 'Votre téléphone comme neuf' },
   ]
 
   return (
@@ -34,7 +34,7 @@ function MobileCards() {
       >
         {cards.map((c, i) => (
           <div key={i} style={{
-            flex: '0 0 calc(100% - 2rem)',
+            flex: '0 0 75%',
             background: '#fff', borderRadius: '14px',
             padding: '1.25rem',
             boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
@@ -45,8 +45,9 @@ function MobileCards() {
               width: '40px', height: '40px', background: '#eff6ff',
               borderRadius: '10px', display: 'flex', alignItems: 'center',
               justifyContent: 'center', marginBottom: '10px',
+              fontSize: '20px',
             }}>
-              <i className={c.icon} style={{ fontSize: '20px', color: '#2563eb' }} />
+              {c.icon}
             </div>
             <div style={{ fontSize: '32px', fontWeight: 700, color: '#f0f0f0', lineHeight: 1, marginBottom: '6px', letterSpacing: '-0.05em' }}>{c.n}</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#111', marginBottom: '4px' }}>{c.t}</div>
