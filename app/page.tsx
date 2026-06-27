@@ -36,7 +36,7 @@ export default function Home() {
     timeoutRef.current = setTimeout(async () => {
       try {
         const res = await fetch(
-          'https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(query) + '&fields=nom&boost=population&limit=6'
+          'https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(query) + '&fields=nom&boost=population&limit=8'
         )
         const data = await res.json()
         const villes = data
@@ -235,7 +235,7 @@ export default function Home() {
                       onMouseEnter={e => (e.currentTarget.style.background = '#f8f9fc')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                     >
-                      <span style={{ fontWeight: 700, color: '#111' }}>{ville.slice(0, query.length)}</span><span style={{ color: '#555' }}>{ville.slice(query.length)}</span>
+                      <span><span style={{ fontWeight: 700, color: '#111' }}>{ville.slice(0, query.length)}</span><span style={{ color: '#555' }}>{ville.slice(query.length)}</span></span>
                       <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#bbb', fontFamily: '"DM Sans", sans-serif' }}>France</span>
                     </button>
                   ))}
