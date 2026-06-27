@@ -100,7 +100,7 @@ export default function Dashboard() {
         </div>
 
         {/* MAIN */}
-        <div style={{ flex: 1, padding: '2rem', minWidth: 0, maxWidth: '800px' }}>
+        <div style={{ flex: 1, padding: '2rem', minWidth: 0 }}>
           {activeTab === 'accueil' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
