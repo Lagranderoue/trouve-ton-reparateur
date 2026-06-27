@@ -377,6 +377,29 @@ export default function Home() {
         </div>
       )}
 
+      {/* CHIFFRES MOBILE */}
+      {isMobile && (
+        <div style={{ padding: '2rem 1.5rem', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
+          <div style={{ fontSize: '18px', fontWeight: 700, color: '#0f2d6b', marginBottom: '2rem', fontFamily: '"DM Sans", sans-serif' }}>
+            Trouve ton réparateur en chiffres
+          </div>
+          {[
+            { n: '+2 000', l: 'réparateurs certifiés et formés' },
+            { n: '+480 000', l: 'téléphones réparés' },
+            { n: '11 040', l: 'tonnes de CO₂ évitées grâce à la réparation' },
+          ].map((s, i, arr) => (
+            <div key={i} style={{
+              paddingBottom: i < arr.length - 1 ? '1.5rem' : 0,
+              marginBottom: i < arr.length - 1 ? '1.5rem' : 0,
+              borderBottom: i < arr.length - 1 ? '1px solid #f0f0f0' : 'none',
+            }}>
+              <div style={{ fontSize: '42px', fontWeight: 700, color: '#0f2d6b', letterSpacing: '-0.04em', lineHeight: 1, fontFamily: '"DM Sans", sans-serif' }}>{s.n}</div>
+              <div style={{ fontSize: '13px', color: '#666', marginTop: '6px', lineHeight: 1.4, fontFamily: '"DM Sans", sans-serif' }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* COMMENT CA MARCHE */}
       <section id="comment-ca-marche" style={{ padding: '2.5rem 2rem', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#999', marginBottom: '0.5rem', fontFamily: '"DM Sans", sans-serif' }}>
