@@ -103,7 +103,7 @@ export default function Home() {
           <span
             onClick={() => router.push('/')}
             style={{
-              fontSize: '17px', fontWeight: 600, color: '#ffffff',
+              fontSize: '20px', fontWeight: 700, color: '#ffffff',
               letterSpacing: '-0.01em', cursor: 'pointer',
               whiteSpace: 'nowrap', flexShrink: 0,
               fontFamily: '"DM Sans", sans-serif',
