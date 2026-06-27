@@ -19,6 +19,104 @@ const SERVICES_LIST = [
   'Carte mère', 'Châssis', 'Récupération de données', 'Autre'
 ]
 
+function PhotosTab({ reparateur }: { reparateur: any }) {
+  const [photos, setPhotos] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
+
+  useEffect(() => {
+    loadPhotos()
+  }, [])
+
+  const loadPhotos = async () => {
+    const { data } = await supabase.storage.from('photos').list(reparateur.id + '/')
+    if (data) {
+      const urls = data.map(f =>
+        supabase.storage.from('photos').getPublicUrl(reparateur.id + '/' + f.name).data.publicUrl
+      )
+      setPhotos(urls)
+    }
+  }
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return
+    setUploading(true)
+    const file = e.target.files[0]
+    const cleanName = file.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_')
+    const fileName = reparateur.id + '/' + Date.now() + '-' + cleanName
+    const { error } = await supabase.storage.from('photos').upload(fileName, file)
+    if (!error) await loadPhotos()
+    setUploading(false)
+  }
+
+  const handleDelete = async (url: string) => {
+    const path = url.split('/photos/')[1]
+    await supabase.storage.from('photos').remove([path])
+    await loadPhotos()
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mes photos</div>
+
+      <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Photos de ma boutique</div>
+            <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>Ces photos apparaîtront sur votre fiche publique</div>
+          </div>
+          <label style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            fontSize: '13px', fontWeight: 600, color: '#2563eb',
+            background: '#eff6ff', border: '1px solid #bfdbfe',
+            borderRadius: '8px', padding: '8px 16px', cursor: 'pointer',
+            fontFamily: '"DM Sans", sans-serif',
+          }}>
+            <IconPlus size={15} />
+            {uploading ? 'Upload...' : 'Ajouter une photo'}
+            <input type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
+          </label>
+        </div>
+
+        {photos.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '3rem 0' }}>
+            <IconPhoto size={48} color="#e0e0e0" style={{ marginBottom: '12px' }} />
+            <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucune photo pour le moment</div>
+            <div style={{ fontSize: '13px', color: '#888' }}>Ajoutez des photos de votre boutique pour attirer plus de clients</div>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            {photos.map((url, i) => (
+              <div key={i} style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', aspectRatio: '1' }}>
+                <img src={url} alt="photo boutique" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <button
+                  onClick={() => handleDelete(url)}
+                  style={{
+                    position: 'absolute', top: '8px', right: '8px',
+                    background: 'rgba(0,0,0,0.6)', color: '#fff',
+                    border: 'none', borderRadius: '6px', padding: '4px 8px',
+                    fontSize: '12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif',
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <label style={{
+              aspectRatio: '1', borderRadius: '10px', background: '#f8f9fc',
+              border: '2px dashed #e0e0e0', display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '8px',
+            }}>
+              <IconPlus size={28} color="#ccc" />
+              <span style={{ fontSize: '12px', color: '#bbb' }}>Ajouter</span>
+              <input type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
+            </label>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function ProfilTab({ reparateur, setReparateur }: { reparateur: any, setReparateur: any }) {
   const [form, setForm] = useState({
     nom: reparateur?.nom || '',
