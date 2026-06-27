@@ -13,6 +13,11 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
 const SERVICES_LIST = [
   'Écran cassé', 'Batterie', 'Connecteur de charge', 'Caméra',
   'Haut-parleur', 'Micro', 'Bouton', 'Vitre arrière',
@@ -296,7 +301,7 @@ export default function Dashboard() {
       const debutMois = new Date()
       debutMois.setDate(1)
       debutMois.setHours(0,0,0,0)
-      const { count: countVues, error: errVues } = await supabase
+      const { count: countVues, error: errVues } = await supabaseAdmin
         .from('vues')
         .select('*', { count: 'exact', head: true })
         .eq('reparateur_id', data.id)
@@ -305,7 +310,7 @@ export default function Dashboard() {
       setVuesMois(countVues || 0)
 
       // Nombre d'avis
-      const { count: countAvis } = await supabase
+      const { count: countAvis } = await supabaseAdmin
         .from('avis')
         .select('*', { count: 'exact', head: true })
         .eq('reparateur_id', data.id)
