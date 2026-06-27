@@ -403,28 +403,30 @@ export default function Home() {
       {/* COMMENT CA MARCHE */}
 
       {/* CTA RÉPARATEURS */}
-      <div className="cta-block" style={{
-        background: '#0a0a0a', margin: '0 1.5rem 2rem',
-        borderRadius: '16px', padding: '2.5rem 1.5rem', textAlign: 'center',
-      }}>
-        <h2 style={{ fontSize: '22px', fontWeight: 600, color: '#fff', marginBottom: '0.5rem', fontFamily: '"DM Sans", sans-serif' }}>
-          Tu repares des telephones ?
-        </h2>
-        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: '"DM Sans", sans-serif' }}>
-          Rejoins la plateforme gratuitement.<br />Sois visible, credible, trouve.
-        </p>
-        <button
-          onClick={() => router.push('/inscrire')}
-          style={{
-            background: '#fff', color: '#111', border: 'none',
-            borderRadius: '100px', padding: '11px 28px',
-            fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-            fontFamily: '"DM Sans", sans-serif',
-          }}
-        >
-          Inscrire ma boutique — c'est gratuit
-        </button>
-      </div>
+      {!isMobile && (
+        <div className="cta-block" style={{
+          background: '#0a0a0a', margin: '0 1.5rem 2rem',
+          borderRadius: '16px', padding: '2.5rem 1.5rem', textAlign: 'center',
+        }}>
+          <h2 style={{ fontSize: '22px', fontWeight: 600, color: '#fff', marginBottom: '0.5rem', fontFamily: '"DM Sans", sans-serif' }}>
+            Tu répares des téléphones ?
+          </h2>
+          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: '"DM Sans", sans-serif' }}>
+            Rejoins la plateforme gratuitement.<br />Sois visible, crédible, trouvé.
+          </p>
+          <button
+            onClick={() => router.push('/inscrire')}
+            style={{
+              background: '#fff', color: '#111', border: 'none',
+              borderRadius: '100px', padding: '11px 28px',
+              fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              fontFamily: '"DM Sans", sans-serif',
+            }}
+          >
+            Inscrire ma boutique — c'est gratuit
+          </button>
+        </div>
+      )}
 
       {/* FAQ */}
       <section style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1.5rem 3rem', width: '100%' }}>
