@@ -15,8 +15,8 @@ const supabase = createClient(
 
 const SERVICES_LIST = [
   'Écran cassé', 'Batterie', 'Connecteur de charge', 'Caméra',
-  'Haut-parleur', 'Micro', 'Bouton home', 'Vitre arrière',
-  'Carte mère', 'Déblocage', 'Récupération de données', 'Autre'
+  'Haut-parleur', 'Micro', 'Bouton', 'Vitre arrière',
+  'Carte mère', 'Châssis', 'Récupération de données', 'Autre'
 ]
 
 function ProfilTab({ reparateur, setReparateur }: { reparateur: any, setReparateur: any }) {
