@@ -296,26 +296,11 @@ export default function Dashboard() {
         setDeplacement(data.deplacement || false)
         setVisible(data.statut === 'approved')
       }
-      console.log('rep id:', data.id)
-      // Vues ce mois
-      const debutMois = new Date()
-      debutMois.setDate(1)
-      debutMois.setHours(0,0,0,0)
-      const { count: countVues, error: errVues } = await supabaseAdmin
-        .from('vues')
-        .select('*', { count: 'exact', head: true })
-        .eq('reparateur_id', data.id)
-        .gte('created_at', debutMois.toISOString())
-      console.log('vues count:', countVues, 'error:', errVues, 'debut mois:', debutMois.toISOString())
-      setVuesMois(countVues || 0)
-
-      // Nombre d'avis
-      const { count: countAvis } = await supabaseAdmin
-        .from('avis')
-        .select('*', { count: 'exact', head: true })
-        .eq('reparateur_id', data.id)
-        .eq('statut', 'approved')
-      setNbAvis(countAvis || 0)
+      // Stats via API route
+      const statsRes = await fetch('/api/stats?id=' + data.id)
+      const stats = await statsRes.json()
+      setVuesMois(stats.vuesMois || 0)
+      setNbAvis(stats.nbAvis || 0)
 
       setLoading(false)
     }
