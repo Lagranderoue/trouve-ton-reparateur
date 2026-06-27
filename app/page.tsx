@@ -277,26 +277,56 @@ export default function Home() {
         </div>
       </div>
 
-      {/* STATS */}
-      <div className="stats-grid" style={{
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-        borderBottom: '1px solid #ebebeb',
-      }}>
-        {[
-          { n: '+500', l: 'Réparateurs' },
-          { n: '4.8★', l: 'Note moyenne' },
-          { n: '100%', l: 'Gratuit' },
-          { n: '<2min', l: 'Pour trouver' },
-        ].map((s, i) => (
-          <div key={i} style={{
-            padding: '1.5rem', textAlign: 'center',
-            borderRight: i < 3 ? '1px solid #ebebeb' : 'none',
-          }}>
-            <div style={{ fontSize: '24px', fontWeight: 600, color: '#111', letterSpacing: '-0.03em', fontFamily: '"DM Sans", sans-serif' }}>{s.n}</div>
-            <div style={{ fontSize: '12px', color: '#999', marginTop: '2px', fontFamily: '"DM Sans", sans-serif' }}>{s.l}</div>
+      {/* STATS desktop / CARDS mobile */}
+      {!isMobile ? (
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+          borderBottom: '1px solid #ebebeb',
+        }}>
+          {[
+            { n: '+500', l: 'Réparateurs' },
+            { n: '4.8★', l: 'Note moyenne' },
+            { n: '100%', l: 'Gratuit' },
+            { n: '<2min', l: 'Pour trouver' },
+          ].map((s, i) => (
+            <div key={i} style={{
+              padding: '1.5rem', textAlign: 'center',
+              borderRight: i < 3 ? '1px solid #ebebeb' : 'none',
+            }}>
+              <div style={{ fontSize: '24px', fontWeight: 600, color: '#111', letterSpacing: '-0.03em', fontFamily: '"DM Sans", sans-serif' }}>{s.n}</div>
+              <div style={{ fontSize: '12px', color: '#999', marginTop: '2px', fontFamily: '"DM Sans", sans-serif' }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ padding: '1.25rem 1.25rem 0.5rem', background: '#f8f9fc' }}>
+          <div style={{ fontSize: '12px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, marginBottom: '0.75rem', fontFamily: '"DM Sans", sans-serif' }}>
+            Comment ça marche
           </div>
-        ))}
-      </div>
+          <div id="cards-scroll" style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollSnapType: 'x mandatory', paddingBottom: '6px' }}>
+            {[
+              { icon: '🔍', n: '1', t: 'Trouvez', d: 'Un réparateur certifié proche de chez vous' },
+              { icon: '📞', n: '2', t: 'Contactez', d: 'Direct et 100% gratuit' },
+              { icon: '🔧', n: '3', t: 'Réparez', d: 'Votre téléphone comme neuf' },
+            ].map((s, i) => (
+              <div key={i} style={{ flex: '0 0 200px', background: '#fff', borderRadius: '12px', padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', scrollSnapAlign: 'start' }}>
+                <div style={{ fontSize: '20px', color: '#2563eb', marginBottom: '6px', fontFamily: '"DM Sans", sans-serif' }}>{s.icon}</div>
+                <div style={{ fontSize: '28px', fontWeight: 700, color: '#f0f0f0', lineHeight: 1, marginBottom: '6px', fontFamily: '"DM Sans", sans-serif' }}>{s.n}</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#111', marginBottom: '4px', fontFamily: '"DM Sans", sans-serif' }}>{s.t}</div>
+                <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.5, fontFamily: '"DM Sans", sans-serif' }}>{s.d}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '5px', padding: '10px 0 4px' }} id="mobile-dots">
+            {[0,1,2].map(i => (
+              <div key={i} style={{ width: i === 0 ? '18px' : '6px', height: '6px', borderRadius: i === 0 ? '3px' : '50%', background: i === 0 ? '#2563eb' : '#e0e0e0', transition: 'all 0.25s' }} />
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', fontSize: '11px', color: '#bbb', paddingBottom: '4px', fontFamily: '"DM Sans", sans-serif' }}>
+            Glissez pour voir la suite →
+          </div>
+        </div>
+      )}
 
       {/* COMMENT CA MARCHE */}
       <section id="comment-ca-marche" style={{ padding: '2.5rem 2rem', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
