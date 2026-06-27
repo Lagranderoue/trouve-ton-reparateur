@@ -13,6 +13,151 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+const SERVICES_LIST = [
+  'Écran cassé', 'Batterie', 'Connecteur de charge', 'Caméra',
+  'Haut-parleur', 'Micro', 'Bouton home', 'Vitre arrière',
+  'Carte mère', 'Déblocage', 'Récupération de données', 'Autre'
+]
+
+function ProfilTab({ reparateur, setReparateur }: { reparateur: any, setReparateur: any }) {
+  const [form, setForm] = useState({
+    nom: reparateur?.nom || '',
+    telephone: reparateur?.telephone || '',
+    adresse: reparateur?.adresse || '',
+    description: reparateur?.description || '',
+    services: reparateur?.services || '',
+  })
+  const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState(false)
+
+  const selectedServices = form.services ? form.services.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+
+  const toggleService = (service: string) => {
+    const current = selectedServices
+    const updated = current.includes(service)
+      ? current.filter((s: string) => s !== service)
+      : [...current, service]
+    setForm({ ...form, services: updated.join(', ') })
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    const { data, error } = await supabase
+      .from('reparateurs')
+      .update({
+        nom: form.nom,
+        telephone: form.telephone,
+        adresse: form.adresse,
+        description: form.description,
+        services: form.services,
+      })
+      .eq('id', reparateur.id)
+      .select()
+      .single()
+
+    if (!error && data) {
+      setReparateur(data)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    }
+    setSaving(false)
+  }
+
+  const inputStyle = {
+    width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px',
+    padding: '10px 12px', fontSize: '14px', color: '#111',
+    background: '#fafafa', outline: 'none', fontFamily: '"DM Sans", sans-serif',
+    boxSizing: 'border-box' as const,
+  }
+
+  const labelStyle = {
+    fontSize: '11px', fontWeight: 700 as const, color: '#888',
+    textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: '5px', display: 'block' as const,
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mon profil</div>
+
+      {success && (
+        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 16px', fontSize: '14px', color: '#166534', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <IconCheck size={18} /> Profil mis à jour avec succès !
+        </div>
+      )}
+
+      {/* INFOS GÉNÉRALES */}
+      <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: '#111', marginBottom: '1.25rem' }}>Informations générales</div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div>
+            <label style={labelStyle}>Nom de la boutique</label>
+            <input style={inputStyle} value={form.nom} onChange={e => setForm({ ...form, nom: e.target.value })} placeholder="Nom de votre boutique" />
+          </div>
+          <div>
+            <label style={labelStyle}>Téléphone</label>
+            <input style={inputStyle} value={form.telephone} onChange={e => setForm({ ...form, telephone: e.target.value })} placeholder="06 XX XX XX XX" />
+          </div>
+          <div>
+            <label style={labelStyle}>Adresse</label>
+            <input style={inputStyle} value={form.adresse} onChange={e => setForm({ ...form, adresse: e.target.value })} placeholder="Votre adresse complète" />
+          </div>
+          <div>
+            <label style={labelStyle}>Description</label>
+            <textarea
+              style={{ ...inputStyle, minHeight: '100px', resize: 'vertical' }}
+              value={form.description}
+              onChange={e => setForm({ ...form, description: e.target.value })}
+              placeholder="Décrivez votre boutique, vos spécialités..."
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* SERVICES */}
+      <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: '#111', marginBottom: '1.25rem' }}>Mes services</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {SERVICES_LIST.map(service => {
+            const selected = selectedServices.includes(service)
+            return (
+              <div
+                key={service}
+                onClick={() => toggleService(service)}
+                style={{
+                  fontSize: '13px', fontWeight: 500, padding: '7px 14px',
+                  borderRadius: '100px', cursor: 'pointer', transition: 'all 0.15s',
+                  background: selected ? '#2563eb' : '#f5f5f5',
+                  color: selected ? '#fff' : '#555',
+                  border: `1px solid ${selected ? '#2563eb' : '#e0e0e0'}`,
+                }}
+              >
+                {service}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* BOUTON SAUVEGARDER */}
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        style={{
+          background: saving ? '#93c5fd' : '#0f2d6b',
+          color: '#fff', border: 'none', borderRadius: '10px',
+          padding: '14px', fontSize: '15px', fontWeight: 600,
+          cursor: saving ? 'not-allowed' : 'pointer',
+          fontFamily: '"DM Sans", sans-serif',
+          transition: 'background 0.15s',
+        }}
+      >
+        {saving ? 'Sauvegarde en cours...' : 'Sauvegarder les modifications →'}
+      </button>
+    </div>
+  )
+}
+
 export default function Dashboard() {
   const [reparateur, setReparateur] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -219,7 +364,11 @@ export default function Dashboard() {
             </div>
           )}
 
-          {activeTab !== 'accueil' && (
+          {activeTab === 'profil' && (
+            <ProfilTab reparateur={reparateur} setReparateur={setReparateur} />
+          )}
+
+          {activeTab !== 'accueil' && activeTab !== 'profil' && (
             <div>
               <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '1.5rem' }}>
                 {sidebarItems.find(i => i.id === activeTab)?.label}
