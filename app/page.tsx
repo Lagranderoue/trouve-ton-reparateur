@@ -371,7 +371,7 @@ export default function Home() {
       ) : (
         <div style={{ padding: '1.25rem 1.25rem 0.5rem', background: '#f8f9fc' }}>
           <div style={{ fontSize: '12px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, marginBottom: '0.75rem', fontFamily: '"DM Sans", sans-serif' }}>
-            Comment ça marche
+            Comment ça marche ?
           </div>
           <MobileCards />
         </div>
