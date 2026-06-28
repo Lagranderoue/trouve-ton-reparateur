@@ -459,7 +459,7 @@ export default function Dashboard() {
                       <div style={{ fontSize: '14px', fontWeight: 500, color: '#111' }}>{item.label}</div>
                       <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{item.desc}</div>
                     </div>
-                    <div onClick={() => item.set(!item.val)} style={{ width: '44px', height: '24px', background: item.val ? '#22c55e' : '#e0e0e0', borderRadius: '100px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0 }}>
+                    <div onClick={async () => { item.set(!item.val); if (item.label === 'Profil visible') { await supabase.from('reparateurs').update({ statut: !item.val ? 'approved' : 'hidden' }).eq('id', reparateur.id) } if (item.label === 'Déplacement à domicile') { await supabase.from('reparateurs').update({ deplacement: !item.val }).eq('id', reparateur.id) } }} style={{ width: '44px', height: '24px', background: item.val ? '#22c55e' : '#e0e0e0', borderRadius: '100px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0 }}>
                       <div style={{ width: '20px', height: '20px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '2px', left: item.val ? '22px' : '2px', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                     </div>
                   </div>
