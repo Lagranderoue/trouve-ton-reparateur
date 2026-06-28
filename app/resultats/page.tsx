@@ -124,8 +124,12 @@ export default async function Resultats({
         <div className="flex flex-col gap-3">
           {reparateurs.map((r) => (
             <a href={'/reparateur/' + r.id} key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-blue-200 transition-colors">
-              <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-sm font-medium text-blue-700 flex-shrink-0">
-                {r.nom?.charAt(0)}
+              <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-sm font-medium text-blue-700 flex-shrink-0 overflow-hidden">
+                {r.logo_url ? (
+                  <img src={r.logo_url} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  r.nom?.charAt(0)
+                )}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
