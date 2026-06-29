@@ -1,7 +1,6 @@
 import { supabase } from '../../../lib/supabase'
 import AvisForm from './AvisForm'
 import AvisList from './AvisList'
-import AvisBanner from './AvisBanner'
 
 export const dynamic = 'force-dynamic'
 
@@ -118,7 +117,6 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
         </div>
       </div>
     <section className="max-w-2xl mx-auto px-4 py-8">
-        <AvisBanner />
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-medium text-gray-900">Avis clients</h2>
           <AvisForm reparateurId={r.id} />

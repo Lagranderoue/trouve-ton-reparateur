@@ -6,7 +6,7 @@ import {
   IconHome, IconUser, IconPhoto, IconStar, IconStarFilled, IconClock, IconSettings,
   IconLogout, IconPencil, IconPlus, IconMapPin, IconPhone, IconMail,
   IconBuildingStore, IconCamera, IconEye, IconMessage, IconCheck,
-  IconShieldCheck, IconCircleCheck, IconClockHour4, IconX
+  IconShieldCheck, IconClockHour4, IconX
 } from '@tabler/icons-react'
 
 const supabase = createClient(
@@ -446,17 +446,9 @@ function AvisTab({ reparateur }: { reparateur: any }) {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '14px', fontWeight: 700, color: '#111' }}>{a.auteur}</span>
-                    {a.user_id ? (
+                    {a.user_id && (
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: '#eff6ff', color: '#2563eb', borderRadius: '100px', padding: '2px 8px' }}>
                         <IconShieldCheck size={12} /> Client vérifié
-                      </span>
-                    ) : a.email_verifie ? (
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: '#f5f5f5', color: '#666', borderRadius: '100px', padding: '2px 8px' }}>
-                        <IconCircleCheck size={12} /> Avis vérifié
-                      </span>
-                    ) : (
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: '#fef2f2', color: '#dc2626', borderRadius: '100px', padding: '2px 8px' }}>
-                        Email non confirmé
                       </span>
                     )}
                   </div>
