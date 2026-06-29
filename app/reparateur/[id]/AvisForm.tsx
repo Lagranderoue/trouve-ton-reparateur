@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '../../../lib/supabase.js'
 import { IconStarFilled, IconX, IconMail, IconUserCircle, IconCheck } from '@tabler/icons-react'
 
-type Step = 'closed' | 'choice' | 'invite' | 'compte' | 'merci' | 'merci-invite'
+type Step = 'closed' | 'choice' | 'invite-form' | 'compte-form' | 'merci' | 'merci-invite'
 
 export default function AvisForm({ reparateurId }: { reparateurId: string }) {
   const router = useRouter()
@@ -12,7 +12,6 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
 
   const [step, setStep] = useState<Step>('closed')
   const [user, setUser] = useState<any>(null)
-  const [checkingAuth, setCheckingAuth] = useState(true)
 
   const [prenom, setPrenom] = useState('')
   const [email, setEmail] = useState('')
@@ -21,33 +20,56 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Vérifie la session uniquement pour gérer le retour depuis /connexion (?avis=ouvrir).
+  // Le clic normal sur "Laisser un avis" affiche toujours l'écran de choix.
   useEffect(() => {
+    if (searchParams.get('avis') !== 'ouvrir') return
     supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
-      setCheckingAuth(false)
       if (data.user) {
+        setUser(data.user)
         setPrenom(data.user.user_metadata?.prenom || '')
-      }
-      if (searchParams.get('avis') === 'ouvrir') {
-        setStep(data.user ? 'compte' : 'choice')
+        setStep('compte-form')
+      } else {
+        setStep('choice')
       }
     })
   }, [])
 
   const resetForm = () => {
-    setPrenom(user?.user_metadata?.prenom || '')
+    setPrenom('')
     setEmail('')
     setNote(0)
     setCommentaire('')
     setError('')
   }
 
+  // Toujours l'écran de choix en premier, sans exception.
   const openModal = () => {
     resetForm()
-    setStep(user ? 'compte' : 'choice')
+    setStep('choice')
   }
 
   const closeModal = () => setStep('closed')
+
+  const goToConnexion = () => {
+    router.push('/connexion?redirect=' + encodeURIComponent('/reparateur/' + reparateurId))
+  }
+
+  const goToInviteForm = () => {
+    resetForm()
+    setStep('invite-form')
+  }
+
+  const goToCompteForm = async () => {
+    const { data } = await supabase.auth.getUser()
+    if (!data.user) {
+      goToConnexion()
+      return
+    }
+    setUser(data.user)
+    setPrenom(data.user.user_metadata?.prenom || '')
+    setStep('compte-form')
+  }
 
   const handleSubmitCompte = async () => {
     if (!prenom || !note || !commentaire || !user) return
@@ -63,7 +85,7 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
       email_verifie: true,
     })
     setLoading(false)
-    if (error) { setError("Une erreur est survenue, veuillez réessayer."); return }
+    if (error) { setError('Une erreur est survenue, veuillez réessayer.'); return }
     setStep('merci')
   }
 
@@ -87,7 +109,7 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
 
     if (insertError) {
       setLoading(false)
-      setError("Une erreur est survenue, veuillez réessayer.")
+      setError('Une erreur est survenue, veuillez réessayer.')
       return
     }
 
@@ -106,7 +128,7 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
       <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-2">Note</label>
       <div className="flex gap-2">
         {[1, 2, 3, 4, 5].map(i => (
-          <button key={i} onClick={() => setNote(i)} className={`transition-transform ${note >= i ? 'scale-110 text-yellow-400' : 'text-gray-200'}`}>
+          <button key={i} type="button" onClick={() => setNote(i)} className={`transition-transform ${note >= i ? 'scale-110 text-yellow-400' : 'text-gray-200'}`}>
             <IconStarFilled size={26} />
           </button>
         ))}
@@ -114,11 +136,10 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
     </div>
   )
 
-  if (checkingAuth) return null
-
   return (
     <>
       <button
+        type="button"
         onClick={openModal}
         className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors"
       >
@@ -128,23 +149,28 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
       {step !== 'closed' && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={closeModal}>
           <div className="bg-white rounded-2xl max-w-md w-full p-6 relative" onClick={e => e.stopPropagation()}>
-            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button type="button" onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
               <IconX size={20} />
             </button>
 
+            {/* ÉCRAN DE CHOIX */}
             {step === 'choice' && (
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">Laisser un avis</h3>
-                <p className="text-sm text-gray-500 mb-6">Connectez-vous ou continuez en tant qu'invité.</p>
+                <p className="text-sm text-gray-500 mb-6">Comment souhaitez-vous procéder ?</p>
+
                 <button
-                  onClick={() => router.push('/connexion?redirect=' + encodeURIComponent('/reparateur/' + reparateurId))}
+                  type="button"
+                  onClick={goToCompteForm}
                   className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium mb-3"
                 >
                   <IconUserCircle size={18} />
                   Se connecter / Créer un compte
                 </button>
+
                 <button
-                  onClick={() => { resetForm(); setStep('invite') }}
+                  type="button"
+                  onClick={goToInviteForm}
                   className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-700 py-3 rounded-xl text-sm font-medium"
                 >
                   <IconMail size={18} />
@@ -153,13 +179,12 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
               </div>
             )}
 
-            {(step === 'invite' || step === 'compte') && (
+            {/* FORMULAIRE INVITÉ — email obligatoire */}
+            {step === 'invite-form' && (
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Votre avis</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Votre avis (invité)</h3>
 
-                {error && (
-                  <div className="bg-red-50 text-red-600 text-sm rounded-lg px-3 py-2 mb-4">{error}</div>
-                )}
+                {error && <div className="bg-red-50 text-red-600 text-sm rounded-lg px-3 py-2 mb-4">{error}</div>}
 
                 <div className="mb-4">
                   <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Votre prénom</label>
@@ -172,19 +197,18 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
                   />
                 </div>
 
-                {step === 'invite' && (
-                  <div className="mb-4">
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Votre email</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      placeholder="vous@exemple.com"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
-                    />
-                    <p className="text-xs text-gray-400 mt-1">Un email de confirmation vous sera envoyé pour valider votre avis.</p>
-                  </div>
-                )}
+                <div className="mb-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Votre email <span className="text-red-500">*</span></label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="vous@exemple.com"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Obligatoire : un email de confirmation vous sera envoyé. Sans clic sur le lien, votre avis ne sera pas publié.</p>
+                </div>
 
                 {starInput}
 
@@ -200,10 +224,55 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
                 </div>
 
                 <button
-                  onClick={step === 'compte' ? handleSubmitCompte : handleSubmitInvite}
-                  disabled={
-                    loading || !prenom || !note || !commentaire || (step === 'invite' && !email)
-                  }
+                  type="button"
+                  onClick={handleSubmitInvite}
+                  disabled={loading || !prenom || !email || !note || !commentaire}
+                  className="w-full bg-blue-600 text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
+                >
+                  {loading ? 'Envoi...' : 'Envoyer mon avis'}
+                </button>
+
+                <button type="button" onClick={() => setStep('choice')} className="w-full text-center text-xs text-gray-400 mt-3">
+                  ← Retour
+                </button>
+              </div>
+            )}
+
+            {/* FORMULAIRE COMPTE — pas d'email, soumis directement en pending */}
+            {step === 'compte-form' && (
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Votre avis</h3>
+
+                {error && <div className="bg-red-50 text-red-600 text-sm rounded-lg px-3 py-2 mb-4">{error}</div>}
+
+                <div className="mb-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Votre prénom</label>
+                  <input
+                    type="text"
+                    value={prenom}
+                    onChange={e => setPrenom(e.target.value)}
+                    placeholder="Ex: Marie"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                  />
+                </div>
+
+                {starInput}
+
+                <div className="mb-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Commentaire</label>
+                  <textarea
+                    value={commentaire}
+                    onChange={e => setCommentaire(e.target.value)}
+                    placeholder="Décrivez votre expérience..."
+                    rows={3}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none resize-none"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSubmitCompte}
+                  disabled={loading || !prenom || !note || !commentaire}
                   className="w-full bg-blue-600 text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
                 >
                   {loading ? 'Envoi...' : 'Envoyer mon avis'}
@@ -227,7 +296,7 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
                   <IconMail size={24} />
                 </div>
                 <h3 className="text-base font-medium text-gray-900 mb-1">Vérifiez votre boîte mail</h3>
-                <p className="text-sm text-gray-500">Cliquez sur le lien reçu par email pour confirmer votre avis. Il sera ensuite publié après validation par notre équipe.</p>
+                <p className="text-sm text-gray-500">Cliquez sur le lien reçu par email pour confirmer votre avis. Sans cette confirmation, il ne sera jamais publié.</p>
               </div>
             )}
           </div>
