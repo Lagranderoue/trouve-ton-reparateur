@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import {
-  IconHome, IconUser, IconPhoto, IconStar, IconClock, IconSettings,
+  IconHome, IconUser, IconPhoto, IconStar, IconStarFilled, IconClock, IconSettings,
   IconLogout, IconPencil, IconPlus, IconMapPin, IconPhone, IconMail,
-  IconBuildingStore, IconCamera, IconEye, IconMessage, IconCheck
+  IconBuildingStore, IconCamera, IconEye, IconMessage, IconCheck,
+  IconShieldCheck, IconCircleCheck, IconClockHour4, IconX
 } from '@tabler/icons-react'
 
 const supabase = createClient(
@@ -373,6 +374,110 @@ function ProfilTab({ reparateur, setReparateur }: { reparateur: any, setReparate
   )
 }
 
+function AvisTab({ reparateur }: { reparateur: any }) {
+  const [avis, setAvis] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filtre, setFiltre] = useState<'tous' | 'pending' | 'approved' | 'rejected'>('tous')
+
+  useEffect(() => {
+    if (!reparateur?.id) return
+    const load = async () => {
+      const res = await fetch('/api/avis-reparateur?id=' + reparateur.id)
+      const data = await res.json()
+      setAvis(data.avis || [])
+      setLoading(false)
+    }
+    load()
+  }, [reparateur?.id])
+
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+
+  const avisFiltres = filtre === 'tous' ? avis : avis.filter(a => a.statut === filtre)
+
+  const statutBadge = (statut: string) => {
+    if (statut === 'approved') return { label: 'Approuvé', bg: '#f0fdf4', color: '#166534', icon: <IconCheck size={12} /> }
+    if (statut === 'rejected') return { label: 'Rejeté', bg: '#fef2f2', color: '#dc2626', icon: <IconX size={12} /> }
+    return { label: 'En attente', bg: '#fefce8', color: '#ca8a04', icon: <IconClockHour4 size={12} /> }
+  }
+
+  const filtres: { id: typeof filtre, label: string }[] = [
+    { id: 'tous', label: 'Tous' },
+    { id: 'pending', label: 'En attente' },
+    { id: 'approved', label: 'Approuvés' },
+    { id: 'rejected', label: 'Rejetés' },
+  ]
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mes avis</div>
+
+      <div style={{ display: 'flex', gap: '6px' }}>
+        {filtres.map(f => (
+          <div
+            key={f.id}
+            onClick={() => setFiltre(f.id)}
+            style={{
+              fontSize: '12px', fontWeight: 600, padding: '7px 14px', borderRadius: '100px', cursor: 'pointer',
+              background: filtre === f.id ? '#2563eb' : '#fff',
+              color: filtre === f.id ? '#fff' : '#555',
+              border: `1px solid ${filtre === f.id ? '#2563eb' : '#e8eaf0'}`,
+            }}
+          >
+            {f.label}
+          </div>
+        ))}
+      </div>
+
+      {loading ? (
+        <div style={{ fontSize: '13px', color: '#888', textAlign: 'center', padding: '2rem 0' }}>Chargement...</div>
+      ) : avisFiltres.length === 0 ? (
+        <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+          <IconStar size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
+          <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucun avis pour le moment</div>
+          <div style={{ fontSize: '13px', color: '#888' }}>Les avis laissés par vos clients apparaîtront ici.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {avisFiltres.map(a => {
+            const badge = statutBadge(a.statut)
+            return (
+              <div key={a.id} style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#111' }}>{a.auteur}</span>
+                    {a.user_id ? (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: '#eff6ff', color: '#2563eb', borderRadius: '100px', padding: '2px 8px' }}>
+                        <IconShieldCheck size={12} /> Client vérifié
+                      </span>
+                    ) : a.email_verifie ? (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: '#f5f5f5', color: '#666', borderRadius: '100px', padding: '2px 8px' }}>
+                        <IconCircleCheck size={12} /> Avis vérifié
+                      </span>
+                    ) : (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: '#fef2f2', color: '#dc2626', borderRadius: '100px', padding: '2px 8px' }}>
+                        Email non confirmé
+                      </span>
+                    )}
+                  </div>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: badge.bg, color: badge.color, borderRadius: '100px', padding: '3px 10px' }}>
+                    {badge.icon} {badge.label}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', color: '#facc15', marginBottom: '8px' }}>
+                  {Array.from({ length: a.note || 0 }).map((_, i) => <IconStarFilled key={i} size={14} />)}
+                </div>
+                <p style={{ fontSize: '13px', color: '#444', lineHeight: 1.5, marginBottom: '8px' }}>{a.commentaire}</p>
+                <p style={{ fontSize: '11px', color: '#aaa' }}>{formatDate(a.created_at)}</p>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Dashboard() {
   const [reparateur, setReparateur] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -627,7 +732,11 @@ export default function Dashboard() {
             <HorairesTab reparateur={reparateur} setReparateur={setReparateur} />
           )}
 
-          {activeTab !== 'accueil' && activeTab !== 'profil' && activeTab !== 'horaires' && activeTab !== 'photos' && (
+          {activeTab === 'avis' && (
+            <AvisTab reparateur={reparateur} />
+          )}
+
+          {activeTab !== 'accueil' && activeTab !== 'profil' && activeTab !== 'horaires' && activeTab !== 'photos' && activeTab !== 'avis' && (
             <div>
               <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '1.5rem' }}>
                 {sidebarItems.find(i => i.id === activeTab)?.label}
