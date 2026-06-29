@@ -24,6 +24,114 @@ const SERVICES_LIST = [
   'Carte mère', 'Châssis', 'Récupération de données', 'Autre'
 ]
 
+const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
+
+function HorairesTab({ reparateur, setReparateur }: { reparateur: any, setReparateur: any }) {
+  const parseHoraires = () => {
+    const result: Record<string, { ouvert: boolean, ouverture: string, fermeture: string }> = {}
+    JOURS.forEach(j => { result[j] = { ouvert: false, ouverture: '09:00', fermeture: '19:00' } })
+    if (reparateur?.horaires) {
+      reparateur.horaires.split('|').forEach((h: string) => {
+        const parts = h.split(':')
+        if (parts.length >= 2) {
+          const jour = parts[0].trim()
+          const horaire = parts.slice(1).join(':').trim()
+          if (jour && result[jour] !== undefined) {
+            if (horaire === 'Fermé') {
+              result[jour] = { ouvert: false, ouverture: '09:00', fermeture: '19:00' }
+            } else {
+              const times = horaire.split(' - ')
+              result[jour] = { ouvert: true, ouverture: times[0] || '09:00', fermeture: times[1] || '19:00' }
+            }
+          }
+        }
+      })
+    }
+    return result
+  }
+
+  const [horaires, setHoraires] = useState(parseHoraires())
+  const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState(false)
+
+  const handleSave = async () => {
+    setSaving(true)
+    const horaireStr = JOURS.map(j => {
+      const h = horaires[j]
+      return h.ouvert ? `${j}: ${h.ouverture} - ${h.fermeture}` : `${j}: Fermé`
+    }).join('|')
+
+    const { data, error } = await supabase
+      .from('reparateurs')
+      .update({ horaires: horaireStr })
+      .eq('id', reparateur.id)
+      .select()
+      .single()
+
+    if (!error && data) {
+      setReparateur(data)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    }
+    setSaving(false)
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mes horaires</div>
+
+      {success && (
+        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 16px', fontSize: '14px', color: '#166534', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <IconCheck size={18} /> Horaires mis à jour avec succès !
+        </div>
+      )}
+
+      <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: '#111', marginBottom: '1.25rem' }}>Horaires d'ouverture</div>
+
+        {JOURS.map(jour => (
+          <div key={jour} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: '1px solid #f5f5f5' }}>
+            <div style={{ width: '90px', fontSize: '13px', fontWeight: 600, color: '#111', flexShrink: 0 }}>{jour}</div>
+            <div
+              onClick={() => setHoraires({ ...horaires, [jour]: { ...horaires[jour], ouvert: !horaires[jour].ouvert } })}
+              style={{ width: '40px', height: '22px', background: horaires[jour].ouvert ? '#22c55e' : '#e0e0e0', borderRadius: '100px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0 }}
+            >
+              <div style={{ width: '18px', height: '18px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '2px', left: horaires[jour].ouvert ? '20px' : '2px', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+            </div>
+            {horaires[jour].ouvert ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                <input
+                  type="time"
+                  value={horaires[jour].ouverture}
+                  onChange={e => setHoraires({ ...horaires, [jour]: { ...horaires[jour], ouverture: e.target.value } })}
+                  style={{ border: '1px solid #e0e0e0', borderRadius: '6px', padding: '6px 10px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none' }}
+                />
+                <span style={{ fontSize: '13px', color: '#888' }}>—</span>
+                <input
+                  type="time"
+                  value={horaires[jour].fermeture}
+                  onChange={e => setHoraires({ ...horaires, [jour]: { ...horaires[jour], fermeture: e.target.value } })}
+                  style={{ border: '1px solid #e0e0e0', borderRadius: '6px', padding: '6px 10px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none' }}
+                />
+              </div>
+            ) : (
+              <div style={{ fontSize: '13px', color: '#bbb', fontStyle: 'italic' }}>Fermé</div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        style={{ background: saving ? '#93c5fd' : '#0f2d6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '14px', fontSize: '15px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', fontFamily: '"DM Sans", sans-serif' }}
+      >
+        {saving ? 'Sauvegarde...' : 'Sauvegarder les horaires →'}
+      </button>
+    </div>
+  )
+}
+
 function PhotosTab({ reparateur }: { reparateur: any }) {
   const [photos, setPhotos] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
@@ -515,7 +623,11 @@ export default function Dashboard() {
             <ProfilTab reparateur={reparateur} setReparateur={setReparateur} />
           )}
 
-          {activeTab !== 'accueil' && activeTab !== 'profil' && (
+          {activeTab === 'horaires' && (
+            <HorairesTab reparateur={reparateur} setReparateur={setReparateur} />
+          )}
+
+          {activeTab !== 'accueil' && activeTab !== 'profil' && activeTab !== 'horaires' && activeTab !== 'photos' && (
             <div>
               <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '1.5rem' }}>
                 {sidebarItems.find(i => i.id === activeTab)?.label}
