@@ -29,6 +29,10 @@ function ConnexionContent() {
   }
 
   const handleSignup = async () => {
+    if (password.length < 6) {
+      setError('Le mot de passe doit contenir au moins 6 caractères.')
+      return
+    }
     setLoading(true)
     setError('')
     const { data, error } = await supabase.auth.signUp({
@@ -39,10 +43,13 @@ function ConnexionContent() {
     setLoading(false)
     if (error) { setError(error.message); return }
     if (data.session) {
+      // Supabase sans confirmation email — connexion directe
       router.push(target)
     } else {
-      setInfo('Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse, puis connectez-vous.')
+      // Supabase avec confirmation email activée
+      setInfo('Compte créé ! Un email de confirmation a été envoyé à ' + email + '. Cliquez sur le lien, puis revenez vous connecter ici.')
       setTab('login')
+      setPassword('')
     }
   }
 

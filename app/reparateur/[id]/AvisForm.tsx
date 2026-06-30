@@ -86,22 +86,23 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
     setLoading(true)
     setError('')
     const token = crypto.randomUUID()
-    const { error: insertError } = await supabase.from('avis').insert({
-      reparateur_id: reparateurId,
-      prenom,
-      email,
-      token,
-      note,
-      commentaire,
-      statut: 'pending',
-      email_verifie: false,
-    })
-    if (insertError) { setLoading(false); setError('Une erreur est survenue.'); return }
-    await fetch('/api/envoyer-confirmation-avis', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, token, prenom }),
-    })
+    try {
+      const res = await fetch('/api/soumettre-avis-invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prenom, email, token, note, commentaire, reparateur_id: reparateurId }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        setError(json.error || 'Erreur ' + res.status)
+        setLoading(false)
+        return
+      }
+    } catch (e: any) {
+      setError('Erreur réseau : ' + e.message)
+      setLoading(false)
+      return
+    }
     setLoading(false)
     setEtape('merci-invite')
   }
