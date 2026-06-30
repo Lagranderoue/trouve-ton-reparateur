@@ -395,6 +395,15 @@ function AvisTab({ reparateur }: { reparateur: any }) {
 
   const avisFiltres = filtre === 'tous' ? avis : avis.filter(a => a.statut === filtre)
 
+  const modererAvis = async (avisId: string, statut: 'approved' | 'rejected') => {
+    await fetch('/api/moderer-avis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ avisId, statut }),
+    })
+    setAvis(prev => prev.map(a => a.id === avisId ? { ...a, statut } : a))
+  }
+
   const statutBadge = (statut: string) => {
     if (statut === 'approved') return { label: 'Approuvé', bg: '#f0fdf4', color: '#166534', icon: <IconCheck size={12} /> }
     if (statut === 'rejected') return { label: 'Rejeté', bg: '#fef2f2', color: '#dc2626', icon: <IconX size={12} /> }
@@ -445,7 +454,7 @@ function AvisTab({ reparateur }: { reparateur: any }) {
               <div key={a.id} style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#111' }}>{a.auteur}</span>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#111' }}>{a.prenom}</span>
                     {a.user_id && (
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600, background: '#eff6ff', color: '#2563eb', borderRadius: '100px', padding: '2px 8px' }}>
                         <IconShieldCheck size={12} /> Client vérifié
@@ -460,7 +469,23 @@ function AvisTab({ reparateur }: { reparateur: any }) {
                   {Array.from({ length: a.note || 0 }).map((_, i) => <IconStarFilled key={i} size={14} />)}
                 </div>
                 <p style={{ fontSize: '13px', color: '#444', lineHeight: 1.5, marginBottom: '8px' }}>{a.commentaire}</p>
-                <p style={{ fontSize: '11px', color: '#aaa' }}>{formatDate(a.created_at)}</p>
+                <p style={{ fontSize: '11px', color: '#aaa', marginBottom: a.statut === 'pending' ? '12px' : '0' }}>{formatDate(a.created_at)}</p>
+                {a.statut === 'pending' && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={() => modererAvis(a.id, 'approved')}
+                      style={{ flex: 1, background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '7px 0', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}
+                    >
+                      Approuver
+                    </button>
+                    <button
+                      onClick={() => modererAvis(a.id, 'rejected')}
+                      style={{ flex: 1, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '8px', padding: '7px 0', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}
+                    >
+                      Rejeter
+                    </button>
+                  </div>
+                )}
               </div>
             )
           })}

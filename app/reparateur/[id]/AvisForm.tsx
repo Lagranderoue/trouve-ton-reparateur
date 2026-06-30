@@ -71,7 +71,7 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
     const { error } = await supabase.from('avis').insert({
       reparateur_id: reparateurId,
       user_id: user.id,
-      auteur: user.user_metadata?.prenom || user.email?.split('@')[0] || 'Client',
+      prenom: user.user_metadata?.prenom || user.email?.split('@')[0] || 'Client',
       note,
       commentaire,
       statut: 'pending',
@@ -88,7 +88,7 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
     const token = crypto.randomUUID()
     const { error: insertError } = await supabase.from('avis').insert({
       reparateur_id: reparateurId,
-      auteur: prenom,
+      prenom,
       email,
       token,
       note,

@@ -37,7 +37,7 @@ export default function AvisList({ reparateurId }: { reparateurId: string }) {
               <div key={a.id} className="bg-white border border-gray-200 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm text-gray-800">{a.auteur}</span>
+                    <span className="font-medium text-sm text-gray-800">{a.prenom}</span>
                     {a.user_id ? (
                       <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">
                         <IconShieldCheck size={12} /> Client vérifié
