@@ -180,11 +180,10 @@ export default function Home() {
           <span
             onClick={() => router.push('/')}
             style={{
-              fontSize: isMobile ? '14px' : '20px', fontWeight: 700, color: '#ffffff',
+              fontSize: isMobile ? '11px' : '20px', fontWeight: 700, color: '#ffffff',
               letterSpacing: '-0.01em', cursor: 'pointer',
               whiteSpace: 'nowrap', flexShrink: 0,
               fontFamily: '"DM Sans", sans-serif',
-              fontSize: isMobile ? '11px' : undefined,
             }}
           >
             {isMobile ? 'Trouve ton répar.' : 'Trouve ton réparateur'}
@@ -243,7 +242,6 @@ export default function Home() {
                 border: '1.5px solid rgba(255,255,255,0.65)',
                 padding: isMobile ? '5px 9px' : '8px 18px', borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                display: 'block',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
