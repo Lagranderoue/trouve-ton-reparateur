@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import {
@@ -13,7 +13,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function MonCompte() {
+function MonCompteInner() {
   const [user, setUser] = useState<any>(null)
   const [client, setClient] = useState<any>(null)
   const [avis, setAvis] = useState<any[]>([])
@@ -210,6 +210,14 @@ export default function MonCompte() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function MonCompte() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"DM Sans", sans-serif', color: '#888' }}>Chargement...</div>}>
+      <MonCompteInner />
+    </Suspense>
   )
 }
 
