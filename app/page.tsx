@@ -211,14 +211,21 @@ export default function Home() {
               onClick={() => router.push('/mon-compte')}
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: isMobile ? '12px' : '14px', fontWeight: 500,
+                fontSize: isMobile ? '12px' : '15px', fontWeight: 600,
                 color: '#ffffff',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
+                background: 'rgba(255,255,255,0.12)',
+                border: '1.5px solid rgba(255,255,255,0.65)',
+                padding: isMobile ? '6px 12px' : '8px 18px',
+                borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                textDecoration: 'underline',
-                opacity: 0.85,
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.9)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.65)'
               }}
             >
               Espace client
