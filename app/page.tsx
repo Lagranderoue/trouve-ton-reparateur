@@ -208,6 +208,22 @@ export default function Home() {
               Comment ça marche ?
             </button>
             <button
+              onClick={() => router.push('/mon-compte')}
+              style={{
+                fontFamily: '"DM Sans", sans-serif',
+                fontSize: isMobile ? '12px' : '14px', fontWeight: 500,
+                color: '#ffffff',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                textDecoration: 'underline',
+                opacity: 0.85,
+              }}
+            >
+              Espace client
+            </button>
+            <button
               onClick={() => router.push('/inscrire')}
               className="nav-reparateur-btn"
               style={{
