@@ -44,9 +44,14 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
         <a href="/" className="text-base font-medium">
           Trouve ton <span className="text-blue-600">réparateur</span>
         </a>
-        <a href="/inscrire" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
-          Inscrire ma boutique
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <a href="/mon-compte" className="text-sm font-medium" style={{ color: '#2563eb' }}>
+            Espace client
+          </a>
+          <a href="/inscrire" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
+            Inscrire ma boutique
+          </a>
+        </div>
       </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-8">

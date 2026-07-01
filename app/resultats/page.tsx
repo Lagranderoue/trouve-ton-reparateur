@@ -98,6 +98,7 @@ export default async function Resultats({
         <a href="/" className="text-base font-medium">
           Trouve ton <span className="text-blue-600">réparateur</span>
         </a>
+        <a href="/mon-compte" style={{ fontSize: "13px", fontWeight: 500, color: "#2563eb", marginRight: "10px" }}>Espace client</a>
         <a href="/inscrire" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
           Inscrire ma boutique
         </a>
