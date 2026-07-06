@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     .from('avis')
     .select('*, reparateurs(nom)')
     .eq('user_id', userId)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false, nullsFirst: false })
 
   const avis = (avisData || []).map((a: any) => ({
     ...a,
