@@ -235,8 +235,7 @@ export default function Home() {
               className="nav-reparateur-btn"
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                display: isMobile ? 'none' : 'block',
-                fontSize: isMobile ? '10px' : '15px', fontWeight: 600,
+                fontSize: isMobile ? '11px' : '15px', fontWeight: 600,
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
