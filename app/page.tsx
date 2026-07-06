@@ -211,7 +211,7 @@ export default function Home() {
               onClick={() => router.push('/mon-compte')}
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: '13px', fontWeight: 600,
+                fontSize: isMobile ? '11px' : '13px', fontWeight: 600,
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
