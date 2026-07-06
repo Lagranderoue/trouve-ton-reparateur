@@ -228,7 +228,7 @@ export default function Home() {
                 e.currentTarget.style.borderColor = 'rgba(255,255,255,0.65)'
               }}
             >
-              Espace client
+              {isMobile ? 'Client' : 'Espace client'}
             </button>
             <button
               onClick={() => router.push('/inscrire')}
@@ -239,7 +239,7 @@ export default function Home() {
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
-                padding: isMobile ? '5px 9px' : '8px 18px', borderRadius: '100px', cursor: 'pointer',
+                padding: isMobile ? '6px 10px' : '8px 18px', borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
               onMouseEnter={e => {
@@ -259,7 +259,7 @@ export default function Home() {
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
-              Vous êtes réparateur ?
+              {isMobile ? 'Réparateur' : 'Vous êtes réparateur ?'}
             </button>
           </div>
         </nav>
