@@ -258,7 +258,7 @@ export default function Home() {
               )}
             </button>
             <button
-              onClick={() => router.push('/inscrire')}
+              onClick={() => router.push('/espace-reparateur')}
               className="nav-reparateur-btn"
               style={{
                 fontFamily: '"DM Sans", sans-serif',
