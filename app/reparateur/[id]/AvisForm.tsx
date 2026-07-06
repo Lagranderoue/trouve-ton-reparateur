@@ -35,13 +35,20 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
     })
   }, [])
 
-  const openChoix = () => {
-    setEtape('choix')
+  const openChoix = async () => {
     setNote(0)
     setCommentaire('')
     setPrenom('')
     setEmail('')
     setError('')
+    // Si déjà connecté → formulaire direct
+    const { data } = await supabase.auth.getUser()
+    if (data.user) {
+      setUser(data.user)
+      setEtape('compte-form')
+    } else {
+      setEtape('choix')
+    }
     setOpen(true)
   }
 
