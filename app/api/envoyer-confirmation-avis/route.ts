@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   if (!email || !token) return NextResponse.json({ error: 'Missing params' }, { status: 400 })
   const lien = 'https://trouvetonreparateur.com/api/valider-avis?token=' + encodeURIComponent(token)
   await resend.emails.send({
-    from: 'onboarding@resend.dev',
+    from: 'Trouve ton réparateur <noreply@trouvetonreparateur.com>',
     to: email,
     subject: 'Confirmez votre avis — Trouve ton réparateur',
     html:
