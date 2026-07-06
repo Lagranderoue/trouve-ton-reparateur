@@ -35,7 +35,7 @@ function MonCompteInner() {
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/connexion?redirect=/mon-compte'); return }
+      if (!user) { router.replace('/connexion?redirect=/mon-compte'); return }
       setUser(user)
 
       const { data: clientData } = await supabase.from('clients').select('*').eq('id', user.id).single()
