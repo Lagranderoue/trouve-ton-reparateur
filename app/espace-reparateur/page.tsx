@@ -33,7 +33,11 @@ export default function EspaceReparateur() {
     setError('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
-      setError('Email ou mot de passe incorrect.')
+      if (error.message.includes('Invalid') || error.message.includes('invalid') || error.message.includes('not found') || error.message.includes('deleted') || error.message.includes('Email not confirmed')) {
+        setError('COMPTE_DESACTIVE')
+      } else {
+        setError('Email ou mot de passe incorrect.')
+      }
       setLoading(false)
     } else {
       router.push('/espace-reparateur/dashboard')
@@ -68,6 +72,25 @@ export default function EspaceReparateur() {
     marginBottom: '5px', textTransform: 'uppercase' as const,
     letterSpacing: '0.04em', display: 'block' as const,
   }
+
+  if (error === 'COMPTE_DESACTIVE') return (
+    <main style={{ minHeight: '100vh', background: '#f4f6fb', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: '"DM Sans", sans-serif', padding: '1rem' }}>
+      <div style={{ background: '#fff', borderRadius: '16px', padding: '2.5rem', width: '100%', maxWidth: '440px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', textAlign: 'center' }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div style={{ fontSize: '18px', fontWeight: 700, color: '#111', marginBottom: '8px' }}>Compte désactivé</div>
+        <div style={{ fontSize: '13px', color: '#888', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+          Votre compte réparateur a été désactivé par notre équipe.<br /><br />
+          Si vous pensez qu'il s'agit d'une erreur ou souhaitez plus d'informations, contactez-nous.
+        </div>
+        <a href="mailto:contact@trouvetonreparateur.com" style={{ display: 'block', background: '#0f2d6b', color: '#fff', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, textDecoration: 'none', marginBottom: '10px' }}>
+          Contacter le support
+        </a>
+        <div onClick={() => router.push('/')} style={{ fontSize: '13px', color: '#2563eb', cursor: 'pointer', fontWeight: 500 }}>← Retour à l'accueil</div>
+      </div>
+    </main>
+  )
 
   return (
     <main style={{ minHeight: '100vh', background: '#f4f6fb', display: 'flex', flexDirection: 'column', fontFamily: '"DM Sans", sans-serif' }}>
