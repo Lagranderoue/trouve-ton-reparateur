@@ -180,13 +180,13 @@ export default function Home() {
           <span
             onClick={() => router.push('/')}
             style={{
-              fontSize: isMobile ? '11px' : '20px', fontWeight: 700, color: '#ffffff',
+              fontSize: isMobile ? '13px' : '20px', fontWeight: 700, color: '#ffffff',
               letterSpacing: '-0.01em', cursor: 'pointer',
               whiteSpace: 'nowrap', flexShrink: 0,
               fontFamily: '"DM Sans", sans-serif',
             }}
           >
-            {isMobile ? 'Trouve ton répar.' : 'Trouve ton réparateur'}
+            Trouve ton réparateur
           </span>
           <div style={{ flex: 1 }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px', flexShrink: 0 }}>
@@ -211,11 +211,11 @@ export default function Home() {
               onClick={() => router.push('/mon-compte')}
               style={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontSize: isMobile ? '10px' : '15px', fontWeight: 600,
+                fontSize: '13px', fontWeight: 600,
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
-                padding: isMobile ? '5px 9px' : '8px 18px',
+                padding: '7px 14px',
                 borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
