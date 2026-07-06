@@ -90,8 +90,35 @@ function MonCompteInner() {
         </div>
       </nav>
 
+      {/* Navigation mobile en bas */}
+      <div style={{ display: 'none' }} className="mobile-nav-bottom" />
+      <style>{`
+        @media (max-width: 768px) {
+          .sidebar-desktop { display: none !important; }
+          .main-content-area { padding: 1rem !important; padding-bottom: 80px !important; }
+          .mobile-bottom-nav { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+          .mobile-bottom-nav { display: none !important; }
+        }
+      `}</style>
+
+      {/* Nav mobile bas */}
+      <div className="mobile-bottom-nav" style={{ display: 'none', position: 'fixed', bottom: 0, left: 0, right: 0, background: '#fff', borderTop: '1px solid #e8eaf0', zIndex: 100, padding: '8px 0' }}>
+        {sidebarItems.map(item => (
+          <div key={item.id} onClick={() => changeTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', padding: '4px 0' }}>
+            <div style={{ color: activeTab === item.id ? '#2563eb' : '#999' }}>{item.icon}</div>
+            <div style={{ fontSize: '9px', fontWeight: 500, color: activeTab === item.id ? '#2563eb' : '#999' }}>{item.label.replace('Mon ', '').replace('Mes ', '')}</div>
+          </div>
+        ))}
+        <div onClick={handleLogout} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', padding: '4px 0' }}>
+          <div style={{ color: '#dc2626' }}><IconLogout size={18} /></div>
+          <div style={{ fontSize: '9px', fontWeight: 500, color: '#dc2626' }}>Quitter</div>
+        </div>
+      </div>
+
       <div style={{ display: 'flex' }}>
-        <div style={{ width: '220px', background: '#fff', borderRight: '1px solid #e8eaf0', minHeight: 'calc(100vh - 60px)', padding: '1.25rem 0', flexShrink: 0, position: 'sticky', top: '60px', height: 'calc(100vh - 60px)', overflowY: 'auto' }}>
+        <div className='sidebar-desktop' style={{ width: '220px', background: '#fff', borderRight: '1px solid #e8eaf0', minHeight: 'calc(100vh - 60px)', padding: '1.25rem 0', flexShrink: 0, position: 'sticky', top: '60px', height: 'calc(100vh - 60px)', overflowY: 'auto' }}>
           <div style={{ padding: '0 1rem 0.75rem', fontSize: '10px', fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Mon espace</div>
           {sidebarItems.map(item => (
             <div key={item.id} onClick={() => changeTab(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 1rem', margin: '1px 8px', fontSize: '13px', fontWeight: activeTab === item.id ? 600 : 500, color: activeTab === item.id ? '#2563eb' : '#555', background: activeTab === item.id ? '#eff6ff' : 'transparent', borderRadius: '8px', borderLeft: activeTab === item.id ? '3px solid #2563eb' : '3px solid transparent', cursor: 'pointer' }}>
@@ -105,7 +132,7 @@ function MonCompteInner() {
           </div>
         </div>
 
-        <div style={{ flex: 1, padding: '2rem', minWidth: 0 }}>
+        <div className='main-content-area' style={{ flex: 1, padding: '2rem', minWidth: 0 }}>
 
           {activeTab === 'dashboard' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
