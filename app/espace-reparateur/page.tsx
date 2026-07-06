@@ -29,27 +29,28 @@ export default function EspaceReparateur() {
 
   const handleLogin = async () => {
     if (!email || !password) { setError('Veuillez remplir tous les champs.'); return }
+    if (loading) return
     setLoading(true)
     setError('')
+    const timer = setTimeout(() => {
+      setError('COMPTE_DESACTIVE')
+      setLoading(false)
+    }, 8000)
     try {
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000))
-      const loginPromise = supabase.auth.signInWithPassword({ email, password })
-      const result = await Promise.race([loginPromise, timeoutPromise]) as any
-      if (result.error) {
+      const { error, data } = await supabase.auth.signInWithPassword({ email, password })
+      clearTimeout(timer)
+      if (error) {
         setError('Email ou mot de passe incorrect.')
         setLoading(false)
-      } else if (!result.data?.user) {
+      } else if (!data?.user) {
         setError('COMPTE_DESACTIVE')
         setLoading(false)
       } else {
         router.push('/espace-reparateur/dashboard')
       }
-    } catch (e: any) {
-      if (e.message === 'timeout') {
-        setError('COMPTE_DESACTIVE')
-      } else {
-        setError('Email ou mot de passe incorrect.')
-      }
+    } catch {
+      clearTimeout(timer)
+      setError('Email ou mot de passe incorrect.')
       setLoading(false)
     }
   }
