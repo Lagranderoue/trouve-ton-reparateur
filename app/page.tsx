@@ -98,12 +98,29 @@ export default function Home() {
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [clientUser, setClientUser] = useState<any>(null)
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
+  }, [])
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: client } = await supabase.from('clients').select('prenom').eq('id', user.id).single()
+        setClientUser({ email: user.email, prenom: client?.prenom || '' })
+      }
+    }
+    checkUser()
   }, [])
   const router = useRouter()
   const timeoutRef = useRef<any>(null)
@@ -218,6 +235,7 @@ export default function Home() {
                 padding: isMobile ? '6px 10px' : '7px 14px',
                 borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
+                display: 'flex', alignItems: 'center', gap: '6px',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
@@ -228,7 +246,16 @@ export default function Home() {
                 e.currentTarget.style.borderColor = 'rgba(255,255,255,0.65)'
               }}
             >
-              {isMobile ? 'Client' : 'Espace client'}
+              {clientUser ? (
+                <>
+                  <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700 }}>
+                    {(clientUser.prenom || clientUser.email)?.[0]?.toUpperCase()}
+                  </div>
+                  {clientUser.prenom || clientUser.email?.split('@')[0]}
+                </>
+              ) : (
+                isMobile ? 'Client' : 'Espace client'
+              )}
             </button>
             <button
               onClick={() => router.push('/inscrire')}
