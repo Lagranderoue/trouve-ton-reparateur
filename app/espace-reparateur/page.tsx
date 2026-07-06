@@ -32,13 +32,20 @@ export default function EspaceReparateur() {
     if (loading) return
     setLoading(true)
     setError('')
-    const timer = setTimeout(() => {
-      setError('COMPTE_DESACTIVE')
-      setLoading(false)
-    }, 8000)
     try {
+      // Vérifier si le compte réparateur existe
+      const checkRes = await fetch('/api/check-reparateur', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      const checkData = await checkRes.json()
+      if (!checkData.existe) {
+        setError('COMPTE_DESACTIVE')
+        setLoading(false)
+        return
+      }
       const { error, data } = await supabase.auth.signInWithPassword({ email, password })
-      clearTimeout(timer)
       if (error) {
         setError('Email ou mot de passe incorrect.')
         setLoading(false)
@@ -49,8 +56,7 @@ export default function EspaceReparateur() {
         router.push('/espace-reparateur/dashboard')
       }
     } catch {
-      clearTimeout(timer)
-      setError('Email ou mot de passe incorrect.')
+      setError('Une erreur est survenue. Veuillez réessayer.')
       setLoading(false)
     }
   }
