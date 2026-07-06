@@ -215,7 +215,7 @@ export default function Home() {
                 color: '#ffffff',
                 background: 'rgba(255,255,255,0.12)',
                 border: '1.5px solid rgba(255,255,255,0.65)',
-                padding: '7px 14px',
+                padding: isMobile ? '6px 10px' : '7px 14px',
                 borderRadius: '100px', cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
