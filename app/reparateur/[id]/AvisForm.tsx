@@ -90,6 +90,7 @@ export default function AvisForm({ reparateurId }: { reparateurId: string }) {
 
   const handleSubmitInvite = async () => {
     if (!prenom || !email || !note || !commentaire) return
+    if (loading) return
     setLoading(true)
     setError('')
     const token = crypto.randomUUID()
