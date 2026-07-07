@@ -38,96 +38,178 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
 }).filter((h: { jour: string; horaire: string }) => h.jour)
     : []
 
+  const ouvert = (() => {
+    if (!r.horaires) return false
+    const now = new Date()
+    const jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+    const jourActuel = jours[now.getDay()]
+    const heureActuelle = now.getHours() * 60 + now.getMinutes()
+    const lignes = r.horaires.split('|')
+    for (const ligne of lignes) {
+      const parts = ligne.split(':')
+      if (parts.length < 2) continue
+      const jour = parts[0].trim()
+      const horaire = parts.slice(1).join(':').trim()
+      if (jour !== jourActuel) continue
+      if (horaire === 'Fermé') return false
+      const times = horaire.split(' - ')
+      if (times.length !== 2) return false
+      const [hOuv, mOuv] = times[0].trim().split(':').map(Number)
+      const [hFerm, mFerm] = times[1].trim().split(':').map(Number)
+      return (now.getHours() * 60 + now.getMinutes()) >= hOuv * 60 + mOuv && (now.getHours() * 60 + now.getMinutes()) < hFerm * 60 + mFerm
+    }
+    return false
+  })()
+
+  const jourActuelNom = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'][new Date().getDay()]
+  const horaireDuJour = horairesList.find(h => h.jour === jourActuelNom)
+
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between bg-white">
-        <a href="/" className="text-base font-medium">
-          Trouve ton <span className="text-blue-600">réparateur</span>
+    <main style={{ minHeight: '100vh', background: '#f4f6fb', fontFamily: '"DM Sans", sans-serif' }}>
+
+      {/* NAVBAR */}
+      <nav style={{ background: '#0f2d6b', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <a href="/" style={{ fontSize: '14px', fontWeight: 500, color: '#fff', textDecoration: 'none' }}>
+          Trouve ton réparateur
         </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <a href="/mon-compte" className="text-sm font-medium" style={{ color: '#2563eb' }}>
-            Espace client
-          </a>
-          <a href="/inscrire" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
-            Inscrire ma boutique
-          </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <a href="/mon-compte" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Espace client</a>
+          <a href="/espace-reparateur" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Espace réparateur</a>
         </div>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-6 py-8">
-        <a href="javascript:history.back()" className="text-sm text-gray-400 hover:text-gray-600 mb-6 flex items-center gap-1">
+      {/* HERO */}
+      <div style={{ background: 'linear-gradient(160deg, #0f2d6b 0%, #1e4db7 100%)', padding: '20px 24px 28px' }}>
+        <a href="javascript:history.back()" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none', display: 'inline-block', marginBottom: '16px' }}>
           ← Retour aux résultats
         </a>
-
-        <div className="bg-white border border-gray-100 rounded-xl p-6 mb-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-xl font-medium text-blue-700 flex-shrink-0 overflow-hidden">
-                {r.logo_url ? (
-                  <img src={r.logo_url} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  r.nom?.charAt(0)
-                )}
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <h1 className="text-xl font-medium text-gray-900">{r.nom}</h1>
-                  <span className={`text-xs px-2.5 py-1 rounded-full ${r.ouvert ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500'}`}>
-                    {r.ouvert ? 'Ouvert' : 'Fermé'}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-400 flex items-center gap-1 mb-2">
-                  {r.adresse}, {r.ville} {r.code_postal}
-                </div>
-                {r.description && <p className="text-sm text-gray-500">{r.description}</p>}
-              </div>
-            </div>
-            {r.telephone && (
-              <a href={'tel:' + r.telephone} className="flex-shrink-0 flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium">
-                📞 Appeler
-              </a>
-            )}
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', flexWrap: 'wrap' }}>
+          <div style={{ width: '68px', height: '68px', borderRadius: '16px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 500, color: '#0f2d6b', flexShrink: 0, overflow: 'hidden' }}>
+            {r.logo_url ? <img src={r.logo_url} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : r.nom?.charAt(0)}
           </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white border border-gray-100 rounded-xl p-5">
-            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">Services</h2>
-            <div className="flex flex-wrap gap-2">
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: '22px', fontWeight: 500, color: '#fff', margin: 0 }}>{r.nom}</h1>
+              <span style={{ fontSize: '12px', background: ouvert ? 'rgba(34,197,94,0.25)' : 'rgba(255,255,255,0.1)', color: ouvert ? '#86efac' : 'rgba(255,255,255,0.6)', padding: '3px 10px', borderRadius: '20px', fontWeight: 500 }}>
+                {ouvert ? '● Ouvert' : 'Fermé'}
+                {ouvert && horaireDuJour && <span style={{ marginLeft: '4px', opacity: 0.8 }}>jusqu'à {horaireDuJour.horaire.split(' - ')[1]}</span>}
+              </span>
               {r.deplacement && (
-              <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-sm px-3 py-1.5 rounded-full font-medium mb-4">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Déplacement à domicile disponible
-              </div>
-            )}
-            {servicesList.length > 0 ? servicesList.map((s) => (
-                <span key={s} className="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
-                  {s}
+                <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.85)', padding: '3px 10px', borderRadius: '20px' }}>
+                  Déplacement à domicile
                 </span>
-              )) : <p className="text-sm text-gray-400">Non renseigné</p>}
+              )}
+            </div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              📍 {r.adresse}, {r.ville} {r.code_postal}
             </div>
           </div>
-
-          <div className="bg-white border border-gray-100 rounded-xl p-5">
-            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">Horaires</h2>
-            <div className="flex flex-col gap-2">
-              {horairesList.length > 0 ? horairesList.map(({ jour, horaire }) => (
-                <div key={jour} className="flex justify-between text-sm">
-                  <span className={horaire === 'Fermé' ? 'text-gray-300' : 'text-gray-700 font-medium'}>{jour}</span>
-                  <span className={horaire === 'Fermé' ? 'text-gray-300' : 'text-gray-500'}>{horaire}</span>
-                </div>
-              )) : <p className="text-sm text-gray-400">Non renseigné</p>}
-            </div>
+          <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+            {r.telephone && (
+              <>
+                <a href={'/reparateur/' + r.id + '?reserv=1'} style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '0.5px solid rgba(255,255,255,0.3)', borderRadius: '10px', padding: '10px 18px', fontSize: '13px', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  📅 Réserver
+                </a>
+                <a href={'tel:' + r.telephone} style={{ background: '#fff', color: '#0f2d6b', border: 'none', borderRadius: '10px', padding: '10px 18px', fontSize: '13px', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  📞 Appeler
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>
-    <section className="max-w-2xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-medium text-gray-900">Avis clients</h2>
-          <AvisForm reparateurId={r.id} />
+
+      <div style={{ maxWidth: '860px', margin: '0 auto', padding: '20px 16px' }}>
+
+        {/* STATS */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '16px' }}>
+          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '22px', color: '#f59e0b' }}>★</span>
+            <div>
+              <div style={{ fontSize: '17px', fontWeight: 500, color: '#111' }}>{r.note ? r.note.toFixed(1) : 'N/A'}</div>
+              <div style={{ fontSize: '11px', color: '#888' }}>Note moyenne</div>
+            </div>
+          </div>
+          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '20px' }}>⏱️</span>
+            <div>
+              <div style={{ fontSize: '17px', fontWeight: 500, color: '#111' }}>~1h</div>
+              <div style={{ fontSize: '11px', color: '#888' }}>Délai moyen</div>
+            </div>
+          </div>
+          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '20px' }}>{r.deplacement ? '🏠' : '🏪'}</span>
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 500, color: '#111' }}>{r.deplacement ? 'Disponible' : 'En boutique'}</div>
+              <div style={{ fontSize: '11px', color: '#888' }}>{r.deplacement ? 'Déplacement domicile' : 'Sur place uniquement'}</div>
+            </div>
+          </div>
         </div>
-        <AvisList reparateurId={r.id} />
-      </section>
+
+        {/* DESCRIPTION */}
+        {r.description && (
+          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '16px', marginBottom: '16px', fontSize: '14px', color: '#555', lineHeight: 1.6 }}>
+            {r.description}
+          </div>
+        )}
+
+        {/* SERVICES + HORAIRES */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+
+          {/* SERVICES */}
+          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '16px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>Services proposés</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+              {servicesList.slice(0, 8).map((s, i) => {
+                const icons: Record<string, string> = {
+                  'Écran cassé': '📱', 'Batterie': '🔋', 'Connecteur de charge': '🔌',
+                  'Caméra': '📷', 'Haut-parleur': '🔊', 'Micro': '🎤',
+                  'Bouton': '⚪', 'Châssis': '🔧', 'Carte mère': '💾',
+                  'Vitre arrière': '🪟', 'Récupération de données': '💿', 'Autre': '🛠️'
+                }
+                return (
+                  <div key={i} style={{ background: '#f4f6fb', borderRadius: '10px', padding: '8px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>{icons[s] || '🔧'}</div>
+                    <div style={{ fontSize: '10px', color: '#555', lineHeight: 1.3 }}>{s}</div>
+                  </div>
+                )
+              })}
+              {servicesList.length > 8 && (
+                <div style={{ background: '#f4f6fb', borderRadius: '10px', padding: '8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '18px', marginBottom: '4px' }}>➕</div>
+                  <div style={{ fontSize: '10px', color: '#888' }}>+{servicesList.length - 8}</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* HORAIRES */}
+          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '16px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>Horaires d'ouverture</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {horairesList.map(({ jour, horaire }) => {
+                const estAujourdhui = jour === jourActuelNom
+                return (
+                  <div key={jour} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 10px', borderRadius: '8px', background: estAujourdhui ? '#eff6ff' : 'transparent' }}>
+                    <span style={{ fontSize: '13px', fontWeight: estAujourdhui ? 500 : 400, color: estAujourdhui ? '#2563eb' : horaire === 'Fermé' ? '#bbb' : '#555' }}>{jour}</span>
+                    <span style={{ fontSize: '13px', color: estAujourdhui ? '#2563eb' : horaire === 'Fermé' ? '#bbb' : '#111', fontWeight: estAujourdhui ? 500 : 400 }}>{horaire}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* AVIS */}
+        <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Avis clients</div>
+            <AvisForm reparateurId={r.id} />
+          </div>
+          <AvisList reparateurId={r.id} />
+        </div>
+
+      </div>
     </main>
   )
 }
