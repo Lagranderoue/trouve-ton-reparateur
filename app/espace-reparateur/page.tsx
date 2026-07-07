@@ -164,6 +164,9 @@ export default function EspaceReparateur() {
                 <label style={labelStyle}>Mot de passe</label>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={e => e.key === 'Enter' && handleLogin()} style={inputStyle} />
               </div>
+              <div style={{ textAlign: 'right', marginTop: '-8px', marginBottom: '4px' }}>
+                <span onClick={() => router.push('/mot-de-passe-oublie')} style={{ fontSize: '12px', color: '#2563eb', cursor: 'pointer', fontWeight: 500 }}>Mot de passe oublié ?</span>
+              </div>
               <button onClick={handleLogin} disabled={loading} style={{ background: loading ? '#93c5fd' : '#0f2d6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '13px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
                 {loading ? 'Connexion...' : 'Se connecter →'}
               </button>

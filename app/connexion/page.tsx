@@ -100,6 +100,11 @@ function ConnexionContent() {
           <input style={inputStyle} type="email" placeholder="Adresse email" value={email} onChange={e => setEmail(e.target.value)} />
           <input style={inputStyle} type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)} />
 
+          {tab === 'login' && (
+            <div style={{ textAlign: 'right', marginBottom: '4px' }}>
+              <span onClick={() => router.push('/mot-de-passe-oublie')} style={{ fontSize: '12px', color: '#2563eb', cursor: 'pointer', fontWeight: 500 }}>Mot de passe oublié ?</span>
+            </div>
+          )}
           <button
             onClick={tab === 'login' ? handleLogin : handleSignup}
             disabled={loading || !email || !password || (tab === 'signup' && !prenom)}
