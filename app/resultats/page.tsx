@@ -92,80 +92,110 @@ export default async function Resultats({
     }
   }
 
+  const meilleuxNote = reparateurs.length > 0 ? reparateurs.reduce((best: any, r: any) => {
+    const noteBest = avisMap[best.id]?.moyenne || 0
+    const noteR = avisMap[r.id]?.moyenne || 0
+    return noteR > noteBest ? r : best
+  }) : null
+
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between bg-white">
-        <a href="/" className="text-base font-medium">
-          Trouve ton <span className="text-blue-600">réparateur</span>
+    <main style={{ minHeight: '100vh', background: '#f4f6fb', fontFamily: '"DM Sans", sans-serif' }}>
+      
+      <nav style={{ background: '#0f2d6b', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <a href="/" style={{ fontSize: '14px', fontWeight: 500, color: '#fff', textDecoration: 'none' }}>
+          Trouve ton réparateur
         </a>
-        <a href="/mon-compte" style={{ fontSize: "13px", fontWeight: 500, color: "#2563eb", marginRight: "10px" }}>Espace client</a>
-        <a href="/inscrire" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
-          Inscrire ma boutique
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <a href="/mon-compte" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Espace client</a>
+          <a href="/espace-reparateur" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Espace réparateur</a>
+        </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-6 py-6">
-        <div className="flex items-center gap-3 mb-4">
-          <a href="/" className="text-sm text-gray-400 hover:text-gray-600">← Retour</a>
-          <h1 className="text-base font-medium text-gray-900">
-            {fallback
-              ? 'Réparateurs les plus proches de vous :'
-              : reparateurs.length + ' réparateur(s) trouvé(s)' + (q ? ' pour "' + q + '"' : '')}
-          </h1>
+      <div style={{ background: '#0f2d6b', padding: '12px 24px 20px' }}>
+        <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '2px' }}>
+          {reparateurs.length} résultat{reparateurs.length > 1 ? 's' : ''} pour
         </div>
+        <div style={{ fontSize: '20px', fontWeight: 500, color: '#fff' }}>
+          {q || 'votre recherche'}
+        </div>
+      </div>
 
-        {reparateurs.length === 0 && (
-          <div className="text-center text-gray-400 py-20">
-            <div className="text-4xl mb-3">🔍</div>
-            <p className="text-sm">Aucun réparateur trouvé dans un rayon de 70 km.</p>
-            <a href="/" className="text-blue-600 text-sm mt-2 inline-block">Réessayer</a>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '16px' }}>
+        {reparateurs.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '4rem 0', color: '#888' }}>
+            <div style={{ fontSize: '14px', fontWeight: 500, color: '#111', marginBottom: '6px' }}>Aucun réparateur trouvé</div>
+            <div style={{ fontSize: '13px', marginBottom: '16px' }}>Aucun réparateur dans un rayon de 70 km.</div>
+            <a href="/" style={{ color: '#2563eb', fontSize: '13px', fontWeight: 500 }}>← Nouvelle recherche</a>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {reparateurs.map((r: any) => {
+              const estMeilleuxNote = meilleuxNote?.id === r.id && avisMap[r.id]
+              const services = r.services ? r.services.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+              const avis = avisMap[r.id]
+              return (
+                <a key={r.id} href={'/reparateur/' + r.id} style={{ textDecoration: 'none', display: 'block' }}>
+                  <div style={{
+                    background: '#fff',
+                    border: estMeilleuxNote ? '0.5px solid #2563eb' : '0.5px solid #e8eaf0',
+                    borderRadius: '14px',
+                    overflow: 'hidden',
+                  }}>
+                    {estMeilleuxNote && (
+                      <div style={{ background: '#eff6ff', padding: '4px 14px' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 500, color: '#2563eb' }}>★ Mieux noté dans votre zone</span>
+                      </div>
+                    )}
+                    <div style={{ padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                        <div style={{ width: '52px', height: '52px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 500, color: '#2563eb', flexShrink: 0, overflow: 'hidden' }}>
+                          {r.logo_url ? <img src={r.logo_url} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : r.nom?.charAt(0)}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '15px', fontWeight: 500, color: '#111' }}>{r.nom}</span>
+                            <span style={{ fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px', background: r.ouvert ? '#f0fdf4' : '#f5f5f5', color: r.ouvert ? '#16a34a' : '#888' }}>
+                              {r.ouvert ? '● Ouvert' : 'Fermé'}
+                            </span>
+                            {r.deplacement && (
+                              <span style={{ fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px', background: '#eff6ff', color: '#2563eb' }}>
+                                Déplacement
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ fontSize: '12px', color: '#888', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span>📍 {r.ville}</span>
+                            {r.distance && <span> · {Math.round(r.distance)} km</span>}
+                          </div>
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+                            {services.slice(0, 3).map((s: string, i: number) => (
+                              <span key={i} style={{ fontSize: '11px', padding: '3px 9px', borderRadius: '20px', background: '#f4f6fb', border: '0.5px solid #e8eaf0', color: '#555' }}>{s}</span>
+                            ))}
+                            {services.length > 3 && <span style={{ fontSize: '11px', color: '#888' }}>+{services.length - 3}</span>}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', flexShrink: 0 }}>
+                          {avis ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <span style={{ color: '#f59e0b', fontSize: '13px' }}>★</span>
+                              <span style={{ fontSize: '13px', fontWeight: 500, color: '#111' }}>{avis.moyenne}</span>
+                              <span style={{ fontSize: '11px', color: '#888' }}>({avis.count})</span>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: '11px', color: '#bbb' }}>Aucun avis</span>
+                          )}
+                          <div style={{ background: '#2563eb', color: '#fff', borderRadius: '8px', padding: '7px 14px', fontSize: '12px', fontWeight: 500 }}>
+                            Voir la fiche →
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              )
+            })}
           </div>
         )}
-
-        <div className="flex flex-col gap-3">
-          {reparateurs.map((r) => (
-            <a href={'/reparateur/' + r.id} key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-blue-200 transition-colors">
-              <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-sm font-medium text-blue-700 flex-shrink-0 overflow-hidden">
-                {r.logo_url ? (
-                  <img src={r.logo_url} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  r.nom?.charAt(0)
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium text-sm text-gray-900">{r.nom}</span>
-                  <span className={'text-xs px-2 py-0.5 rounded-full ' + (r.ouvert ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500')}>
-                    {r.ouvert ? 'Ouvert' : 'Fermé'}
-                  </span>
-                  {r.deplacement && (
-  <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">
-    🏠 Déplacement à domicile
-  </span>
-)}
-                </div>
-                <div className="text-xs text-gray-400">{r.adresse}, {r.ville}</div>
-                <div className="flex items-center gap-1 mt-1">
-                  {avisMap[r.id] ? (
-                    <>
-                      <span className="text-amber-400 text-xs">★</span>
-                      <span className="text-xs font-medium text-gray-800">{avisMap[r.id].moyenne}</span>
-                      <span className="text-xs text-gray-400">({avisMap[r.id].count} avis)</span>
-                    </>
-                  ) : (
-                    <span className="text-xs text-gray-300">Aucun avis</span>
-                  )}
-                </div>
-              </div>
-              <div className="text-right flex-shrink-0">
-                {r.distance && (
-                  <div className="text-xs text-blue-500 font-medium">{Math.round(r.distance)} km</div>
-                )}
-                <div className="text-xs text-gray-400">📍 {r.ville}</div>
-              </div>
-            </a>
-          ))}
-        </div>
       </div>
     </main>
   )
