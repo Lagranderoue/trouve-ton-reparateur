@@ -1,5 +1,30 @@
 import { supabase } from '../../lib/supabase'
 
+function estOuvert(horaires: string | null): boolean {
+  if (!horaires) return false
+  const now = new Date()
+  const jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+  const jourActuel = jours[now.getDay()]
+  const heureActuelle = now.getHours() * 60 + now.getMinutes()
+  const lignes = horaires.split('|')
+  for (const ligne of lignes) {
+    const parts = ligne.split(':')
+    if (parts.length < 2) continue
+    const jour = parts[0].trim()
+    const horaire = parts.slice(1).join(':').trim()
+    if (jour !== jourActuel) continue
+    if (horaire === 'Fermé') return false
+    const times = horaire.split(' - ')
+    if (times.length !== 2) return false
+    const [hOuv, mOuv] = times[0].trim().split(':').map(Number)
+    const [hFerm, mFerm] = times[1].trim().split(':').map(Number)
+    const ouverture = hOuv * 60 + mOuv
+    const fermeture = hFerm * 60 + mFerm
+    return heureActuelle >= ouverture && heureActuelle < fermeture
+  }
+  return false
+}
+
 async function geocodeVille(query: string) {
   const res = await fetch(
     'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=fr&format=json&limit=1',
@@ -154,8 +179,8 @@ export default async function Resultats({
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                             <span style={{ fontSize: '15px', fontWeight: 500, color: '#111' }}>{r.nom}</span>
-                            <span style={{ fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px', background: r.ouvert ? '#f0fdf4' : '#f5f5f5', color: r.ouvert ? '#16a34a' : '#888' }}>
-                              {r.ouvert ? '● Ouvert' : 'Fermé'}
+                            <span style={{ fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px', background: estOuvert(r.horaires) ? '#f0fdf4' : '#f5f5f5', color: estOuvert(r.horaires) ? '#16a34a' : '#888' }}>
+                              {estOuvert(r.horaires) ? '● Ouvert' : 'Fermé'}
                             </span>
                             {r.deplacement && (
                               <span style={{ fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px', background: '#eff6ff', color: '#2563eb' }}>
