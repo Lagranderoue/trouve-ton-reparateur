@@ -1,6 +1,7 @@
 import { supabase } from '../../../lib/supabase'
 import Navbar from '../../../components/Navbar'
 import AvisForm from './AvisForm'
+import ReservationModal from './ReservationModal'
 import AvisList from './AvisList'
 
 export const dynamic = 'force-dynamic'
@@ -124,9 +125,7 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
             <i className="ti ti-phone" aria-hidden="true" /> Appeler
           </div>
         )}
-        <button style={{ background: '#f4f6fb', color: '#111', border: '0.5px solid #e8eaf0', borderRadius: '10px', padding: '11px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontFamily: '"DM Sans", sans-serif' }}>
-          <i className="ti ti-calendar" aria-hidden="true" /> Réserver
-        </button>
+        <ReservationModal reparateurId={r.id} reparateurNom={r.nom} horaires={r.horaires} services={r.services} />
       </div>
 
       <div style={{ padding: '16px' }}>

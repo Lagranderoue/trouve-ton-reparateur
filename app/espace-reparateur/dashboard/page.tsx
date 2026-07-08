@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 import {
   IconHome, IconUser, IconPhoto, IconStar, IconStarFilled, IconClock, IconSettings,
   IconLogout, IconPencil, IconPlus, IconMapPin, IconPhone, IconMail,
-  IconBuildingStore, IconCamera, IconEye, IconMessage, IconCheck,
+  IconBuildingStore, IconCalendar, IconCamera, IconEye, IconMessage, IconCheck,
   IconShieldCheck, IconClockHour4, IconX
 } from '@tabler/icons-react'
 
@@ -129,6 +129,115 @@ function HorairesTab({ reparateur, setReparateur }: { reparateur: any, setRepara
       >
         {saving ? 'Sauvegarde...' : 'Sauvegarder les horaires →'}
       </button>
+    </div>
+  )
+}
+
+function ReservationsTab({ reparateur }: { reparateur: any }) {
+  const [reservations, setReservations] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filtre, setFiltre] = useState('tous')
+
+  useEffect(() => {
+    const load = async () => {
+      const res = await fetch('/api/reservations?reparateur_id=' + reparateur.id)
+      const data = await res.json()
+      setReservations(data.reservations || [])
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const moderer = async (id: string, statut: string) => {
+    await fetch('/api/reservations', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, statut })
+    })
+    setReservations(prev => prev.map(r => r.id === id ? { ...r, statut } : r))
+  }
+
+  const filtrees = filtre === 'tous' ? reservations : reservations.filter(r => r.statut === filtre)
+
+  const MOIS = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc']
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mes réservations</div>
+
+      {/* Filtres */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {[
+          { id: 'tous', label: 'Toutes' },
+          { id: 'pending', label: 'En attente' },
+          { id: 'approved', label: 'Acceptées' },
+          { id: 'rejected', label: 'Refusées' },
+        ].map(f => (
+          <button key={f.id} onClick={() => setFiltre(f.id)} style={{
+            fontSize: '12px', fontWeight: 500, padding: '6px 14px', borderRadius: '100px',
+            background: filtre === f.id ? '#0f2d6b' : '#fff',
+            color: filtre === f.id ? '#fff' : '#555',
+            border: `1px solid ${filtre === f.id ? '#0f2d6b' : '#e0e0e0'}`,
+            cursor: 'pointer', fontFamily: '"DM Sans", sans-serif',
+          }}>{f.label}</button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Chargement...</div>
+      ) : filtrees.length === 0 ? (
+        <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+          <IconCalendar size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
+          <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucune réservation</div>
+          <div style={{ fontSize: '13px', color: '#888' }}>Les demandes de réservation apparaîtront ici.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {filtrees.map((r: any) => {
+            const date = new Date(r.date)
+            const dateStr = date.getDate() + ' ' + MOIS[date.getMonth()]
+            return (
+              <div key={r.id} style={{
+                background: r.statut === 'pending' ? '#fefce8' : '#fff',
+                border: `1px solid ${r.statut === 'pending' ? '#fde68a' : '#e8eaf0'}`,
+                borderRadius: '12px', padding: '14px 16px',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '8px' }}>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#111', marginBottom: '3px' }}>{r.client_nom || r.client_email || 'Client'}</div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>
+                      {r.type_reparation} · {dateStr} · {r.heure}
+                    </div>
+                  </div>
+                  <span style={{
+                    fontSize: '11px', fontWeight: 600, padding: '3px 9px', borderRadius: '100px', flexShrink: 0,
+                    background: r.statut === 'approved' ? '#f0fdf4' : r.statut === 'rejected' ? '#fef2f2' : '#fefce8',
+                    color: r.statut === 'approved' ? '#16a34a' : r.statut === 'rejected' ? '#dc2626' : '#ca8a04',
+                  }}>
+                    {r.statut === 'approved' ? 'Acceptée' : r.statut === 'rejected' ? 'Refusée' : 'En attente'}
+                  </span>
+                </div>
+                {r.note && (
+                  <div style={{ fontSize: '12px', color: '#555', background: 'rgba(0,0,0,0.04)', borderRadius: '6px', padding: '6px 10px', marginBottom: '10px' }}>
+                    {r.note}
+                  </div>
+                )}
+                {r.statut === 'pending' && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => moderer(r.id, 'approved')} style={{ flex: 1, background: '#16a34a', color: '#fff', border: 'none', borderRadius: '8px', padding: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                      <IconCheck size={15} /> Accepter
+                    </button>
+                    <button onClick={() => moderer(r.id, 'rejected')} style={{ flex: 1, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '8px', padding: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                      <IconX size={15} /> Refuser
+                    </button>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -558,6 +667,7 @@ export default function Dashboard() {
     { id: 'photos', icon: <IconPhoto size={18} />, label: 'Mes photos' },
     { id: 'avis', icon: <IconStar size={18} />, label: 'Mes avis' },
     { id: 'horaires', icon: <IconClock size={18} />, label: 'Mes horaires' },
+    { id: 'reservations', icon: <IconCalendar size={18} />, label: 'Réservations' },
     { id: 'parametres', icon: <IconSettings size={18} />, label: 'Paramètres' },
   ]
 
@@ -735,6 +845,10 @@ export default function Dashboard() {
               </div>
 
             </div>
+          )}
+
+          {activeTab === 'reservations' && (
+            <ReservationsTab reparateur={reparateur} />
           )}
 
           {activeTab === 'photos' && (

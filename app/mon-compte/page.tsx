@@ -220,14 +220,7 @@ function MonCompteInner() {
           )}
 
           {activeTab === 'reservations' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#111' }}>Mes réservations</div>
-              <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                <IconCalendar size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
-                <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Bientôt disponible</div>
-                <div style={{ fontSize: '13px', color: '#888' }}>La réservation en ligne arrive prochainement</div>
-              </div>
-            </div>
+            <ReservationsClientTab user={user} />
           )}
 
           {activeTab === 'profil' && (
@@ -245,6 +238,68 @@ export default function MonCompte() {
     <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"DM Sans", sans-serif', color: '#888' }}>Chargement...</div>}>
       <MonCompteInner />
     </Suspense>
+  )
+}
+
+function ReservationsClientTab({ user }: { user: any }) {
+  const [reservations, setReservations] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      const res = await fetch('/api/reservations?client_id=' + user.id)
+      const data = await res.json()
+      setReservations(data.reservations || [])
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const MOIS = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc']
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mes réservations</div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Chargement...</div>
+      ) : reservations.length === 0 ? (
+        <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+          <IconCalendar size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
+          <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucune réservation</div>
+          <div style={{ fontSize: '13px', color: '#888' }}>Vos réservations apparaîtront ici après vos demandes.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {reservations.map((r: any) => {
+            const date = new Date(r.date)
+            const dateStr = date.getDate() + ' ' + MOIS[date.getMonth()]
+            return (
+              <div key={r.id} style={{
+                background: '#fff', border: '1px solid #e8eaf0',
+                borderRadius: '12px', padding: '14px 16px',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px' }}>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#111', marginBottom: '3px' }}>{r.reparateur_nom || 'Réparateur'}</div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '2px' }}>{r.type_reparation}</div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>{dateStr} · {r.heure}</div>
+                  </div>
+                  <span style={{
+                    fontSize: '11px', fontWeight: 600, padding: '3px 9px', borderRadius: '100px', flexShrink: 0,
+                    background: r.statut === 'approved' ? '#f0fdf4' : r.statut === 'rejected' ? '#fef2f2' : '#fefce8',
+                    color: r.statut === 'approved' ? '#16a34a' : r.statut === 'rejected' ? '#dc2626' : '#ca8a04',
+                  }}>
+                    {r.statut === 'approved' ? 'Acceptée' : r.statut === 'rejected' ? 'Refusée' : 'En attente'}
+                  </span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
 
