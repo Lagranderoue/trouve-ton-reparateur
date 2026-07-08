@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase'
+import Navbar from '../../components/Navbar'
 
 function estOuvert(horaires: string | null): boolean {
   if (!horaires) return false
@@ -126,15 +127,7 @@ export default async function Resultats({
   return (
     <main style={{ minHeight: '100vh', background: '#f4f6fb', fontFamily: '"DM Sans", sans-serif' }}>
       
-      <nav style={{ background: '#0f2d6b', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <a href="/" style={{ fontSize: '14px', fontWeight: 500, color: '#fff', textDecoration: 'none' }}>
-          Trouve ton réparateur
-        </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <a href="/mon-compte" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Espace client</a>
-          <a href="/espace-reparateur" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Espace réparateur</a>
-        </div>
-      </nav>
+      <Navbar />
 
       <div style={{ background: '#0f2d6b', padding: '12px 24px 20px' }}>
         <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '2px' }}>

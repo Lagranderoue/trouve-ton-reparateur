@@ -1,4 +1,5 @@
 import { supabase } from '../../../lib/supabase'
+import Navbar from '../../../components/Navbar'
 import AvisForm from './AvisForm'
 import AvisList from './AvisList'
 
@@ -85,14 +86,7 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
   return (
     <main style={{ minHeight: '100vh', background: '#f4f6fb', fontFamily: '"DM Sans", sans-serif' }}>
 
-      {/* NAVBAR */}
-      <nav style={{ background: '#0f2d6b', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <a href="/" style={{ fontSize: '14px', fontWeight: 500, color: '#fff', textDecoration: 'none' }}>Trouve ton réparateur</a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <a href="/mon-compte" style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>Espace client</a>
-          <a href="/espace-reparateur" style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>Espace réparateur</a>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* HERO */}
       <div style={{ background: 'linear-gradient(150deg, #0f2d6b 0%, #1e4db7 100%)', padding: '16px 16px 22px' }}>
