@@ -13,18 +13,39 @@ export async function GET(request: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  let query = supabase.from('reservations').select('*, reparateurs(nom, adresse, ville, telephone)').order('date', { ascending: true }).order('heure', { ascending: true })
+  let query = supabase.from('reservations').select('*').order('date', { ascending: true }).order('heure', { ascending: true })
   if (reparateurId) query = query.eq('reparateur_id', reparateurId)
   if (clientId) query = query.eq('client_id', clientId)
 
   const { data } = await query
-  const reservations = (data || []).map((r: any) => ({
-    ...r,
-    reparateur_nom: r.reparateurs?.nom,
-    reparateur_adresse: r.reparateurs?.adresse,
-    reparateur_ville: r.reparateurs?.ville,
-    reparateur_telephone: r.reparateurs?.telephone,
-  }))
+  if (!data || data.length === 0) return NextResponse.json({ reservations: [] })
+
+  // Récupérer les noms des réparateurs
+  const repIds = [...new Set(data.map((r: any) => r.reparateur_id))]
+  const { data: reps } = await supabase.from('reparateurs').select('id, nom, adresse, ville, telephone').in('id', repIds)
+  const repsMap: Record<string, any> = {}
+  ;(reps || []).forEach((r: any) => { repsMap[r.id] = r })
+
+  // Récupérer les infos clients
+  const clientIds = [...new Set(data.filter((r: any) => r.client_id).map((r: any) => r.client_id))]
+  const { data: clients } = await supabase.from('clients').select('id, prenom, nom, telephone').in('id', clientIds)
+  const clientsMap: Record<string, any> = {}
+  ;(clients || []).forEach((c: any) => { clientsMap[c.id] = c })
+
+  const reservations = data.map((r: any) => {
+    const rep = repsMap[r.reparateur_id]
+    const client = clientsMap[r.client_id]
+    const clientNomComplet = client ? [client.prenom, client.nom].filter(Boolean).join(' ') : null
+    return {
+      ...r,
+      reparateur_nom: rep?.nom || null,
+      reparateur_adresse: rep?.adresse || null,
+      reparateur_ville: rep?.ville || null,
+      reparateur_telephone: rep?.telephone || null,
+      client_nom: clientNomComplet || r.client_email,
+      client_telephone: client?.telephone || r.client_telephone || null,
+    }
+  })
   return NextResponse.json({ reservations })
 }
 
