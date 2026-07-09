@@ -13,12 +13,15 @@ const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dim
 function getProchainsDays(horaires: string | null, nb: number) {
   const days = []
   const now = new Date()
-  for (let i = 0; i < 14 && days.length < nb; i++) {
+  // Commencer à demain si après 17h, sinon aujourd'hui
+  const startOffset = now.getHours() >= 17 ? 1 : 0
+  for (let i = startOffset; i < 30 && days.length < nb; i++) {
     const d = new Date(now)
     d.setDate(now.getDate() + i)
+    d.setHours(0, 0, 0, 0)
     const jourNom = JOURS[(d.getDay() + 6) % 7]
     if (!horaires) { days.push(d); continue }
-    const ligne = horaires.split('|').find(h => h.startsWith(jourNom))
+    const ligne = horaires.split('|').find(h => h.startsWith(jourNom + ':'))
     if (ligne && !ligne.includes('Fermé')) days.push(d)
   }
   return days
