@@ -137,6 +137,11 @@ function ReservationsTab({ reparateur }: { reparateur: any }) {
   const [reservations, setReservations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [filtre, setFiltre] = useState('tous')
+  const [modifModal, setModifModal] = useState<any>(null)
+  const [newDate, setNewDate] = useState('')
+  const [newHeure, setNewHeure] = useState('')
+  const [msgRep, setMsgRep] = useState('')
+  const [savingModif, setSavingModif] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -148,28 +153,48 @@ function ReservationsTab({ reparateur }: { reparateur: any }) {
     load()
   }, [])
 
-  const moderer = async (id: string, statut: string) => {
+  const moderer = async (id: string, statut: string, msg?: string) => {
     await fetch('/api/reservations', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, statut })
+      body: JSON.stringify({ id, statut, message_reparateur: msg || '' })
     })
     setReservations(prev => prev.map(r => r.id === id ? { ...r, statut } : r))
   }
 
-  const filtrees = filtre === 'tous' ? reservations : reservations.filter(r => r.statut === filtre)
+  const modifierRDV = async () => {
+    if (!modifModal || !newDate || !newHeure) return
+    setSavingModif(true)
+    await fetch('/api/reservations', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: modifModal.id, date: newDate, heure: newHeure, message_reparateur: msgRep })
+    })
+    setReservations(prev => prev.map(r => r.id === modifModal.id ? { ...r, date: newDate, heure: newHeure } : r))
+    setSavingModif(false)
+    setModifModal(null)
+  }
 
+  const filtrees = filtre === 'tous' ? reservations : reservations.filter(r => r.statut === filtre)
+  const nbAttente = reservations.filter(r => r.statut === 'pending').length
   const MOIS = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc']
+
+  const badgeStyle = (statut: string) => ({
+    fontSize: '11px', fontWeight: 600, padding: '3px 9px', borderRadius: '100px', flexShrink: 0,
+    background: statut === 'approved' ? '#f0fdf4' : statut === 'rejected' ? '#fef2f2' : statut === 'cancelled' ? '#f5f5f5' : '#fefce8',
+    color: statut === 'approved' ? '#16a34a' : statut === 'rejected' ? '#dc2626' : statut === 'cancelled' ? '#888' : '#ca8a04',
+  } as React.CSSProperties)
+
+  const badgeLabel = (statut: string) => statut === 'approved' ? 'Acceptée' : statut === 'rejected' ? 'Refusée' : statut === 'cancelled' ? 'Annulée' : 'En attente'
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mes réservations</div>
 
-      {/* Filtres */}
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         {[
           { id: 'tous', label: 'Toutes' },
-          { id: 'pending', label: 'En attente' },
+          { id: 'pending', label: `En attente${nbAttente > 0 ? ' (' + nbAttente + ')' : ''}` },
           { id: 'approved', label: 'Acceptées' },
           { id: 'rejected', label: 'Refusées' },
         ].map(f => (
@@ -186,16 +211,17 @@ function ReservationsTab({ reparateur }: { reparateur: any }) {
       {loading ? (
         <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Chargement...</div>
       ) : filtrees.length === 0 ? (
-        <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+        <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center' }}>
           <IconCalendar size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
           <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucune réservation</div>
-          <div style={{ fontSize: '13px', color: '#888' }}>Les demandes de réservation apparaîtront ici.</div>
+          <div style={{ fontSize: '13px', color: '#888' }}>Les demandes apparaîtront ici.</div>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {filtrees.map((r: any) => {
             const date = new Date(r.date)
             const dateStr = date.getDate() + ' ' + MOIS[date.getMonth()]
+            const initiale = (r.client_email || 'C')[0].toUpperCase()
             return (
               <div key={r.id} style={{
                 background: r.statut === 'pending' ? '#fefce8' : '#fff',
@@ -203,39 +229,103 @@ function ReservationsTab({ reparateur }: { reparateur: any }) {
                 borderRadius: '12px', padding: '14px 16px',
                 boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
               }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '8px' }}>
-                  <div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#111', marginBottom: '3px' }}>{r.client_nom || r.client_email || 'Client'}</div>
-                    <div style={{ fontSize: '12px', color: '#888' }}>
-                      {r.type_reparation} · {dateStr} · {r.heure}
+                {/* Header client */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 600, color: '#2563eb', flexShrink: 0 }}>
+                      {initiale}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: '#111', marginBottom: '2px' }}>{r.client_email || 'Client'}</div>
+                      {r.client_telephone && <div style={{ fontSize: '12px', color: '#888' }}>{r.client_telephone}</div>}
                     </div>
                   </div>
-                  <span style={{
-                    fontSize: '11px', fontWeight: 600, padding: '3px 9px', borderRadius: '100px', flexShrink: 0,
-                    background: r.statut === 'approved' ? '#f0fdf4' : r.statut === 'rejected' ? '#fef2f2' : '#fefce8',
-                    color: r.statut === 'approved' ? '#16a34a' : r.statut === 'rejected' ? '#dc2626' : '#ca8a04',
-                  }}>
-                    {r.statut === 'approved' ? 'Acceptée' : r.statut === 'rejected' ? 'Refusée' : 'En attente'}
-                  </span>
+                  <span style={badgeStyle(r.statut)}>{badgeLabel(r.statut)}</span>
                 </div>
+
+                {/* Détails */}
+                <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: '8px', padding: '10px 12px', marginBottom: '10px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#888', marginBottom: '2px' }}>Réparation</div>
+                    <div style={{ fontSize: '13px', fontWeight: 500, color: '#111' }}>{r.type_reparation}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#888', marginBottom: '2px' }}>Date</div>
+                    <div style={{ fontSize: '13px', fontWeight: 500, color: '#111' }}>{dateStr}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#888', marginBottom: '2px' }}>Heure</div>
+                    <div style={{ fontSize: '13px', fontWeight: 500, color: '#111' }}>{r.heure}</div>
+                  </div>
+                </div>
+
                 {r.note && (
-                  <div style={{ fontSize: '12px', color: '#555', background: 'rgba(0,0,0,0.04)', borderRadius: '6px', padding: '6px 10px', marginBottom: '10px' }}>
-                    {r.note}
+                  <div style={{ fontSize: '12px', color: '#555', background: 'rgba(0,0,0,0.03)', borderRadius: '6px', padding: '7px 10px', marginBottom: '10px' }}>
+                    <span style={{ fontWeight: 500, color: '#888', fontSize: '11px' }}>Note : </span>{r.note}
                   </div>
                 )}
-                {r.statut === 'pending' && (
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => moderer(r.id, 'approved')} style={{ flex: 1, background: '#16a34a', color: '#fff', border: 'none', borderRadius: '8px', padding: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
-                      <IconCheck size={15} /> Accepter
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {r.statut === 'pending' && (
+                    <>
+                      <button onClick={() => moderer(r.id, 'approved')} style={{ flex: 1, background: '#16a34a', color: '#fff', border: 'none', borderRadius: '8px', padding: '9px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', minWidth: '100px' }}>
+                        <IconCheck size={14} /> Accepter
+                      </button>
+                      <button onClick={() => moderer(r.id, 'rejected')} style={{ flex: 1, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '8px', padding: '9px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', minWidth: '100px' }}>
+                        <IconX size={14} /> Refuser
+                      </button>
+                    </>
+                  )}
+                  <button onClick={() => { setModifModal(r); setNewDate(r.date); setNewHeure(r.heure); setMsgRep('') }} style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '9px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <IconPencil size={14} /> Modifier
+                  </button>
+                  {r.client_telephone && (
+                    <a href={'tel:' + r.client_telephone} style={{ background: '#f4f6fb', color: '#111', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '12px', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <IconPhone size={14} /> Appeler
+                    </a>
+                  )}
+                  {r.statut === 'approved' && (
+                    <button onClick={() => moderer(r.id, 'cancelled')} style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '8px', padding: '9px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <IconX size={14} /> Annuler
                     </button>
-                    <button onClick={() => moderer(r.id, 'rejected')} style={{ flex: 1, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '8px', padding: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
-                      <IconX size={15} /> Refuser
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* MODAL MODIFIER */}
+      {modifModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '400px' }}>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>Modifier le rendez-vous</div>
+              <button onClick={() => setModifModal(null)} style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#888' }}>×</button>
+            </div>
+            <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '10px 12px', fontSize: '12px', color: '#1e40af' }}>
+                Le client recevra un email avec le nouveau créneau proposé.
+              </div>
+              <div>
+                <div style={{ fontSize: '10px', fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '6px' }}>Nouvelle date</div>
+                <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)} style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none' }} />
+              </div>
+              <div>
+                <div style={{ fontSize: '10px', fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '6px' }}>Nouvel horaire</div>
+                <input type="time" value={newHeure} onChange={e => setNewHeure(e.target.value)} style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none' }} />
+              </div>
+              <div>
+                <div style={{ fontSize: '10px', fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '6px' }}>Message au client (optionnel)</div>
+                <textarea value={msgRep} onChange={e => setMsgRep(e.target.value)} placeholder="Ex: Je suis disponible plutôt à 11h..." style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none', resize: 'none', minHeight: '70px' }} />
+              </div>
+              <button onClick={modifierRDV} disabled={savingModif} style={{ background: savingModif ? '#93c5fd' : '#0f2d6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+                {savingModif ? 'Envoi...' : 'Proposer ce nouveau créneau →'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
