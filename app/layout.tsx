@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Footer from "../components/Footer";
 import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
 
 const dmSans = DM_Sans({
@@ -41,7 +42,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
