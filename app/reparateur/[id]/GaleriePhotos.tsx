@@ -27,9 +27,9 @@ export default function GaleriePhotos({ photos }: { photos: string[] }) {
             <div
               key={i}
               onClick={() => setLightbox(page * PER_PAGE + i)}
-              style={{ borderRadius: '8px', overflow: 'hidden', height: '80px', cursor: 'pointer', position: 'relative' }}
+              style={{ borderRadius: '8px', overflow: 'hidden', height: '100px', cursor: 'pointer', position: 'relative' }}
             >
-              <img src={url} alt={'photo ' + (page * PER_PAGE + i + 1)} style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#f4f6fb' }} />
+              <img src={url} alt={'photo ' + (page * PER_PAGE + i + 1)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)', transition: 'background 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.15)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0)')}
@@ -83,7 +83,7 @@ export default function GaleriePhotos({ photos }: { photos: string[] }) {
             <img
               src={photos[lightbox]}
               alt={'photo ' + (lightbox + 1)}
-              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '8px' }}
+              style={{ maxWidth: '90vw', maxHeight: '70vh', objectFit: 'contain', borderRadius: '8px', width: 'auto', height: 'auto' }}
             />
             {lightbox > 0 && (
               <button
@@ -121,7 +121,7 @@ export default function GaleriePhotos({ photos }: { photos: string[] }) {
                     transition: 'opacity 0.15s',
                   }}
                 >
-                  <img src={url} alt={'miniature ' + (i + 1)} style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#111' }} />
+                  <img src={url} alt={'miniature ' + (i + 1)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               ))}
             </div>
