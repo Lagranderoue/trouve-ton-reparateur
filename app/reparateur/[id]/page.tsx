@@ -1,6 +1,7 @@
 import { supabase } from '../../../lib/supabase'
 import Navbar from '../../../components/Navbar'
 import AvisForm from './AvisForm'
+import GaleriePhotos from './GaleriePhotos'
 import ReservationModal from './ReservationModal'
 import AvisList from './AvisList'
 
@@ -181,32 +182,7 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
         )}
 
         {/* PHOTOS */}
-        {photos.length > 0 && (
-          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '14px', marginBottom: '12px' }}>
-            <div style={{ fontSize: '11px', fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '10px' }}>Photos</div>
-            <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', marginBottom: '5px', height: '160px' }}>
-              <img src={photos[0]} alt="photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.4)', color: '#fff', fontSize: '10px', padding: '3px 8px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <i className="ti ti-photo" aria-hidden="true" /> {photos.length} photo{photos.length > 1 ? 's' : ''}
-              </div>
-            </div>
-            {photos.length > 1 && (
-              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(photos.length - 1, 3)}, 1fr)`, gap: '5px' }}>
-                {photos.slice(1, 3).map((url, i) => (
-                  <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', height: '70px' }}>
-                    <img src={url} alt={'photo ' + (i + 2)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                ))}
-                {photos.length > 3 && (
-                  <div style={{ borderRadius: '8px', height: '70px', background: '#f4f6fb', border: '1px dashed #e0e0e0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
-                    <i className="ti ti-dots" style={{ fontSize: '18px', color: '#bbb' }} aria-hidden="true" />
-                    <span style={{ fontSize: '10px', color: '#bbb', fontWeight: 600 }}>+{photos.length - 3}</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        <GaleriePhotos photos={photos} />
 
         {/* SERVICES */}
         <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '14px', marginBottom: '12px' }}>
