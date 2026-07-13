@@ -27,7 +27,7 @@ export default function GaleriePhotos({ photos }: { photos: string[] }) {
             <div
               key={i}
               onClick={() => setLightbox(page * PER_PAGE + i)}
-              style={{ borderRadius: '8px', overflow: 'hidden', height: '100px', cursor: 'pointer', position: 'relative' }}
+              style={{ borderRadius: '8px', overflow: 'hidden', aspectRatio: '1/1', cursor: 'pointer', position: 'relative' }}
             >
               <img src={url} alt={'photo ' + (page * PER_PAGE + i + 1)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)', transition: 'background 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
