@@ -29,7 +29,7 @@ export default function GaleriePhotos({ photos }: { photos: string[] }) {
               onClick={() => setLightbox(page * PER_PAGE + i)}
               style={{ borderRadius: '8px', overflow: 'hidden', height: '80px', cursor: 'pointer', position: 'relative' }}
             >
-              <img src={url} alt={'photo ' + (page * PER_PAGE + i + 1)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={url} alt={'photo ' + (page * PER_PAGE + i + 1)} style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#f4f6fb' }} />
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)', transition: 'background 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.15)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0)')}
@@ -121,7 +121,7 @@ export default function GaleriePhotos({ photos }: { photos: string[] }) {
                     transition: 'opacity 0.15s',
                   }}
                 >
-                  <img src={url} alt={'miniature ' + (i + 1)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={url} alt={'miniature ' + (i + 1)} style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#111' }} />
                 </div>
               ))}
             </div>
