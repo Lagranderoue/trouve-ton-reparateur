@@ -65,6 +65,17 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
   const jourActuelNom = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'][new Date().getDay()]
   const horaireDuJour = horairesList.find((h: {jour: string; horaire: string}) => h.jour === jourActuelNom)
 
+  // Récupérer les photos depuis Supabase Storage
+  const { createClient: createClientServer } = await import('@supabase/supabase-js')
+  const supabaseServer = createClientServer(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+  const { data: photosData } = await supabaseServer.storage.from('photos').list(String(r.id))
+  const photos = (photosData || [])
+    .filter(f => !f.name.startsWith('.') && f.name !== '.emptyFolderPlaceholder')
+    .map(f => supabaseServer.storage.from('photos').getPublicUrl(String(r.id) + '/' + f.name).data.publicUrl)
+
   const serviceIcons: Record<string, string> = {
     'Écran cassé': 'ti-device-mobile',
     'Batterie': 'ti-battery',
@@ -166,6 +177,34 @@ export default async function FicheReparateur({ params }: { params: Promise<{ id
         {r.description && (
           <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '14px', marginBottom: '12px', fontSize: '13px', color: '#555', lineHeight: 1.6 }}>
             {r.description}
+          </div>
+        )}
+
+        {/* PHOTOS */}
+        {photos.length > 0 && (
+          <div style={{ background: '#fff', border: '0.5px solid #e8eaf0', borderRadius: '12px', padding: '14px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '10px' }}>Photos</div>
+            <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', marginBottom: '5px', height: '160px' }}>
+              <img src={photos[0]} alt="photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.4)', color: '#fff', fontSize: '10px', padding: '3px 8px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <i className="ti ti-photo" aria-hidden="true" /> {photos.length} photo{photos.length > 1 ? 's' : ''}
+              </div>
+            </div>
+            {photos.length > 1 && (
+              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(photos.length - 1, 3)}, 1fr)`, gap: '5px' }}>
+                {photos.slice(1, 3).map((url, i) => (
+                  <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', height: '70px' }}>
+                    <img src={url} alt={'photo ' + (i + 2)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ))}
+                {photos.length > 3 && (
+                  <div style={{ borderRadius: '8px', height: '70px', background: '#f4f6fb', border: '1px dashed #e0e0e0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
+                    <i className="ti ti-dots" style={{ fontSize: '18px', color: '#bbb' }} aria-hidden="true" />
+                    <span style={{ fontSize: '10px', color: '#bbb', fontWeight: 600 }}>+{photos.length - 3}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
