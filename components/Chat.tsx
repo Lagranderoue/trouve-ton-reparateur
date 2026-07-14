@@ -120,13 +120,13 @@ export default function Chat({
       {/* Input */}
       <div style={{ padding: '10px 16px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: '8px', alignItems: 'center' }}>
         <input
+          type="search"
           value={contenu}
           onChange={e => setContenu(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && envoyer()}
           placeholder="Écrire un message..."
           autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
+          name="chat-message"
           style={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: '20px', padding: '8px 14px', fontSize: '13px', outline: 'none', fontFamily: '"DM Sans", sans-serif', background: '#f8f9fc' }}
         />
         <button
