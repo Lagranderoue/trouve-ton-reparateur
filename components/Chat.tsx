@@ -38,20 +38,9 @@ export default function Chat({
   useEffect(() => {
     loadMessages()
 
-    // Supabase Realtime
-    const channel = supabase
-      .channel('messages-' + reservationId)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: 'reservation_id=eq.' + reservationId,
-      }, (payload) => {
-        setMessages(prev => [...prev, payload.new])
-      })
-      .subscribe()
-
-    return () => { supabase.removeChannel(channel) }
+    // Polling toutes les 3 secondes
+    const interval = setInterval(loadMessages, 3000)
+    return () => clearInterval(interval)
   }, [reservationId])
 
   useEffect(() => {
