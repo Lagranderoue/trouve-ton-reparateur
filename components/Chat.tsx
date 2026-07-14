@@ -75,6 +75,14 @@ export default function Chat({
   }
 
   return (
+    <>
+    <style>{`
+      [contenteditable][data-placeholder]:empty:before {
+        content: attr(data-placeholder);
+        color: #bbb;
+        pointer-events: none;
+      }
+    `}</style>
     <div style={{ display: 'flex', flexDirection: 'column', height: '400px', background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', overflow: 'hidden' }}>
 
       {/* Header */}
@@ -119,17 +127,25 @@ export default function Chat({
 
       {/* Input */}
       <div style={{ padding: '10px 16px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: '8px', alignItems: 'center' }}>
-        <input type="text" style={{ display: 'none' }} autoComplete="username" readOnly />
-        <input type="password" style={{ display: 'none' }} autoComplete="current-password" readOnly />
-        <input
-          type="search"
-          value={contenu}
-          onChange={e => setContenu(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && !e.shiftKey && envoyer()}
-          placeholder="Écrire un message..."
-          autoComplete="off"
-          name="chat-message"
-          style={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: '20px', padding: '8px 14px', fontSize: '13px', outline: 'none', fontFamily: '"DM Sans", sans-serif', background: '#f8f9fc' }}
+        <div
+          contentEditable
+          suppressContentEditableWarning
+          onInput={e => setContenu(e.currentTarget.textContent || '')}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              envoyer()
+              e.currentTarget.textContent = ''
+            }
+          }}
+          data-placeholder="Écrire un message..."
+          style={{
+            flex: 1, border: '1px solid #e0e0e0', borderRadius: '20px',
+            padding: '8px 14px', fontSize: '13px', outline: 'none',
+            fontFamily: '"DM Sans", sans-serif', background: '#f8f9fc',
+            minHeight: '36px', maxHeight: '100px', overflowY: 'auto',
+            cursor: 'text', color: '#111',
+          }}
         />
         <button
           onClick={envoyer}
@@ -140,5 +156,6 @@ export default function Chat({
         </button>
       </div>
     </div>
+    </>
   )
 }
