@@ -119,6 +119,8 @@ export default function Chat({
 
       {/* Input */}
       <div style={{ padding: '10px 16px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <input type="text" style={{ display: 'none' }} autoComplete="username" readOnly />
+        <input type="password" style={{ display: 'none' }} autoComplete="current-password" readOnly />
         <input
           type="search"
           value={contenu}
