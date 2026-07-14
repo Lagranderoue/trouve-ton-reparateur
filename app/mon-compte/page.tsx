@@ -5,8 +5,9 @@ import { createClient } from '@supabase/supabase-js'
 import {
   IconLayoutDashboard, IconStar, IconCalendar, IconUser,
   IconLogout, IconPencil, IconCheck, IconClock, IconX,
-  IconBuildingStore
+  IconBuildingStore, IconMessage
 } from '@tabler/icons-react'
+import Chat from '../../components/Chat'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -69,6 +70,7 @@ function MonCompteInner() {
     { id: 'dashboard', icon: <IconLayoutDashboard size={18} />, label: 'Tableau de bord' },
     { id: 'avis', icon: <IconStar size={18} />, label: 'Mes avis' },
     { id: 'reservations', icon: <IconCalendar size={18} />, label: 'Mes réservations' },
+    { id: 'messages', icon: <IconMessage size={18} />, label: 'Mes messages' },
     { id: 'profil', icon: <IconUser size={18} />, label: 'Mon profil' },
   ]
 
@@ -219,6 +221,10 @@ function MonCompteInner() {
             </div>
           )}
 
+          {activeTab === 'messages' && (
+            <MessagesClientTab user={user} />
+          )}
+
           {activeTab === 'reservations' && (
             <ReservationsClientTab user={user} />
           )}
@@ -238,6 +244,76 @@ export default function MonCompte() {
     <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"DM Sans", sans-serif', color: '#888' }}>Chargement...</div>}>
       <MonCompteInner />
     </Suspense>
+  )
+}
+
+function MessagesClientTab({ user }: { user: any }) {
+  const [reservations, setReservations] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState<any>(null)
+
+  useEffect(() => {
+    const load = async () => {
+      const res = await fetch('/api/reservations?client_id=' + user.id)
+      const data = await res.json()
+      // Garder seulement les réservations acceptées
+      setReservations((data.reservations || []).filter((r: any) => r.statut === 'approved'))
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const MOIS = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc']
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Mes messages</div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Chargement...</div>
+      ) : reservations.length === 0 ? (
+        <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center' }}>
+          <IconMessage size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
+          <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucun message</div>
+          <div style={{ fontSize: '13px', color: '#888' }}>Vos conversations apparaîtront ici après vos réservations acceptées.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: selected ? '280px 1fr' : '1fr', gap: '12px' }}>
+          {/* Liste conversations */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {reservations.map((r: any) => {
+              const date = new Date(r.date)
+              const dateStr = date.getDate() + ' ' + MOIS[date.getMonth()]
+              return (
+                <div
+                  key={r.id}
+                  onClick={() => setSelected(r)}
+                  style={{
+                    background: selected?.id === r.id ? '#eff6ff' : '#fff',
+                    border: '1px solid',
+                    borderColor: selected?.id === r.id ? '#bfdbfe' : '#e8eaf0',
+                    borderRadius: '10px', padding: '12px 14px', cursor: 'pointer',
+                  }}
+                >
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#111', marginBottom: '2px' }}>{r.reparateur_nom || 'Réparateur'}</div>
+                  <div style={{ fontSize: '11px', color: '#888' }}>{r.type_reparation} · {dateStr}</div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Chat */}
+          {selected && (
+            <Chat
+              reservationId={selected.id}
+              userId={user.id}
+              senderType="client"
+              nomInterlocuteur={selected.reparateur_nom || 'Réparateur'}
+            />
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 

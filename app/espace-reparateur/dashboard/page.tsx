@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
+import Chat from '../../../components/Chat'
 import {
   IconHome, IconUser, IconPhoto, IconStar, IconStarFilled, IconClock, IconSettings,
   IconLogout, IconPencil, IconPlus, IconMapPin, IconPhone, IconMail,
@@ -129,6 +130,82 @@ function HorairesTab({ reparateur, setReparateur }: { reparateur: any, setRepara
       >
         {saving ? 'Sauvegarde...' : 'Sauvegarder les horaires →'}
       </button>
+    </div>
+  )
+}
+
+function MessagesReparateurTab({ reparateur }: { reparateur: any }) {
+  const [reservations, setReservations] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState<any>(null)
+  const [userId, setUserId] = useState<string>('')
+
+  useEffect(() => {
+    const load = async () => {
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) setUserId(user.id)
+
+      const res = await fetch('/api/reservations?reparateur_id=' + reparateur.id)
+      const data = await res.json()
+      setReservations((data.reservations || []).filter((r: any) => r.statut === 'approved'))
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const MOIS = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc']
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Messages</div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Chargement...</div>
+      ) : reservations.length === 0 ? (
+        <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', padding: '3rem', textAlign: 'center' }}>
+          <IconMessage size={40} color="#e0e0e0" style={{ marginBottom: '12px' }} />
+          <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucun message</div>
+          <div style={{ fontSize: '13px', color: '#888' }}>Les conversations apparaîtront ici après vos réservations acceptées.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: selected ? '280px 1fr' : '1fr', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {reservations.map((r: any) => {
+              const date = new Date(r.date)
+              const dateStr = date.getDate() + ' ' + MOIS[date.getMonth()]
+              return (
+                <div
+                  key={r.id}
+                  onClick={() => setSelected(r)}
+                  style={{
+                    background: selected?.id === r.id ? '#eff6ff' : '#fff',
+                    border: '1px solid',
+                    borderColor: selected?.id === r.id ? '#bfdbfe' : '#e8eaf0',
+                    borderRadius: '10px', padding: '12px 14px', cursor: 'pointer',
+                  }}
+                >
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#111', marginBottom: '2px' }}>{r.client_nom || r.client_email || 'Client'}</div>
+                  <div style={{ fontSize: '11px', color: '#888' }}>{r.type_reparation} · {dateStr}</div>
+                </div>
+              )
+            })}
+          </div>
+
+          {selected && userId && (
+            <Chat
+              reservationId={selected.id}
+              userId={userId}
+              senderType="reparateur"
+              nomInterlocuteur={selected.client_nom || selected.client_email || 'Client'}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -758,6 +835,7 @@ export default function Dashboard() {
     { id: 'avis', icon: <IconStar size={18} />, label: 'Mes avis' },
     { id: 'horaires', icon: <IconClock size={18} />, label: 'Mes horaires' },
     { id: 'reservations', icon: <IconCalendar size={18} />, label: 'Réservations' },
+    { id: 'messages', icon: <IconMessage size={18} />, label: 'Messages' },
     { id: 'parametres', icon: <IconSettings size={18} />, label: 'Paramètres' },
   ]
 
@@ -935,6 +1013,10 @@ export default function Dashboard() {
               </div>
 
             </div>
+          )}
+
+          {activeTab === 'messages' && (
+            <MessagesReparateurTab reparateur={reparateur} />
           )}
 
           {activeTab === 'reservations' && (
