@@ -252,13 +252,26 @@ function MessagesClientTab({ user }: { user: any }) {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<any>(null)
 
+  // Persister la conversation sélectionnée dans l'URL
+  const selectConversation = (r: any) => {
+    setSelected(r)
+    window.history.replaceState({}, '', '/mon-compte?tab=messages&conv=' + r.id)
+  }
+
   useEffect(() => {
     const load = async () => {
       const res = await fetch('/api/reservations?client_id=' + user.id)
       const data = await res.json()
-      // Garder seulement les réservations acceptées
-      setReservations((data.reservations || []).filter((r: any) => r.statut === 'approved'))
+      const approved = (data.reservations || []).filter((r: any) => r.statut === 'approved')
+      setReservations(approved)
       setLoading(false)
+      // Restaurer la conversation depuis l'URL
+      const params = new URLSearchParams(window.location.search)
+      const convId = params.get('conv')
+      if (convId) {
+        const found = approved.find((r: any) => r.id === convId)
+        if (found) setSelected(found)
+      }
     }
     load()
   }, [])
@@ -287,7 +300,7 @@ function MessagesClientTab({ user }: { user: any }) {
               return (
                 <div
                   key={r.id}
-                  onClick={() => setSelected(r)}
+                  onClick={() => selectConversation(r)}
                   style={{
                     background: selected?.id === r.id ? '#eff6ff' : '#fff',
                     border: '1px solid',

@@ -44,7 +44,10 @@ export default function Chat({
   }, [reservationId])
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (bottomRef.current) {
+      const container = bottomRef.current.parentElement
+      if (container) container.scrollTop = container.scrollHeight
+    }
   }, [messages])
 
   const envoyer = async () => {
