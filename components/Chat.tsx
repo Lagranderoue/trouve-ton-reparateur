@@ -33,6 +33,8 @@ export default function Chat({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reservation_id: reservationId, reader_id: userId })
       })
+      // Mettre à jour localement les messages lus
+      setMessages(prev => prev.map(m => m.sender_id !== userId ? { ...m, lu: true } : m))
     }
 
     load()
@@ -114,7 +116,11 @@ export default function Chat({
               </div>
               <div style={{ fontSize: '10px', color: '#bbb', marginTop: '3px' }}>
                 {formatDate(m.created_at)}
-                {isMe && <span style={{ marginLeft: '4px' }}>{m.lu ? ' ✓✓' : ' ✓'}</span>}
+                {isMe && (
+                  <span style={{ marginLeft: '4px', color: m.lu ? '#2563eb' : 'rgba(255,255,255,0.5)', fontSize: '11px' }}>
+                    {m.lu ? '✓✓' : '✓'}
+                  </span>
+                )}
               </div>
             </div>
           )
