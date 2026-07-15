@@ -23,25 +23,22 @@ export default function Chat({
   const [loading, setLoading] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  const loadMessages = async () => {
-    const res = await fetch('/api/messages?reservation_id=' + reservationId)
-    const data = await res.json()
-    setMessages(data.messages || [])
-    // Marquer comme lus
-    await fetch('/api/messages', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reservation_id: reservationId, reader_id: userId })
-    })
-  }
-
   useEffect(() => {
-    loadMessages()
+    const load = async () => {
+      const res = await fetch('/api/messages?reservation_id=' + reservationId)
+      const data = await res.json()
+      setMessages(data.messages || [])
+      await fetch('/api/messages', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservation_id: reservationId, reader_id: userId })
+      })
+    }
 
-    // Polling toutes les 3 secondes
-    const interval = setInterval(loadMessages, 3000)
+    load()
+    const interval = setInterval(load, 3000)
     return () => clearInterval(interval)
-  }, [reservationId])
+  }, [reservationId, userId])
 
   useEffect(() => {
     if (bottomRef.current) {
