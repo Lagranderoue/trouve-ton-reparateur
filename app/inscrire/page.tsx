@@ -67,10 +67,16 @@ export default function Inscrire() {
       const geoData = await geoRes.json()
       const lat = geoData[0] ? parseFloat(geoData[0].lat) : null
       const lng = geoData[0] ? parseFloat(geoData[0].lon) : null
-      const cleanName = kbis.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_')
-      const fileName = Date.now() + '-' + cleanName
-      const { error: uploadError } = await supabase.storage.from('kbis').upload(fileName, kbis)
-      if (uploadError) throw uploadError
+      // Upload via API route avec service_role
+      const formData = new FormData()
+      formData.append('file', kbis)
+      const uploadRes = await fetch('/api/upload-kbis', {
+        method: 'POST',
+        body: formData
+      })
+      if (!uploadRes.ok) throw new Error('Erreur upload fichier')
+      const uploadData = await uploadRes.json()
+      const fileName = uploadData.fileName
       const horairesText = horaires
         .map(h => h.ouvert ? h.jour + ': ' + h.ouverture + ' - ' + h.fermeture : h.jour + ': Fermé')
         .join(' | ')
