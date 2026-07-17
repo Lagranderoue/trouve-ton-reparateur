@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import Chat from '../../../components/Chat'
+import Navbar from '../../../components/Navbar'
 import {
   IconHome, IconUser, IconPhoto, IconStar, IconStarFilled, IconClock, IconSettings,
   IconLogout, IconPencil, IconPlus, IconMapPin, IconPhone, IconMail,
@@ -878,20 +879,7 @@ export default function Dashboard() {
       `}</style>
 
       {/* NAVBAR */}
-      <nav style={{ background: '#ffffff', boxShadow: '0 1px 0 #e8eaf0, 0 2px 8px rgba(0,0,0,0.04)', padding: '0 2rem', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
-        <div onClick={() => router.push('/')} style={{ fontSize: '15px', fontWeight: 700, color: '#0f2d6b', cursor: 'pointer' }}>
-          Trouve ton réparateur
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #0f2d6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff' }}>
-            {reparateur?.nom?.[0] || 'R'}
-          </div>
-          <span style={{ fontSize: '14px', fontWeight: 600, color: '#111' }}>{reparateur?.nom}</span>
-          <button onClick={handleLogout} style={{ fontSize: '12px', color: '#888', background: '#f5f5f5', border: '1px solid #e8e8e8', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
-            Déconnexion
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       <div style={{ display: 'flex' }}>
 
