@@ -1,19 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
-
-// Client Supabase créé une seule fois
-let supabaseInstance: any = null
-const getSupabase = () => {
-  if (!supabaseInstance) {
-    supabaseInstance = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-  }
-  return supabaseInstance
-}
+import { supabase } from '../lib/supabase'
+const getSupabase = () => supabase
 
 export default function Navbar() {
   const router = useRouter()
