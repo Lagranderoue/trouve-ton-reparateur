@@ -838,6 +838,15 @@ export default function Dashboard() {
         <div style={{ width: '36px', height: '36px', border: '3px solid #e0e0e0', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
         <div style={{ fontSize: '14px', color: '#888' }}>Chargement...</div>
       </div>
+      <style>{`
+        @media (max-width: 768px) {
+          .sidebar-rep { display: none !important; }
+          .main-rep { padding: 1rem !important; padding-bottom: 80px !important; }
+        }
+        @media (min-width: 769px) {
+          .bottomnav-rep { display: none !important; }
+        }
+      `}</style>
       <style>{"@keyframes spin { to { transform: rotate(360deg) } }"}</style>
     </div>
   )
@@ -878,7 +887,7 @@ export default function Dashboard() {
       <div style={{ display: 'flex' }}>
 
         {/* SIDEBAR */}
-        <div style={{ width: '220px', background: '#ffffff', borderRight: '1px solid #e8eaf0', minHeight: 'calc(100vh - 60px)', padding: '1.25rem 0', flexShrink: 0, position: 'sticky', top: '60px', height: 'calc(100vh - 60px)', overflowY: 'auto' }}>
+        <div className='sidebar-rep' style={{ width: '220px', background: '#ffffff', borderRight: '1px solid #e8eaf0', minHeight: 'calc(100vh - 60px)', padding: '1.25rem 0', flexShrink: 0, position: 'sticky', top: '60px', height: 'calc(100vh - 60px)', overflowY: 'auto' }}>
           <div style={{ padding: '0 1rem 0.75rem', fontSize: '10px', fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Menu</div>
           {sidebarItems.map(item => (
             <div key={item.id} onClick={() => changeTab(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 1rem', margin: '1px 8px', fontSize: '13px', fontWeight: activeTab === item.id ? 600 : 500, color: activeTab === item.id ? '#2563eb' : '#555', background: activeTab === item.id ? '#eff6ff' : 'transparent', borderRadius: '8px', borderLeft: activeTab === item.id ? '3px solid #2563eb' : '3px solid transparent', cursor: 'pointer' }}>
@@ -893,7 +902,7 @@ export default function Dashboard() {
         </div>
 
         {/* MAIN */}
-        <div style={{ flex: 1, padding: '2rem', minWidth: 0 }}>
+        <div className='main-rep' style={{ flex: 1, padding: '2rem', minWidth: 0 }}>
           {activeTab === 'accueil' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
@@ -1067,6 +1076,21 @@ export default function Dashboard() {
           )}
 
         </div>
+      </div>
+    {/* NAV MOBILE BAS */}
+      <div className='bottomnav-rep' style={{ display: 'flex', position: 'fixed', bottom: 0, left: 0, right: 0, background: '#fff', borderTop: '1px solid #e8eaf0', zIndex: 100, padding: '6px 0 8px' }}>
+        {[
+          { id: 'accueil', icon: <IconHome size={20} />, label: 'Accueil' },
+          { id: 'reservations', icon: <IconCalendar size={20} />, label: 'RDV' },
+          { id: 'messages', icon: <IconMessage size={20} />, label: 'Messages' },
+          { id: 'avis', icon: <IconStar size={20} />, label: 'Avis' },
+          { id: 'profil', icon: <IconUser size={20} />, label: 'Profil' },
+        ].map(item => (
+          <div key={item.id} onClick={() => changeTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', padding: '4px 0', color: activeTab === item.id ? '#2563eb' : '#aaa' }}>
+            {item.icon}
+            <span style={{ fontSize: '9px', fontWeight: activeTab === item.id ? 600 : 500 }}>{item.label}</span>
+          </div>
+        ))}
       </div>
     </main>
   )
