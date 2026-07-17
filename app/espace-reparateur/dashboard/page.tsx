@@ -867,6 +867,15 @@ export default function Dashboard() {
   return (
     <main style={{ minHeight: '100vh', background: '#f4f6fb', fontFamily: '"DM Sans", sans-serif' }}>
       <style>{"@keyframes spin { to { transform: rotate(360deg) } }"}</style>
+      <style>{`
+        @media (max-width: 768px) {
+          .sidebar-rep { display: none !important; }
+          .main-rep { padding: 1rem !important; padding-bottom: 80px !important; }
+        }
+        @media (min-width: 769px) {
+          .bottomnav-rep { display: none !important; }
+        }
+      `}</style>
 
       {/* NAVBAR */}
       <nav style={{ background: '#ffffff', boxShadow: '0 1px 0 #e8eaf0, 0 2px 8px rgba(0,0,0,0.04)', padding: '0 2rem', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
