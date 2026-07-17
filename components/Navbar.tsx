@@ -3,10 +3,17 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+// Client Supabase créé une seule fois
+let supabaseInstance: any = null
+const getSupabase = () => {
+  if (!supabaseInstance) {
+    supabaseInstance = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+  }
+  return supabaseInstance
+}
 
 export default function Navbar() {
   const router = useRouter()
@@ -26,12 +33,12 @@ export default function Navbar() {
 
   useEffect(() => {
     const init = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user } } = await getSupabase().auth.getUser()
       if (!user) return
       setUser(user)
 
       // Vérifier si c'est un réparateur
-      const { data: rep } = await supabase
+      const { data: rep } = await getSupabase()
         .from('reparateurs')
         .select('id, nom')
         .eq('email', user.email)
@@ -42,7 +49,7 @@ export default function Navbar() {
         setProfil({ nom: rep.nom, initiale: rep.nom?.[0]?.toUpperCase() || 'R' })
       } else {
         // Client
-        const { data: client } = await supabase
+        const { data: client } = await getSupabase()
           .from('clients')
           .select('prenom, nom')
           .eq('id', user.id)
@@ -55,7 +62,7 @@ export default function Navbar() {
     }
     init()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = getSupabase().auth.onAuthStateChange((_event: any, session: any) => {
       if (!session) { setUser(null); setProfil(null); setUserType(null) }
     })
     return () => subscription.unsubscribe()
@@ -72,7 +79,7 @@ export default function Navbar() {
   }, [])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await getSupabase().auth.signOut()
     setUser(null); setProfil(null); setUserType(null); setMenuOpen(false)
     router.push('/')
   }
