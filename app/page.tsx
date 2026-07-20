@@ -1,4 +1,5 @@
 'use client'
+import Navbar from '../components/Navbar'
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -186,110 +187,7 @@ export default function Home() {
         }} />
 
         {/* NAVBAR */}
-        <nav style={{
-          padding: '0 1.5rem',
-          height: '68px',
-          display: 'flex',
-          alignItems: 'center',
-          position: 'relative',
-          zIndex: 10,
-        }}>
-          <span
-            onClick={() => router.push('/')}
-            style={{
-              fontSize: isMobile ? '13px' : '20px', fontWeight: 700, color: '#ffffff',
-              letterSpacing: '-0.01em', cursor: 'pointer',
-              whiteSpace: 'nowrap', flexShrink: 0,
-              fontFamily: '"DM Sans", sans-serif',
-            }}
-          >
-            Trouve ton réparateur
-          </span>
-          <div style={{ flex: 1 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px', flexShrink: 0 }}>
-            <button
-              onClick={() => document.getElementById('comment-ca-marche')?.scrollIntoView({ behavior: 'smooth' })}
-              className="nav-comment-btn"
-              style={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontSize: '15px', fontWeight: 500,
-                color: '#ffffff',
-                background: 'transparent',
-                border: 'none', cursor: 'pointer',
-                whiteSpace: 'nowrap', padding: '8px 12px', borderRadius: '8px',
-                display: isMobile ? 'none' : 'block',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            >
-              Comment ça marche ?
-            </button>
-            <button
-              onClick={() => router.push('/mon-compte')}
-              style={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontSize: isMobile ? '11px' : '13px', fontWeight: 600,
-                color: '#ffffff',
-                background: 'rgba(255,255,255,0.12)',
-                border: '1.5px solid rgba(255,255,255,0.65)',
-                padding: isMobile ? '6px 10px' : '7px 14px',
-                borderRadius: '100px', cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                display: 'flex', alignItems: 'center', gap: '6px',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.9)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.65)'
-              }}
-            >
-              {clientUser ? (
-                <>
-                  <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700 }}>
-                    {(clientUser.prenom || clientUser.email)?.[0]?.toUpperCase()}
-                  </div>
-                  {clientUser.prenom || clientUser.email?.split('@')[0]}
-                </>
-              ) : (
-                isMobile ? 'Client' : 'Espace client'
-              )}
-            </button>
-            <button
-              onClick={() => router.push('/espace-reparateur')}
-              className="nav-reparateur-btn"
-              style={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontSize: isMobile ? '11px' : '15px', fontWeight: 600,
-                color: '#ffffff',
-                background: 'rgba(255,255,255,0.12)',
-                border: '1.5px solid rgba(255,255,255,0.65)',
-                padding: isMobile ? '6px 10px' : '8px 18px', borderRadius: '100px', cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.22)'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.9)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.65)'
-              }}
-              onMouseDown={e => {
-                e.currentTarget.style.transform = 'scale(0.96)'
-                e.currentTarget.style.boxShadow = '0 0 0 4px rgba(255,255,255,0.15)'
-              }}
-              onMouseUp={e => {
-                e.currentTarget.style.transform = 'scale(1)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              {isMobile ? 'Réparateur' : 'Vous êtes réparateur ?'}
-            </button>
-          </div>
-        </nav>
+        <Navbar />
 
         {/* HERO */}
         <div style={{
