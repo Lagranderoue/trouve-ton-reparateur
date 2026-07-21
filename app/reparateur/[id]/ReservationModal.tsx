@@ -68,6 +68,8 @@ export default function ReservationModal({
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [etape, setEtape] = useState<'form' | 'confirm'>('form')
+  const [marque, setMarque] = useState('')
+  const [modele, setModele] = useState('')
   const [typeRep, setTypeRep] = useState('')
   const [dateChoisie, setDateChoisie] = useState<Date | null>(null)
   const [heureChoisie, setHeureChoisie] = useState('')
@@ -116,6 +118,8 @@ export default function ReservationModal({
       reparateur_id: reparateurId,
       client_id: user.id,
       client_email: user.email,
+      marque: marque || null,
+      modele: modele || null,
       type_reparation: typeRep,
       date: dateStr,
       heure: heureChoisie,
@@ -170,6 +174,31 @@ export default function ReservationModal({
                 </div>
 
                 <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+                  {/* MARQUE */}
+                  <div>
+                    <div style={sectionTitle}>Marque du téléphone</div>
+                    <div style={{ position: 'relative' }}>
+                      <select value={marque} onChange={e => setMarque(e.target.value)} style={{ ...inputStyle, cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
+                        <option value="">Sélectionner une marque</option>
+                        {['Apple','Samsung','Huawei','Xiaomi','OnePlus','Google','Oppo','Sony','Nokia','Motorola','Autre'].map(m => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                      <i className="ti ti-chevron-down" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888', fontSize: '14px', pointerEvents: 'none' }} aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  {/* MODÈLE */}
+                  <div>
+                    <div style={sectionTitle}>Modèle</div>
+                    <input
+                      value={modele}
+                      onChange={e => setModele(e.target.value)}
+                      placeholder="Ex: iPhone 13 Pro, Galaxy S22..."
+                      style={inputStyle}
+                    />
+                  </div>
 
                   {/* TYPE DE RÉPARATION */}
                   <div>
@@ -288,6 +317,31 @@ export default function ReservationModal({
                     </div>
                   )}
 
+                  {/* RÉCAPITULATIF */}
+                  {(marque || modele || typeRep) && dateChoisie && heureChoisie && (
+                    <div style={{ background: '#f4f6fb', borderRadius: '10px', padding: '12px 14px', border: '1px solid #e8eaf0' }}>
+                      <div style={{ fontSize: '10px', fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '9px' }}>Récapitulatif</div>
+                      {(marque || modele) && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                          <span style={{ fontSize: '12px', color: '#888' }}>Téléphone</span>
+                          <span style={{ fontSize: '12px', fontWeight: 600, color: '#111' }}>{[marque, modele].filter(Boolean).join(' · ')}</span>
+                        </div>
+                      )}
+                      {typeRep && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                          <span style={{ fontSize: '12px', color: '#888' }}>Réparation</span>
+                          <span style={{ fontSize: '12px', fontWeight: 600, color: '#111' }}>{typeRep}</span>
+                        </div>
+                      )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '6px', borderTop: '1px solid #e8eaf0', marginTop: '4px' }}>
+                        <span style={{ fontSize: '12px', color: '#888' }}>RDV</span>
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#2563eb' }}>
+                          {dateChoisie.getDate()} {MOIS_COURT[dateChoisie.getMonth()]} · {heureChoisie}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   <button
                     onClick={handleReserver}
                     disabled={loading}
@@ -319,7 +373,7 @@ export default function ReservationModal({
                   Voir mes réservations
                 </button>
                 <button
-                  onClick={() => { setOpen(false); setEtape('form'); setDateChoisie(null); setHeureChoisie(''); setTypeRep(''); setNote('') }}
+                  onClick={() => { setOpen(false); setEtape('form'); setDateChoisie(null); setHeureChoisie(''); setMarque(''); setModele(''); setTypeRep(''); setNote('') }}
                   style={{ background: '#f4f6fb', color: '#111', border: '1px solid #e8eaf0', borderRadius: '10px', padding: '12px 20px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', width: '100%' }}
                 >
                   Retour à la fiche
