@@ -294,26 +294,22 @@ export default function Home() {
         </div>
       </div>
 
-      {/* STATS desktop / CARDS mobile */}
+      {/* BADGE CONFIANCE desktop uniquement */}
       {!isMobile ? (
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-          borderBottom: '1px solid #ebebeb',
-        }}>
-          {[
-            { n: '+500', l: 'Réparateurs' },
-            { n: '4.8★', l: 'Note moyenne' },
-            { n: '100%', l: 'Gratuit' },
-            { n: '<2min', l: 'Pour trouver' },
-          ].map((s, i) => (
-            <div key={i} style={{
-              padding: '1.5rem', textAlign: 'center',
-              borderRight: i < 3 ? '1px solid #ebebeb' : 'none',
-            }}>
-              <div style={{ fontSize: '24px', fontWeight: 600, color: '#111', letterSpacing: '-0.03em', fontFamily: '"DM Sans", sans-serif' }}>{s.n}</div>
-              <div style={{ fontSize: '12px', color: '#999', marginTop: '2px', fontFamily: '"DM Sans", sans-serif' }}>{s.l}</div>
-            </div>
-          ))}
+        <div style={{ background: 'linear-gradient(150deg,#0f2d6b,#1e4db7)', padding: '0 3rem 2.5rem', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {[
+              { icon: 'ti-shield-check', label: 'Réparateurs certifiés' },
+              { icon: 'ti-calendar', label: 'Réservation en ligne' },
+              { icon: 'ti-star', label: 'Avis clients vérifiés' },
+              { icon: 'ti-clock', label: 'Réparation en 1h' },
+            ].map((b, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <i className={'ti ' + b.icon} style={{ fontSize: '16px', color: '#60a5fa' }} aria-hidden="true" />
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: '"DM Sans", sans-serif' }}>{b.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div style={{ padding: '1.25rem 1.25rem 0.5rem', background: '#f8f9fc' }}>
