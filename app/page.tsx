@@ -275,21 +275,46 @@ export default function Home() {
             </div>
           </div>
 
-          {/* DROITE - espace photo */}
+          {/* DROITE - Map décorative */}
           <div style={{
-            flex: '0 0 42%', display: isMobile ? 'none' : 'flex', alignItems: 'flex-end',
+            flex: '0 0 42%', display: isMobile ? 'none' : 'flex', alignItems: 'center',
             justifyContent: 'center', minHeight: '380px', position: 'relative', zIndex: 2,
           }}>
             <div style={{
-              width: '100%', maxWidth: '360px', height: '380px',
-              background: 'rgba(255,255,255,0.07)',
-              borderRadius: '50% 50% 0 0 / 55% 55% 0 0',
-              border: '1px solid rgba(255,255,255,0.12)', borderBottom: 'none',
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center', gap: '10px',
+              width: '100%', maxWidth: '320px', height: '260px',
+              background: 'linear-gradient(135deg, rgba(37,99,235,0.2), rgba(15,45,107,0.4))',
+              borderRadius: '16px', border: '1px solid rgba(255,255,255,0.15)',
+              position: 'relative', overflow: 'hidden',
             }}>
-              <span style={{ fontSize: '36px', opacity: 0.2 }}>📷</span>
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.22)' }}>Photo à venir</span>
+              {/* Rues horizontales */}
+              <div style={{ position: 'absolute', top: '25%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.12)' }} />
+              <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.12)' }} />
+              <div style={{ position: 'absolute', top: '75%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.12)' }} />
+              {/* Rues verticales */}
+              <div style={{ position: 'absolute', top: 0, bottom: 0, left: '30%', width: '1px', background: 'rgba(255,255,255,0.12)' }} />
+              <div style={{ position: 'absolute', top: 0, bottom: 0, left: '60%', width: '1px', background: 'rgba(255,255,255,0.12)' }} />
+              <div style={{ position: 'absolute', top: 0, bottom: 0, left: '85%', width: '1px', background: 'rgba(255,255,255,0.12)' }} />
+              {/* Pin principal */}
+              <div style={{ position: 'absolute', top: '20%', left: '25%', width: '28px', height: '28px', borderRadius: '50%', background: '#2563eb', border: '2.5px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+                <i className="ti ti-tool" style={{ fontSize: '11px', color: '#fff' }} aria-hidden="true" />
+              </div>
+              {/* Pin secondaire */}
+              <div style={{ position: 'absolute', top: '55%', left: '58%', width: '22px', height: '22px', borderRadius: '50%', background: '#2563eb', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.3)', opacity: 0.7 }}>
+                <i className="ti ti-tool" style={{ fontSize: '9px', color: '#fff' }} aria-hidden="true" />
+              </div>
+              {/* Pin tertiaire */}
+              <div style={{ position: 'absolute', top: '30%', left: '75%', width: '20px', height: '20px', borderRadius: '50%', background: '#2563eb', border: '2px solid rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}>
+                <i className="ti ti-tool" style={{ fontSize: '8px', color: '#fff' }} aria-hidden="true" />
+              </div>
+              {/* Pin user */}
+              <div style={{ position: 'absolute', top: '50%', left: '40%', transform: 'translate(-50%, -50%)' }}>
+                <div style={{ position: 'absolute', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(96,165,250,0.2)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+                <div style={{ position: 'relative', width: '14px', height: '14px', borderRadius: '50%', background: '#fff', border: '3px solid #60a5fa', boxShadow: '0 0 0 4px rgba(96,165,250,0.2)' }} />
+              </div>
+              {/* Label discret */}
+              <div style={{ position: 'absolute', bottom: '10px', left: 0, right: 0, textAlign: 'center', fontSize: '10px', color: 'rgba(255,255,255,0.35)' }}>
+                Trouvez un réparateur partout en France
+              </div>
             </div>
           </div>
         </div>
