@@ -349,7 +349,7 @@ export default function Home() {
 
 
       {/* FAQ */}
-      <section style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1.5rem 3rem', width: '100%' }}>
+      <section style={{ maxWidth: '640px', margin: '2rem auto 0', padding: '0 1.5rem 3rem', width: '100%' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#111', marginBottom: '1.25rem', textAlign: 'center', fontFamily: '"DM Sans", sans-serif' }}>
           Questions frequentes
         </h2>
