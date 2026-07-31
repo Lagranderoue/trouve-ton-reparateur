@@ -297,8 +297,8 @@ export default function Home() {
 
       {/* ÉTAPES desktop uniquement */}
       {!isMobile ? (
-        <div style={{ background: 'linear-gradient(150deg,#0f2d6b,#1e4db7)', padding: '0 3rem 2.5rem', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', maxWidth: '680px', width: '100%', margin: '0 auto' }}>
+        <div style={{ background: 'linear-gradient(150deg,#0f2d6b,#1e4db7)', padding: '2rem 3rem 2.5rem', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', maxWidth: '680px', width: '100%', margin: '0 auto' }}>
             {[
               { Icon: IconSearch, label: 'Cherchez', sub: 'Par ville' },
               { Icon: IconMapPin, label: 'Trouvez', sub: 'Un pro vérifié' },
