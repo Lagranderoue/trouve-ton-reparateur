@@ -294,19 +294,20 @@ export default function Home() {
         </div>
       </div>
 
-      {/* BADGE CONFIANCE desktop uniquement */}
+      {/* ÉTAPES desktop uniquement */}
       {!isMobile ? (
         <div style={{ background: 'linear-gradient(150deg,#0f2d6b,#1e4db7)', padding: '0 3rem 2.5rem', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', maxWidth: '700px', width: '100%' }}>
             {[
-              { icon: 'ti-shield-check', label: 'Réparateurs certifiés' },
-              { icon: 'ti-calendar', label: 'Réservation en ligne' },
-              { icon: 'ti-star', label: 'Avis clients vérifiés' },
-              { icon: 'ti-clock', label: 'Réparation en 1h' },
+              { icon: 'ti-search', label: 'Cherchez', sub: 'Par ville' },
+              { icon: 'ti-map-pin', label: 'Trouvez', sub: 'Un pro vérifié' },
+              { icon: 'ti-calendar', label: 'Réservez', sub: 'En ligne' },
+              { icon: 'ti-tool', label: 'Réparez', sub: "En moins d'1h" },
             ].map((b, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <i className={'ti ' + b.icon} style={{ fontSize: '16px', color: '#60a5fa' }} aria-hidden="true" />
-                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: '"DM Sans", sans-serif' }}>{b.label}</span>
+              <div key={i} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '16px 12px', textAlign: 'center' }}>
+                <i className={'ti ' + b.icon} style={{ fontSize: '26px', color: '#60a5fa', display: 'block', marginBottom: '8px' }} aria-hidden="true" />
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#fff', marginBottom: '3px', fontFamily: '"DM Sans", sans-serif' }}>{b.label}</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontFamily: '"DM Sans", sans-serif' }}>{b.sub}</div>
               </div>
             ))}
           </div>
