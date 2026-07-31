@@ -297,7 +297,7 @@ export default function Home() {
 
       {/* ÉTAPES desktop uniquement */}
       {!isMobile ? (
-        <div style={{ background: 'linear-gradient(150deg,#0f2d6b,#1e4db7)', padding: '1.2rem 3rem 1.5rem', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ background: 'linear-gradient(150deg,#0f2d6b,#1e4db7)', padding: '1.5rem 3rem 2rem', display: 'flex', justifyContent: 'center' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '28px', maxWidth: '860px', width: '100%', margin: '0 auto' }}>
             {[
               { Icon: IconSearch, label: 'Cherchez', sub: 'Par ville' },
