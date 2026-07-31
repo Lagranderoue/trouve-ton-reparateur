@@ -347,10 +347,6 @@ export default function Home() {
 
       {/* COMMENT CA MARCHE */}
 
-      {/* CTA RÉPARATEURS */}
-      {!isMobile && (
-        
-      )}
 
       {/* FAQ */}
       <section style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1.5rem 3rem', width: '100%' }}>
