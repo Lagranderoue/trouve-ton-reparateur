@@ -1,5 +1,6 @@
 'use client'
 import Navbar from '../components/Navbar'
+import { IconSearch, IconMapPin, IconCalendar, IconTool } from '@tabler/icons-react'
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -297,15 +298,15 @@ export default function Home() {
       {/* ÉTAPES desktop uniquement */}
       {!isMobile ? (
         <div style={{ background: 'linear-gradient(150deg,#0f2d6b,#1e4db7)', padding: '0 3rem 2.5rem', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', maxWidth: '700px', width: '100%' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', maxWidth: '680px', width: '100%', margin: '0 auto' }}>
             {[
-              { icon: 'ti-search', label: 'Cherchez', sub: 'Par ville' },
-              { icon: 'ti-map-pin', label: 'Trouvez', sub: 'Un pro vérifié' },
-              { icon: 'ti-calendar', label: 'Réservez', sub: 'En ligne' },
-              { icon: 'ti-tool', label: 'Réparez', sub: "En moins d'1h" },
+              { Icon: IconSearch, label: 'Cherchez', sub: 'Par ville' },
+              { Icon: IconMapPin, label: 'Trouvez', sub: 'Un pro vérifié' },
+              { Icon: IconCalendar, label: 'Réservez', sub: 'En ligne' },
+              { Icon: IconTool, label: 'Réparez', sub: "En moins d'1h" },
             ].map((b, i) => (
               <div key={i} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '16px 12px', textAlign: 'center' }}>
-                <i className={'ti ' + b.icon} style={{ fontSize: '26px', color: '#60a5fa', display: 'block', marginBottom: '8px' }} aria-hidden="true" />
+                <b.Icon size={26} color="#60a5fa" style={{ display: 'block', margin: '0 auto 8px' }} />
                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#fff', marginBottom: '3px', fontFamily: '"DM Sans", sans-serif' }}>{b.label}</div>
                 <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontFamily: '"DM Sans", sans-serif' }}>{b.sub}</div>
               </div>
