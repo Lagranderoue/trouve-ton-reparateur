@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 import {
   IconLayoutDashboard, IconStar, IconCalendar, IconUser,
   IconLogout, IconPencil, IconCheck, IconClock, IconX,
-  IconBuildingStore, IconMessage
+  IconBuildingStore, IconMessage, IconAlertCircle
 } from '@tabler/icons-react'
 import Chat from '../../components/Chat'
 
@@ -236,6 +236,7 @@ function MonCompteInner() {
         </div>
       </div>
     </main>
+
   )
 }
 
@@ -246,7 +247,6 @@ export default function MonCompte() {
     </Suspense>
   )
 }
-
 function MessagesClientTab({ user }: { user: any }) {
   const [reservations, setReservations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -333,6 +333,24 @@ function MessagesClientTab({ user }: { user: any }) {
 function ReservationsClientTab({ user }: { user: any }) {
   const [reservations, setReservations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [litigeModal, setLitigeModal] = useState<any>(null)
+  const [litigeTitre, setLitigeTitre] = useState('')
+  const [litigeDesc, setLitigeDesc] = useState('')
+  const [litigeSent, setLitigeSent] = useState(false)
+
+  const signalerLitige = async () => {
+    if (!litigeTitre || !litigeModal) return
+    const { supabase: sb } = await import('../../lib/supabase')
+    await sb.from('litiges').insert({
+      titre: litigeTitre,
+      description: litigeDesc,
+      client_id: user.id,
+      reservation_id: litigeModal.id,
+      reparateur_id: litigeModal.reparateur_id,
+      statut: 'ouvert',
+    })
+    setLitigeSent(true)
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -369,7 +387,7 @@ function ReservationsClientTab({ user }: { user: any }) {
                 borderRadius: '12px', padding: '14px 16px',
                 boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
               }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '8px' }}>
                   <div>
                     <div style={{ fontSize: '14px', fontWeight: 600, color: '#111', marginBottom: '3px' }}>{r.reparateur_nom || 'Réparateur'}</div>
                     <div style={{ fontSize: '12px', color: '#888', marginBottom: '2px' }}>{r.type_reparation}</div>
@@ -383,9 +401,50 @@ function ReservationsClientTab({ user }: { user: any }) {
                     {r.statut === 'approved' ? 'Acceptée' : r.statut === 'rejected' ? 'Refusée' : 'En attente'}
                   </span>
                 </div>
+                <button onClick={() => { setLitigeModal(r); setLitigeSent(false); setLitigeTitre(''); setLitigeDesc('') }} style={{ background: 'none', border: 'none', color: '#dc2626', fontSize: '11px', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', display: 'flex', alignItems: 'center', gap: '4px', padding: 0 }}>
+                  <IconAlertCircle size={13} /> Signaler un problème
+                </button>
               </div>
             )
           })}
+        </div>
+      )}
+      {/* MODAL LITIGE */}
+      {litigeModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '420px', padding: '20px' }}>
+            {litigeSent ? (
+              <div style={{ textAlign: 'center', padding: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <IconCheck size={24} color="#16a34a" />
+                </div>
+                <div style={{ fontSize: '16px', fontWeight: 700, color: '#111', marginBottom: '6px' }}>Litige signalé</div>
+                <div style={{ fontSize: '13px', color: '#888', marginBottom: '16px' }}>Notre équipe va examiner votre signalement et vous contactera rapidement.</div>
+                <button onClick={() => setLitigeModal(null)} style={{ background: '#0f2d6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 20px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: '"DM Sans", sans-serif' }}>Fermer</button>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: 700, color: '#111' }}>Signaler un problème</div>
+                  <button onClick={() => setLitigeModal(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}>×</button>
+                </div>
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '10px 12px', marginBottom: '14px', fontSize: '12px', color: '#dc2626' }}>
+                  Réservation : {litigeModal.reparateur_nom} · {litigeModal.type_reparation}
+                </div>
+                <div style={{ marginBottom: '10px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '5px' }}>Titre du problème</div>
+                  <input value={litigeTitre} onChange={e => setLitigeTitre(e.target.value)} placeholder="Ex: Réparation mal effectuée..." style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none' }} />
+                </div>
+                <div style={{ marginBottom: '14px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '5px' }}>Description</div>
+                  <textarea value={litigeDesc} onChange={e => setLitigeDesc(e.target.value)} placeholder="Décrivez le problème en détail..." style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none', resize: 'none', minHeight: '80px' }} />
+                </div>
+                <button onClick={signalerLitige} disabled={!litigeTitre} style={{ background: !litigeTitre ? '#e0e0e0' : '#dc2626', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, cursor: !litigeTitre ? 'not-allowed' : 'pointer', fontFamily: '"DM Sans", sans-serif', width: '100%' }}>
+                  Signaler le problème
+                </button>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>
