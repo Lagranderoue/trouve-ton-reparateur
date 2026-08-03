@@ -1,5 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
+const MapReparateurs = dynamic(() => import('./MapReparateurs'), { ssr: false })
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import {
@@ -212,6 +214,15 @@ function DashboardTab({ stats, setActiveTab }: { stats: any, setActiveTab: (t: s
             </div>
           </div>
         ))}
+      </div>
+      {/* CARTE */}
+      <div style={{ background: '#fff', border: '1px solid #e8eaf0', borderRadius: '12px', overflow: 'hidden' }}>
+        <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '14px', fontWeight: 600, color: '#111' }}>Réparateurs sur la carte</div>
+        </div>
+        <div style={{ height: '400px' }}>
+          <MapReparateurs />
+        </div>
       </div>
     </div>
   )
