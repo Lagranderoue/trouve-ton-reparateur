@@ -281,7 +281,7 @@ export default function Home() {
             justifyContent: 'center', minHeight: '380px', position: 'relative', zIndex: 2,
           }}>
             <div style={{
-              width: '100%', maxWidth: '320px', height: '260px',
+              width: '100%', maxWidth: '380px', height: '300px',
               background: 'linear-gradient(135deg, rgba(37,99,235,0.2), rgba(15,45,107,0.4))',
               borderRadius: '16px', border: '1px solid rgba(255,255,255,0.15)',
               position: 'relative', overflow: 'hidden',
@@ -295,16 +295,16 @@ export default function Home() {
               <div style={{ position: 'absolute', top: 0, bottom: 0, left: '60%', width: '1px', background: 'rgba(255,255,255,0.12)' }} />
               <div style={{ position: 'absolute', top: 0, bottom: 0, left: '85%', width: '1px', background: 'rgba(255,255,255,0.12)' }} />
               {/* Pin principal */}
-              <div style={{ position: 'absolute', top: '20%', left: '25%', width: '28px', height: '28px', borderRadius: '50%', background: '#2563eb', border: '2.5px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
-                <i className="ti ti-tool" style={{ fontSize: '11px', color: '#fff' }} aria-hidden="true" />
+              <div style={{ position: 'absolute', top: '20%', left: '25%', width: '38px', height: '38px', borderRadius: '50%', background: '#2563eb', border: '3px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}>
+                <i className="ti ti-tool" style={{ fontSize: '16px', color: '#fff' }} aria-hidden="true" />
               </div>
               {/* Pin secondaire */}
-              <div style={{ position: 'absolute', top: '55%', left: '58%', width: '22px', height: '22px', borderRadius: '50%', background: '#2563eb', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.3)', opacity: 0.7 }}>
-                <i className="ti ti-tool" style={{ fontSize: '9px', color: '#fff' }} aria-hidden="true" />
+              <div style={{ position: 'absolute', top: '55%', left: '58%', width: '32px', height: '32px', borderRadius: '50%', background: '#2563eb', border: '2.5px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(0,0,0,0.35)', opacity: 0.8 }}>
+                <i className="ti ti-tool" style={{ fontSize: '13px', color: '#fff' }} aria-hidden="true" />
               </div>
               {/* Pin tertiaire */}
-              <div style={{ position: 'absolute', top: '30%', left: '75%', width: '20px', height: '20px', borderRadius: '50%', background: '#2563eb', border: '2px solid rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}>
-                <i className="ti ti-tool" style={{ fontSize: '8px', color: '#fff' }} aria-hidden="true" />
+              <div style={{ position: 'absolute', top: '30%', left: '75%', width: '28px', height: '28px', borderRadius: '50%', background: '#2563eb', border: '2px solid rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.65, boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+                <i className="ti ti-tool" style={{ fontSize: '11px', color: '#fff' }} aria-hidden="true" />
               </div>
               {/* Pin user */}
               <div style={{ position: 'absolute', top: '50%', left: '40%', transform: 'translate(-50%, -50%)' }}>
