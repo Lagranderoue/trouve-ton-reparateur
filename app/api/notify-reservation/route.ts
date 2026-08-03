@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   await resend.emails.send({
-    from: 'Trouve ton réparateur <noreply@trouvetonreparateur.com>',
+    from: 'Trouve ton réparateur <onboarding@resend.dev>',
     to: rep.email,
     subject: 'Nouvelle réservation — ' + clientNom,
     html: `

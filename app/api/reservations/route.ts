@@ -83,7 +83,7 @@ export async function PATCH(request: NextRequest) {
 
       if (statut === 'approved') {
         await resend.emails.send({
-          from: 'Trouve ton réparateur <noreply@trouvetonreparateur.com>',
+          from: 'Trouve ton réparateur <onboarding@resend.dev>',
           to: resa.client_email,
           subject: 'Réservation confirmée — ' + reparateurNom,
           html: `
@@ -108,7 +108,7 @@ export async function PATCH(request: NextRequest) {
         })
       } else if (statut === 'rejected') {
         await resend.emails.send({
-          from: 'Trouve ton réparateur <noreply@trouvetonreparateur.com>',
+          from: 'Trouve ton réparateur <onboarding@resend.dev>',
           to: resa.client_email,
           subject: 'Réservation refusée — ' + reparateurNom,
           html: `

@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Champs manquants' }, { status: 400 })
   }
   await resend.emails.send({
-    from: 'Trouve ton réparateur <noreply@trouvetonreparateur.com>',
+    from: 'Trouve ton réparateur <onboarding@resend.dev>',
     to: 'lagranderouecontact@gmail.com',
     subject: '[Contact] ' + sujet,
     html: `

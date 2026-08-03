@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const { nom, adresse, ville, telephone, email, services, horaires, description } = body
 
   await resend.emails.send({
-    from: 'Trouve ton réparateur <noreply@trouvetonreparateur.com>',
+    from: 'Trouve ton réparateur <onboarding@resend.dev>',
     to: 'lagranderouecontact@gmail.com',
     subject: 'Nouvelle inscription - ' + nom,
     html: '<h2>Nouvelle demande d inscription</h2>' +
