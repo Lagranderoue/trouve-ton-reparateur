@@ -296,15 +296,15 @@ export default function Home() {
               <div style={{ position: 'absolute', top: 0, bottom: 0, left: '85%', width: '1px', background: 'rgba(255,255,255,0.12)' }} />
               {/* Pin principal */}
               <div style={{ position: 'absolute', top: '20%', left: '25%', width: '38px', height: '38px', borderRadius: '50%', background: '#2563eb', border: '3px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}>
-                <i className="ti ti-tool" style={{ fontSize: '16px', color: '#fff' }} aria-hidden="true" />
+                <IconTool size={16} color="#fff" />
               </div>
               {/* Pin secondaire */}
               <div style={{ position: 'absolute', top: '55%', left: '58%', width: '32px', height: '32px', borderRadius: '50%', background: '#2563eb', border: '2.5px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(0,0,0,0.35)', opacity: 0.8 }}>
-                <i className="ti ti-tool" style={{ fontSize: '13px', color: '#fff' }} aria-hidden="true" />
+                <IconTool size={13} color="#fff" />
               </div>
               {/* Pin tertiaire */}
               <div style={{ position: 'absolute', top: '30%', left: '75%', width: '28px', height: '28px', borderRadius: '50%', background: '#2563eb', border: '2px solid rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.65, boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
-                <i className="ti ti-tool" style={{ fontSize: '11px', color: '#fff' }} aria-hidden="true" />
+                <IconTool size={11} color="#fff" />
               </div>
               {/* Pin user */}
               <div style={{ position: 'absolute', top: '50%', left: '40%', transform: 'translate(-50%, -50%)' }}>
