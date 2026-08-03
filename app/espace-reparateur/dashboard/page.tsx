@@ -1125,12 +1125,22 @@ export default function Dashboard() {
           { id: 'messages', icon: <IconMessage size={20} />, label: 'Messages' },
           { id: 'avis', icon: <IconStar size={20} />, label: 'Avis' },
           { id: 'profil', icon: <IconUser size={20} />, label: 'Profil' },
-        ].map(item => (
-          <div key={item.id} onClick={() => changeTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', padding: '4px 0', color: activeTab === item.id ? '#2563eb' : '#aaa' }}>
-            {item.icon}
-            <span style={{ fontSize: '9px', fontWeight: activeTab === item.id ? 600 : 500 }}>{item.label}</span>
-          </div>
-        ))}
+        ].map(item => {
+          const nbAttente = 0 // badge géré dans ReservationsTab
+          return (
+            <div key={item.id} onClick={() => changeTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', padding: '4px 0', color: activeTab === item.id ? '#2563eb' : '#aaa' }}>
+              <div style={{ position: 'relative' }}>
+                {item.icon}
+                {nbAttente > 0 && (
+                  <div style={{ position: 'absolute', top: '-6px', right: '-8px', width: '16px', height: '16px', borderRadius: '50%', background: '#dc2626', color: '#fff', fontSize: '9px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {nbAttente}
+                  </div>
+                )}
+              </div>
+              <span style={{ fontSize: '9px', fontWeight: activeTab === item.id ? 600 : 500 }}>{item.label}</span>
+            </div>
+          )
+        })}
       </div>
     </main>
   )

@@ -208,6 +208,24 @@ export default function ReservationModal({
     })
     setLoading(false)
     if (err) { setError('Une erreur est survenue. Veuillez réessayer.'); return }
+
+    // Envoyer email au réparateur
+    await fetch('/api/notify-reservation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reparateurId,
+        reparateurNom,
+        clientEmail: user.email,
+        typeReparation: typeRep,
+        marque,
+        modele,
+        date: dateStr,
+        heure: heureChoisie,
+        note,
+      })
+    })
+
     setEtape('confirm')
   }
 

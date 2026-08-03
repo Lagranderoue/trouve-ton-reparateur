@@ -12,6 +12,8 @@ function ConnexionContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [prenom, setPrenom] = useState('')
+  const [nom, setNom] = useState('')
+  const [telephone, setTelephone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
@@ -42,6 +44,15 @@ function ConnexionContent() {
     })
     setLoading(false)
     if (error) { setError(error.message); return }
+    if (data.user) {
+      // Insérer dans la table clients
+      await supabase.from('clients').upsert({
+        id: data.user.id,
+        prenom: prenom.trim(),
+        nom: nom.trim(),
+        telephone: telephone.trim() || null,
+      })
+    }
     if (data.session) {
       // Supabase sans confirmation email — connexion directe
       router.push(target)
@@ -95,7 +106,13 @@ function ConnexionContent() {
           )}
 
           {tab === 'signup' && (
-            <input style={inputStyle} placeholder="Votre prénom" value={prenom} onChange={e => setPrenom(e.target.value)} />
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <input style={inputStyle} placeholder="Prénom" value={prenom} onChange={e => setPrenom(e.target.value)} />
+                <input style={inputStyle} placeholder="Nom" value={nom} onChange={e => setNom(e.target.value)} />
+              </div>
+              <input style={inputStyle} placeholder="Téléphone (ex: 06 12 34 56 78)" value={telephone} onChange={e => setTelephone(e.target.value)} type="tel" />
+            </>
           )}
           <input style={inputStyle} type="email" placeholder="Adresse email" value={email} onChange={e => setEmail(e.target.value)} />
           <input style={inputStyle} type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)} />
