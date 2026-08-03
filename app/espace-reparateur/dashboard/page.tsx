@@ -7,7 +7,7 @@ import Navbar from '../../../components/Navbar'
 import {
   IconHome, IconUser, IconPhoto, IconStar, IconStarFilled, IconClock, IconSettings,
   IconLogout, IconPencil, IconPlus, IconMapPin, IconPhone, IconMail,
-  IconBuildingStore, IconCalendar, IconCamera, IconEye, IconMessage, IconCheck,
+  IconBuildingStore, IconCalendar, IconCamera, IconEye, IconMessage, IconCheck, IconChevronLeft, IconChevronRight,
   IconShieldCheck, IconClockHour4, IconX
 } from '@tabler/icons-react'
 
@@ -140,6 +140,14 @@ function MessagesReparateurTab({ reparateur }: { reparateur: any }) {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<any>(null)
   const [userId, setUserId] = useState<string>('')
+  const [isMobileView, setIsMobileView] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobileView(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const selectConversation = (r: any) => {
     setSelected(r)
@@ -155,14 +163,11 @@ function MessagesReparateurTab({ reparateur }: { reparateur: any }) {
       )
       const { data: { user } } = await supabase.auth.getUser()
       if (user) setUserId(user.id)
-
       const res = await fetch('/api/reservations?reparateur_id=' + reparateur.id)
       const data = await res.json()
       const approved = (data.reservations || []).filter((r: any) => r.statut === 'approved')
       setReservations(approved)
       setLoading(false)
-
-      // Restaurer la conversation depuis l'URL
       const params = new URLSearchParams(window.location.search)
       const convId = params.get('conv')
       if (convId) {
@@ -174,11 +179,39 @@ function MessagesReparateurTab({ reparateur }: { reparateur: any }) {
   }, [])
 
   const MOIS = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc']
+  const COULEURS = ['#dbeafe', '#f0fdf4', '#fff7ed', '#fdf4ff', '#fefce8']
+  const TEXTES = ['#2563eb', '#16a34a', '#f59e0b', '#9333ea', '#ca8a04']
+
+  if (isMobileView && selected && userId) {
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: '#fff', zIndex: 500, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: '#0f2d6b', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <IconChevronLeft size={22} color="#fff" />
+          </button>
+          <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+            {(selected.client_nom || selected.client_email || 'C')[0].toUpperCase()}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>{selected.client_nom || selected.client_email || 'Client'}</div>
+            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)' }}>{selected.type_reparation} · {new Date(selected.date).getDate()} {MOIS[new Date(selected.date).getMonth()]}</div>
+          </div>
+          {selected.client_telephone && (
+            <a href={'tel:' + selected.client_telephone} style={{ color: '#fff', display: 'flex', alignItems: 'center' }}>
+              <IconPhone size={18} color="#fff" />
+            </a>
+          )}
+        </div>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <Chat reservationId={selected.id} userId={userId} senderType="reparateur" nomInterlocuteur={selected.client_nom || selected.client_email || 'Client'} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Messages</div>
-
+      {!isMobileView && <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Messages</div>}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Chargement...</div>
       ) : reservations.length === 0 ? (
@@ -187,6 +220,31 @@ function MessagesReparateurTab({ reparateur }: { reparateur: any }) {
           <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '6px' }}>Aucun message</div>
           <div style={{ fontSize: '13px', color: '#888' }}>Les conversations apparaîtront ici après vos réservations acceptées.</div>
         </div>
+      ) : isMobileView ? (
+        <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e8eaf0' }}>
+          {reservations.map((r: any, idx: number) => {
+            const date = new Date(r.date)
+            const dateStr = date.getDate() + ' ' + MOIS[date.getMonth()]
+            const initiale = (r.client_nom || r.client_email || 'C')[0].toUpperCase()
+            const couleur = COULEURS[idx % COULEURS.length]
+            const texte = TEXTES[idx % TEXTES.length]
+            return (
+              <div key={r.id} onClick={() => selectConversation(r)} style={{ padding: '12px 14px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: couleur, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', fontWeight: 700, color: texte, flexShrink: 0 }}>
+                  {initiale}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#111' }}>{r.client_nom || r.client_email || 'Client'}</span>
+                    <span style={{ fontSize: '10px', color: '#bbb' }}>{dateStr}</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.type_reparation}</div>
+                </div>
+                <IconChevronRight size={16} color="#ddd" />
+              </div>
+            )
+          })}
+        </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: selected ? '280px 1fr' : '1fr', gap: '12px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -194,30 +252,15 @@ function MessagesReparateurTab({ reparateur }: { reparateur: any }) {
               const date = new Date(r.date)
               const dateStr = date.getDate() + ' ' + MOIS[date.getMonth()]
               return (
-                <div
-                  key={r.id}
-                  onClick={() => selectConversation(r)}
-                  style={{
-                    background: selected?.id === r.id ? '#eff6ff' : '#fff',
-                    border: '1px solid',
-                    borderColor: selected?.id === r.id ? '#bfdbfe' : '#e8eaf0',
-                    borderRadius: '10px', padding: '12px 14px', cursor: 'pointer',
-                  }}
-                >
+                <div key={r.id} onClick={() => selectConversation(r)} style={{ background: selected?.id === r.id ? '#eff6ff' : '#fff', border: '1px solid', borderColor: selected?.id === r.id ? '#bfdbfe' : '#e8eaf0', borderRadius: '10px', padding: '12px 14px', cursor: 'pointer' }}>
                   <div style={{ fontSize: '13px', fontWeight: 600, color: '#111', marginBottom: '2px' }}>{r.client_nom || r.client_email || 'Client'}</div>
                   <div style={{ fontSize: '11px', color: '#888' }}>{r.type_reparation} · {dateStr}</div>
                 </div>
               )
             })}
           </div>
-
           {selected && userId && (
-            <Chat
-              reservationId={selected.id}
-              userId={userId}
-              senderType="reparateur"
-              nomInterlocuteur={selected.client_nom || selected.client_email || 'Client'}
-            />
+            <Chat reservationId={selected.id} userId={userId} senderType="reparateur" nomInterlocuteur={selected.client_nom || selected.client_email || 'Client'} />
           )}
         </div>
       )}
