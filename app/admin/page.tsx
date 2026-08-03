@@ -530,14 +530,36 @@ function LitigesTab() {
   const [litiges, setLitiges] = useState<any[]>([])
   const [selected, setSelected] = useState<any>(null)
   const [msg, setMsg] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [newTitre, setNewTitre] = useState('')
+  const [newDesc, setNewDesc] = useState('')
+  const [showForm, setShowForm] = useState(false)
 
-  // Simulation de litiges (à connecter à une vraie table plus tard)
-  useEffect(() => {
-    setLitiges([
-      { id: '1', titre: 'Client insatisfait — écran', client: 'Marie Dupont', reparateur: 'Phone Expert', statut: 'ouvert', date: new Date().toISOString(), description: 'Le client signale que l&apos;écran a été mal réparé et présente des traces.' },
-      { id: '2', titre: 'RDV non honoré', client: 'Thomas Laurent', reparateur: 'iRepair Cannes', statut: 'ouvert', date: new Date().toISOString(), description: 'Le réparateur n&apos;a pas honoré le rendez-vous sans prévenir.' },
-    ])
-  }, [])
+  useEffect(() => { load() }, [])
+
+  const load = async () => {
+    const { data } = await supabase
+      .from('litiges')
+      .select('*, reparateurs(nom), clients(prenom, nom)')
+      .order('created_at', { ascending: false })
+    setLitiges(data || [])
+    setLoading(false)
+  }
+
+  const resoudre = async (id: string) => {
+    await supabase.from('litiges').update({ statut: 'resolu', resolved_at: new Date().toISOString() }).eq('id', id)
+    load()
+    setSelected(null)
+  }
+
+  const creerLitige = async () => {
+    if (!newTitre) return
+    await supabase.from('litiges').insert({ titre: newTitre, description: newDesc, statut: 'ouvert' })
+    setNewTitre('')
+    setNewDesc('')
+    setShowForm(false)
+    load()
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
