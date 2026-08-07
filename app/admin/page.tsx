@@ -601,12 +601,49 @@ function CommunicationsTab() {
   const [sujet, setSujet] = useState('')
   const [message, setMessage] = useState('')
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [accessResult, setAccessResult] = useState<any>(null)
 
   const inputStyle = { width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: '"DM Sans", sans-serif', outline: 'none', background: '#fafafa' }
+
+  const envoyerAccesTous = async () => {
+    if (!confirm('Envoyer le lien de création de mot de passe à tous les réparateurs approuvés ?')) return
+    setSending(true)
+    const { data } = await supabase.from('reparateurs').select('id, email, nom').eq('statut', 'approved')
+    const res = await fetch('/api/send-access-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emails: data || [] })
+    })
+    const result = await res.json()
+    setAccessResult(result)
+    setSending(false)
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div style={{ fontSize: '22px', fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>Communications</div>
+
+      {/* ENVOI ACCÈS MASSE */}
+      <div style={{ ...cardStyle, padding: '20px', maxWidth: '600px', background: '#eff6ff', borderColor: '#bfdbfe' }}>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: '#111', marginBottom: '6px' }}>Envoyer les accès à tous les réparateurs</div>
+        <div style={{ fontSize: '13px', color: '#555', marginBottom: '14px', lineHeight: 1.6 }}>
+          Envoie un email avec un lien de création de mot de passe à tous les réparateurs approuvés qui n&apos;ont pas encore accès à leur espace.
+        </div>
+        {accessResult ? (
+          <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '12px 14px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', marginBottom: '4px' }}>Emails envoyés !</div>
+            <div style={{ fontSize: '12px', color: '#555' }}>
+              {accessResult.results?.filter((r: any) => r.status === 'sent').length} envoyés · {accessResult.results?.filter((r: any) => r.status === 'error').length} erreurs
+            </div>
+          </div>
+        ) : (
+          <button onClick={envoyerAccesTous} disabled={sending} style={{ background: sending ? '#e0e0e0' : '#0f2d6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '11px 20px', fontSize: '13px', fontWeight: 600, cursor: sending ? 'not-allowed' : 'pointer', fontFamily: '"DM Sans", sans-serif' }}>
+            {sending ? 'Envoi en cours...' : 'Envoyer les accès à tous les réparateurs'}
+          </button>
+        )}
+      </div>
+
       <div style={{ ...cardStyle, padding: '20px', maxWidth: '600px' }}>
         <div style={{ fontSize: '15px', fontWeight: 700, color: '#111', marginBottom: '16px' }}>Envoyer un email groupé</div>
         {sent ? (
